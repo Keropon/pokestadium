@@ -231,7 +231,6 @@ s32 func_81003A24(s8* arg0) {
     return var_v1;
 }
 
-#ifdef NON_MATCHING
 void func_81003A54(Gfx* gfx) {
     u16 temp_v1;
     u8 sp4D;
@@ -270,9 +269,6 @@ void func_81003A54(Gfx* gfx) {
     gSPEndDisplayList(gfx++);
     D_81004BB0++;
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/31/fragment31_258080/func_81003A54.s")
-#endif
 
 void func_81003CF0(s32 arg0, DisplayListState* state) {
     Gfx* gfx;
