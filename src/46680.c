@@ -119,4 +119,110 @@ s32 func_80045D60(unk_arg0_func_80045A80* arg0, unk_arg1_func_80045D60* arg1, s3
     return 0;
 }
 
+#define READ_BITS_3ARM(dest, W_imm)                                                                  \
+    do {                                                                                             \
+        if (v1 >= W_imm) {                                                                           \
+            dest = v0 & ((1 << W_imm) - 1);                                                          \
+            v0 >>= W_imm;                                                                            \
+            v1 -= W_imm;                                                                             \
+        } else {                                                                                     \
+            t0 += 0x20;                                                                              \
+            dest = ((1 << v1) - 1) & v0;                                                             \
+            if (v1 != W_imm) {                                                                       \
+                v0 = ((u32*) ((u8*) arg0 + 0x1598))[(t0 >> 5) & 0x3FF];                                 \
+                dest |= (v0 & ((1 << (W_imm - v1)) - 1)) << v1;                                      \
+                v0 >>= (W_imm - v1);                                                                 \
+            }                                                                                        \
+            v1 += 0x20 - W_imm;                                                                      \
+        }                                                                                            \
+    } while (0)
+
+#ifdef NON_MATCHING
+s32 func_80045FF0(unk_D_800FCED8* arg0, void* arg1) {
+    AnimBlock19 sp60[4];
+    s16 spC8[4];
+    s16 spD0[4];
+    s16 spD8[4];
+    s16 spE0[4];
+    unk_arg1_func_80045A80 header;
+    s32 i;
+    s32 t0;
+    s32 a3;
+    u32 v0;
+    s32 v1;
+    u32 count;
+
+    t0 = arg0->unk_25BC;
+    v0 = ((u32*) ((u8*) arg0 + 0x1598))[(t0 >> 5) & 0x3FF] >> (t0 & 0x1F);
+    a3 = 0x20 - (t0 & 0x1F);
+    v1 = a3;
+
+    if (arg0->unk_0000.unk_18A == 0) {
+        if (arg0->unk_0000.unk_18C == 0) {
+            if (v1 < 2) {
+                count = v0 & 1;
+                v0 >>= 1;
+                v1 -= 1;
+            } else {
+                t0 += 0x20;
+                count = ((1 << v1) - 1) & v0;
+                if (v1 != 1) {
+                    v0 = ((u32*) ((u8*) arg0 + 0x1598))[(t0 >> 5) & 0x3FF];
+                    count |= (v0 & ((1 << (1 - v1)) - 1)) << v1;
+                    v0 >>= (1 - v1);
+                }
+                v1 += 0x20 - 1;
+            }
+            if (count == 0) {
+                READ_BITS_3ARM(arg0->unk_0000.unk_18A, 7);
+                arg0->unk_0000.unk_18A += 1;
+            } else {
+                READ_BITS_3ARM(arg0->unk_0000.unk_18C, 4);
+                arg0->unk_0000.unk_18C += 1;
+            }
+        }
+    }
+
+    if (arg0->unk_0000.unk_18C != 0) {
+        bzero(arg1, 0x140);
+        arg0->unk_0000.unk_18C -= 1;
+    } else {
+        READ_BITS_3ARM(header.unk0, 6);
+        READ_BITS_3ARM(header.unk2, 6);
+        READ_BITS_3ARM(header.unk4, 5);
+        READ_BITS_3ARM(header.unk6, 5);
+        READ_BITS_3ARM(header.unk8, 4);
+        READ_BITS_3ARM(header.unkA, 4);
+        READ_BITS_3ARM(header.unkC, 3);
+        READ_BITS_3ARM(header.unkE, 3);
+
+        for (i = 0; i < 4; i++) {
+            READ_BITS_3ARM(spE0[i], 7);
+            READ_BITS_3ARM(spD0[i], 2);
+            READ_BITS_3ARM(spD8[i], 2);
+            READ_BITS_3ARM(spC8[i], 6);
+            READ_BITS_3ARM(sp60[i].xRotA, 3);
+            READ_BITS_3ARM(sp60[i].xRotB, 3);
+            READ_BITS_3ARM(sp60[i].flag0, 3);
+            READ_BITS_3ARM(sp60[i].yRotA, 3);
+            READ_BITS_3ARM(sp60[i].yRotB, 3);
+            READ_BITS_3ARM(sp60[i].flag1, 3);
+            READ_BITS_3ARM(sp60[i].zRotA, 3);
+            READ_BITS_3ARM(sp60[i].zRotB, 3);
+            READ_BITS_3ARM(sp60[i].flag2, 3);
+            READ_BITS_3ARM(sp60[i].unkA, 3);
+            READ_BITS_3ARM(sp60[i].unkB, 3);
+            READ_BITS_3ARM(sp60[i].unkC, 3);
+            READ_BITS_3ARM(sp60[i].unkD, 3);
+        }
+
+        arg0->unk_0000.unk_18A -= 1;
+        func_80045C78(arg0, &header, spE0, spD0, spD8, spC8, sp60, (s32) arg1);
+    }
+
+    arg0->unk_25BC = (t0 & ~0x1F) - v1 + 0x20;
+    return 0;
+}
+#else
 #pragma GLOBAL_ASM("asm/us/nonmatchings/46680/func_80045FF0.s")
+#endif
