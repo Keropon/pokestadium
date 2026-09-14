@@ -122,7 +122,6 @@ void func_8001A258(unk_func_8001A024* arg0) {
     }
 }
 
-#ifdef NON_MATCHING
 void func_8001A324(unk_func_8001A024* arg0, s32 arg1, s32 arg2, u16 arg3) {
     s32 w;
     s32 h;
@@ -151,9 +150,7 @@ void func_8001A324(unk_func_8001A024* arg0, s32 arg1, s32 arg2, u16 arg3) {
         arg0->unk_08[arg1].unk_04 = -0xE38;
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/1AB70/func_8001A324.s")
-#endif
+
 
 #ifdef NON_MATCHING
 void func_8001A46C(unk_func_8001A024* arg0, s32 arg1, unk_func_80026268_arg0* arg2, u16 arg3) {
