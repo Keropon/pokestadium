@@ -1107,7 +1107,6 @@ void func_81407484(Gfx* arg0, arg1_func_81407874_014_000_010* arg1) {
                       GCCc1w1(arg1->unk_09, arg1->unk_0C, arg1->unk_0E, arg1->unk_0B, arg1->unk_0D, arg1->unk_0F));
 }
 
-#ifdef NON_MATCHING
 Gfx* func_81407590(Gfx* arg0, arg1_func_81407874_014* arg1) {
     arg1_func_81407874_014_000* var_a3;
     arg1_func_81407874_014_004* sp20;
@@ -1172,9 +1171,6 @@ Gfx* func_81407590(Gfx* arg0, arg1_func_81407874_014* arg1) {
 
     return arg0;
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/34/fragment34_264380/func_81407590.s")
-#endif
 
 void func_81407874(s32 arg0, arg1_func_87903D64* arg1) {
     if (arg0 == 5) {
