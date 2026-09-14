@@ -662,7 +662,11 @@ void func_80033D44(StadiumModel* model, s16 arg1, f32 arg2, f32 arg3, f32 arg4, 
 #pragma GLOBAL_ASM("asm/us/nonmatchings/33FE0/func_80033D44.s")
 #endif
 
-#ifdef NON_MATCHING
+typedef struct ModelBlendWeight {
+    /* 0x00 */ f32 dist;
+    /* 0x04 */ char pad[0xC];
+} ModelBlendWeight; // size = 0x10
+
 void func_80034254(StadiumModel* model) {
     u32 pad[2];
     ModelSegment* segment;
@@ -672,10 +676,11 @@ void func_80034254(StadiumModel* model) {
     s32 j;
     s32 i;
     ModelVertex* temp_a1;
-    ModelVertex* var_a0;
     ModelVertex* var_a2;
+    f32* var_a0;
+
     segment = Memmap_GetSegmentVaddr(model->modelSegment);
-    indexTable = Memmap_GetSegmentVaddr(segment->tableSegment);
+    indexTable = Memmap_GetSegmentVaddr(segment->remapSegment);
     temp_a1 = &model->mvtx;
     var_a2 = temp_a1;
     for(i = 0; i < segment->vertexCount; i++) {
@@ -683,26 +688,21 @@ void func_80034254(StadiumModel* model) {
         var_a2++;
     }
     var_a2 = temp_a1;
-    for(i = 0; i < segment->vertexCount; i++) {
+    for (i = 0; i < segment->vertexCount; i++) {
         temp_v1 = indexTable[i];
         if (temp_v1 == i) {
             var_fv0 = 10000.0f;
-            var_a0 = var_a2;
-            for(j = 0; j < model->unk_02; j++) {
-                if (var_a2->unk_20 < var_fv0) {
-                    var_fv0 = var_a0->unk_20;
+            for (j = 0; j < model->unk_02; j++) {
+                var_a0 = (ModelBlendWeight*)&var_a2->unk_20 + j;
+                if (*var_a0 < var_fv0) {
+                    var_fv0 = *var_a0;
                     var_a2->nextIndex = j;
                 }
-                var_a0++;
             }
         }
         var_a2++;
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/33FE0/func_80034254.s")
-#endif
-
 void func_80034348(ModelSegment*, ModelVertex*);
 #pragma GLOBAL_ASM("asm/us/nonmatchings/33FE0/func_80034348.s")
 
