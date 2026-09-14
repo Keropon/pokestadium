@@ -106,7 +106,6 @@ void func_80044E80(s32 arg0) {
     }
 }
 
-#ifdef NON_MATCHING
 void func_80044EA4(void) {
     s32 i;
     s32 j;
@@ -242,9 +241,6 @@ void func_80044EA4(void) {
         }
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/45720/func_80044EA4.s")
-#endif
 
 void func_800455DC(u32 arg0, u32 arg1, u32 arg2, OSMesgQueue* arg3) {
     OSIoMesg sp48;
