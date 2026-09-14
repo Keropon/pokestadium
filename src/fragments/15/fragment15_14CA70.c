@@ -572,7 +572,6 @@ void func_869009E8(Controller* arg0, Controller* arg1) {
     arg0->stickMag = arg1->stickMag;
 }
 
-#ifdef NON_MATCHING
 void func_86900A14(void) {
     s32 temp_t9;
     u16 temp_v0;
@@ -596,9 +595,6 @@ void func_86900A14(void) {
 
     func_869009E8(&D_8690B390, &D_8690B5D0);
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/15/fragment15_14CA70/func_86900A14.s")
-#endif
 
 void func_86900B04(f32* arg0, f32* arg1, s16 arg2, s16 arg3) {
     *arg0 += arg3 * COSS(arg2);
