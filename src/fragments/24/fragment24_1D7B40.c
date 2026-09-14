@@ -2440,7 +2440,6 @@ void func_88310808(unk_func_8830867C_040_05C* arg0, unk_func_8830867C_040* arg1)
     arg0->unk_24 = arg1;
 }
 
-#ifdef NON_MATCHING
 s32 func_88310854(unk_func_8830867C_040_05C* arg0, Controller* arg1) {
     s32 var_t2;
     s32 i;
@@ -2525,9 +2524,6 @@ s32 func_88310854(unk_func_8830867C_040_05C* arg0, Controller* arg1) {
     }
     return var_t2;
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/24/fragment24_1D7B40/func_88310854.s")
-#endif
 
 void func_88310B70(unk_func_88310B70* arg0, s32 arg1, s32 arg2, unk_func_8830867C_04C_030* arg3, MemoryPool* arg4) {
     ((func885007CC)Memmap_GetFragmentVaddr(func_885007CC))(arg0, sizeof(unk_func_88310B70));
