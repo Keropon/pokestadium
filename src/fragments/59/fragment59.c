@@ -522,7 +522,6 @@ static u32 D_841033F8[] = {
     0x00000000, 0x08000000, func_84101120, 0x00000000, 0x06000000, 0x01000000,
 };
 
-#ifdef NON_MATCHING
 void func_84100020(s16 arg0, s16 arg1, s16 arg2) {
     s32 spC;
     s32 sp8;
@@ -541,9 +540,6 @@ void func_84100020(s16 arg0, s16 arg1, s16 arg2) {
                         0, 0, 0x8000 / arg2, 0x8000 / arg2);
     gSPDisplayList(gDisplayListHead++, D_8006F630);
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/59/fragment59/func_84100020.s")
-#endif
 
 void func_84100288(s16 arg0) {
     s32 i;
