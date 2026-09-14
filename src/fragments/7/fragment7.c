@@ -545,7 +545,6 @@ void func_86100B48(void) {
 void func_86100C28(void) {
 }
 
-#ifdef NON_MATCHING
 void func_86100C30(s32 arg0) {
     s32 i;
     UNUSED unk_D_86104B5C sp60 = D_86104B60;
@@ -670,9 +669,6 @@ void func_86100C30(s32 arg0) {
         func_87801F48(2, 0x19, 0xA6);
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/7/fragment7/func_86100C30.s")
-#endif
 
 void func_86101434(void) {
     s32 i;
