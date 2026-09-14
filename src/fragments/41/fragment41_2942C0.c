@@ -1509,7 +1509,6 @@ void func_82F10A24(unk_D_82F21140* arg0) {
     }
 }
 
-#ifdef NON_MATCHING
 void func_82F10BB4(s16 arg0, s16 arg1, f32 arg2) {
     s16 sp58;
     s16 temp_ft1;
@@ -1533,9 +1532,6 @@ void func_82F10BB4(s16 arg0, s16 arg1, f32 arg2) {
         func_82F0C410(arg0 + temp_ft2, var_s2, temp_ft2, temp_ft1, 0x1C60, 0, sp58, temp_ft0, 0);
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/41/fragment41_2942C0/func_82F10BB4.s")
-#endif
 
 void func_82F10ED0(s16 arg0, s16 arg1, f32 arg2, s16 arg3, s16 arg4, s16 arg5) {
     s16 sp6E;
