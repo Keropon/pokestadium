@@ -65,7 +65,6 @@ void func_8431790C(void) {
     D_843901A0->unk_008[1] = 0;
 }
 
-#ifdef NON_MATCHING
 void func_84317940(s8* arg0, s8* arg1, ...) {
     va_list args;
     s8** temp_v1;
@@ -96,9 +95,6 @@ void func_84317940(s8* arg0, s8* arg1, ...) {
     }
     arg0[var_v0] = '\x00';
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/62/fragment62_3020D0/func_84317940.s")
-#endif
 
 void func_843179F4(s8* arg0, s8 arg1) {
     u8 tmp = arg1;
