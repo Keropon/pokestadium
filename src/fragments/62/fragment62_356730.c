@@ -236,7 +236,6 @@ s32 func_8436C62C(void) {
                               (j * 4) + (k + 10), (j * 4) + (k + 1), 0);                                      \
     }
 
-#ifdef NON_MATCHING
 Gfx* func_8436C6A4(Gfx* arg0, unk_D_843C2C00* arg1, s16 arg2, s16 arg3) {
     s32 i;
     s32 j;
@@ -289,9 +288,6 @@ Gfx* func_8436C6A4(Gfx* arg0, unk_D_843C2C00* arg1, s16 arg2, s16 arg3) {
 
     return arg0;
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/62/fragment62_356730/func_8436C6A4.s")
-#endif
 
 Gfx* func_8436CB60(Gfx* arg0, unk_D_843C2C00* arg1) {
     unk_D_843C2C00_064* ptr;
