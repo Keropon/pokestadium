@@ -698,7 +698,6 @@ void func_8380419C(s32 arg0, s32 arg1, unk_D_838067F0_0168* arg2) {
     func_8001F444();
 }
 
-#ifdef NON_MATCHING
 void func_838043F8(s32 arg0) {
     unk_D_838067F0* ptr = &D_838067F0;
     s32 i;
@@ -821,6 +820,3 @@ void func_838043F8(s32 arg0) {
         func_84200738(spC4 + var_v0, spC0 + var_v1, 0x84, 0x2C);
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/47/fragment47_2AFDB0/func_838043F8.s")
-#endif
