@@ -1197,6 +1197,7 @@ void func_812011D0(u16* fb, u8* cmd) {
 #else
 #pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_7F9A0/func_812011D0.s")
 #endif
+
 s32 GbEmu_PixelOpDitherA(s32 arg0, s32 arg1) {
   return (arg1 & 1) ? arg1 : arg0;
 }
@@ -1413,68 +1414,53 @@ void func_8120241C(void) {
     }
 }
 
-#ifdef NON_MATCHING
 void func_81202758(s32 arg0, s32 arg1) {
-    s32 temp_s1;
-    s32 temp_s1_2;
     s32 temp_s4;
     s32 temp_s6;
-    s32 var_s0;
-    s32 var_s0_2;
-    s32 var_s0_3;
-    s32 var_s1;
-    s32 var_s1_2;
-    s32 var_s1_3;
+    s32 i;
 
-    var_s1 = arg0;
-    temp_s4 = arg1 * 0x28 * 2;
-    var_s0 = 0;
-    do {
-        GbEmu_BlitWithPixelOp((u16*)(var_s1), (u16*)(temp_s4 + D_8122C748 + 0x8910), 0, 8, 5);
-        var_s0 += 1;
-        var_s1 += 0x10;
-    } while (var_s0 < 6);
-    temp_s6 = arg1 << 7;
-    GbEmu_BlitWithPixelOp((u16*)(var_s1), (u16*)(temp_s6 + D_8122C748 + 0x8F90), 0, 8, 8);
-    var_s1_2 = var_s1 + 0x1406;
-    var_s0_2 = 0;
-    do {
-        GbEmu_BlitWithPixelOp((u16*)(var_s1_2), (u16*)(temp_s6 + D_8122C748 + 0x8090), 0, 8, 8);
-        var_s0_2 += 1;
-        var_s1_2 += 0x1400;
-    } while (var_s0_2 < 5);
-    GbEmu_BlitWithPixelOp((u16*)(var_s1_2), (u16*)(temp_s6 + D_8122C748 + 0x8510), 0, 8, 8);
-    var_s1_3 = var_s1_2 + 0x10;
-    switch(D_8122C771) {
-        case 1:
-            var_s0_3 = 7;
-            break;
-        case 2:
-            var_s0_3 = 0xA;
-            break;
-        case 3:
-            var_s0_3 = 0xB;
+    temp_s4 = (arg1 * 0x28) << 1;
+    for (i = 0; i < 6; i++) {
+        GbEmu_BlitWithPixelOp(arg0, temp_s4 + D_8122C748 + 0x8910, 0, 8, 5);
+        arg0 += 0x10;
+    }
+    temp_s6 = arg1 << 6;
+    temp_s6 <<= 1;
+    GbEmu_BlitWithPixelOp(arg0, temp_s6 + D_8122C748 + 0x8F90, 0, 8, 8);
+    arg0 += 0x1406;
+    for (i = 0; i < 5; i++) {
+        GbEmu_BlitWithPixelOp(arg0, temp_s6 + D_8122C748 + 0x8090, 0, 8, 8);
+        arg0 += 0x1400;
+    }
+    GbEmu_BlitWithPixelOp(arg0, temp_s6 + D_8122C748 + 0x8510, 0, 8, 8);
+    arg0 += 0x10;
+    switch (D_8122C771) {
+    case 1:
+        i = 7;
         break;
-        default:
-        var_s0_3 = 7;
+    case 2:
+        i = 0xA;
+        break;
+    case 3:
+        i = 0xB;
+        break;
+    default:
+        i = 6;
         break;
     }
-    while (var_s0_3 > 0) {
-        GbEmu_BlitWithPixelOp((u16*)(var_s1_3 + 0x780), (u16*)(temp_s4 + D_8122C748 + 0x8910), 0, 8, 5);
-        var_s0_3 -= 1;
-        var_s1_3 += 0x10;
+    while (i > 0) {
+        GbEmu_BlitWithPixelOp(arg0 + 0x780, temp_s4 + D_8122C748 + 0x8910, 0, 8, 5);
+        arg0 += 0x10;
+        i--;
     }
-    GbEmu_BlitWithPixelOp((u16*)(var_s1_3), (u16*)(temp_s6 + D_8122C748 + 0x8B90), 0, 8, 8);
-    temp_s1 = var_s1_3 - 0x13FA;
-    GbEmu_BlitWithPixelOp((u16*)(temp_s1), (u16*)(temp_s6 + D_8122C748 + 0x9390), 0, 8, 8);
-    temp_s1_2 = temp_s1 - 0x1400;
-    GbEmu_BlitWithPixelOp((u16*)(temp_s1_2), (u16*)(temp_s6 + D_8122C748 + 0x9390), 0, 8, 8);
-    GbEmu_BlitWithPixelOp((u16*)(temp_s1_2 - 0x1400), (u16*)(D_8122C748 + 0x8490), 0, 8, 8);
+    GbEmu_BlitWithPixelOp(arg0, temp_s6 + D_8122C748 + 0x8B90, 0, 8, 8);
+    arg0 -= 0x13FA;
+    GbEmu_BlitWithPixelOp(arg0, temp_s6 + D_8122C748 + 0x9390, 0, 8, 8);
+    arg0 -= 0x1400;
+    GbEmu_BlitWithPixelOp(arg0, temp_s6 + D_8122C748 + 0x9390, 0, 8, 8);
+    arg0 -= 0x1400;
+    GbEmu_BlitWithPixelOp(arg0, D_8122C748 + 0x8490, 0, 8, 8);
 }
-#else
-void func_81202758(s32, s32);
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_7F9A0/func_81202758.s")
-#endif
 
 #pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_7F9A0/func_812029B0.s")
 
