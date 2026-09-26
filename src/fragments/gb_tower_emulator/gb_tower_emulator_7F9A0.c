@@ -1077,7 +1077,6 @@ s32 GbPak_DetectSupportedCartridgeVariant(unk_func_812009D0* arg0) {
 void func_81200AA8(void *);
 #pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_7F9A0/func_81200AA8.s")
 
-#ifdef NON_MATCHING
 void func_812011D0(u16* fb, u8* cmd) {
     u8* ptr;
     u8* map;
@@ -1087,11 +1086,11 @@ void func_812011D0(u16* fb, u8* cmd) {
     u16* pal;
     u8 flags;
     u8 y;
-    u8 tile;
+    s32 tile;
     s32 width;
     s32 x;
     s32 dir;
-    s32 trans;
+    long trans;
     s32 tileSize;
     s32 count;
     s32 row;
@@ -1099,7 +1098,7 @@ void func_812011D0(u16* fb, u8* cmd) {
 
     flags = *cmd;
     ptr = cmd;
-    while (flags != 0) {
+    while (((unsigned int) flags) != 0) {
         trans = flags;
         x = ptr[1] + ((flags & 1) << 8);
         y = ptr[2];
@@ -1123,8 +1122,7 @@ void func_812011D0(u16* fb, u8* cmd) {
                 data = gGbEmuFont2Data;
                 break;
             case 0xA:
-                data = gGbEmuFont1Data;
-                map = D_8120E480;
+                map = D_8120E480, data = gGbEmuFont1Data;
                 tileSize = 0xA;
                 break;
         }
@@ -1194,9 +1192,6 @@ void func_812011D0(u16* fb, u8* cmd) {
         ptr += 6;
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_7F9A0/func_812011D0.s")
-#endif
 
 s32 GbEmu_PixelOpDitherA(s32 arg0, s32 arg1) {
   return (arg1 & 1) ? arg1 : arg0;
