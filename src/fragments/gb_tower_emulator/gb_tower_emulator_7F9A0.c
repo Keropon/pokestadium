@@ -42,11 +42,6 @@ typedef struct unk_D_8120D7F3 {
     u8 unk116;
 } unk_D_8120D7F3; // size = 0x10A ??
 
-typedef struct unk_func_8120241C_80 {
-    u8 pad[0x80];
-    u8 unk80;
-} unk_func_8120241C_80; // size = 0x81
-
 // ??
 extern unk_D_8120D7F3 D_8120D7F3;
 
@@ -341,7 +336,6 @@ extern s32 D_8122C4DC;
 extern u8 gGbPakServiceThreadActive;
 extern u8 gGbEmuPresentationMode;
 extern u8 D_8122C4E3;
-extern u8 D_8122C4E2;
 extern u8 D_8122C4E4;
 extern u8 D_8122C4E5;
 extern s8 D_8122C4E7;
@@ -1366,68 +1360,58 @@ void func_81202210(s32 arg0, s32 arg1) {
     D_8122C4E7 = 0;
 }
 
-#ifdef NON_MATCHING
 void func_8120241C(void) {
-    unk_D_8120D7F3* var_s2;
+    u8* var_s2;
     s32 temp_s0;
     s32 var_s0;
     s32 var_s1;
     s32 var_s4;
-    s32 var_v0;
-    u16 temp_v1_2;
     u16 temp_v1;
 
     temp_v1 = D_8122B2C0->unk_5DC5;
-    var_v0 = 0;
     temp_s0 = D_8122B2E0 - 0x14;
-    if (temp_v1 != 0) {
-        var_v0 = temp_v1 - 1;
-    }
-    temp_v1_2 = D_8120E680[var_v0];
-    switch (D_8122C4E2) { 
+    temp_v1 = D_8120E680[(temp_v1 != 0) ? (temp_v1 - 1) : 0];
+    switch (gGbEmuPresentationMode) {
     case 1:
-        func_81201FBC(temp_s0 + 0xA4, temp_v1_2, 0x8C);
-        func_812015EC(temp_s0 + 0x5AA, D_8122C748 + 0xA778, 0, 0x18, 0xD);
-        func_812015EC(temp_s0 + 0x1762, D_8122C748 + 0xA6D8, 0, 0x10, 5);
-        func_812015EC(temp_s0 + 0x5DE, D_8122C748 + 0xAC58, 0, 8, 6);
-        func_812015EC(temp_s0 + 0x5EE, D_8122C748 + 0xACB8, 0, 8, 6);
+        GbEmu_DrawStretchedBorderRow(temp_s0 + 0xA4, temp_v1, 0x8C);
+        GbEmu_BlitWithPixelOp((u16*)(temp_s0 + 0x5AA), (u16*)(D_8122C748 + 0xA778), 0, 0x18, 0xD);
+        GbEmu_BlitWithPixelOp((u16*)(temp_s0 + 0x1762), (u16*)(D_8122C748 + 0xA6D8), 0, 0x10, 5);
+        GbEmu_BlitWithPixelOp((u16*)(temp_s0 + 0x5DE), (u16*)(D_8122C748 + 0xAC58), 0, 8, 6);
+        GbEmu_BlitWithPixelOp((u16*)(temp_s0 + 0x5EE), (u16*)(D_8122C748 + 0xACB8), 0, 8, 6);
         var_s4 = temp_s0 + 0x600;
         break;
     case 2:
-        func_81201FBC(temp_s0 + 0x9C, temp_v1_2, 0x94);
-        func_812015EC(temp_s0 + 0x5A4, D_8122C748 + 0xA9E8, 0, 0x18, 0xD);
-        func_812015EC(temp_s0 + 0x175C, D_8122C748 + 0xA5E8, 0, 0x18, 5);
-        func_812015EC(temp_s0 + 0x5D8, D_8122C748 + 0xAC58, 0, 8, 6);
-        func_812015EC(temp_s0 + 0x5E8, D_8122C748 + 0xACB8, 0, 8, 6);
-        func_812015EC(temp_s0 + 0x5F8, D_8122C748 + 0xACB8, 0, 8, 6);
+        GbEmu_DrawStretchedBorderRow(temp_s0 + 0x9C, temp_v1, 0x94);
+        GbEmu_BlitWithPixelOp((u16*)(temp_s0 + 0x5A4), (u16*)(D_8122C748 + 0xA9E8), 0, 0x18, 0xD);
+        GbEmu_BlitWithPixelOp((u16*)(temp_s0 + 0x175C), (u16*)(D_8122C748 + 0xA5E8), 0, 0x18, 5);
+        GbEmu_BlitWithPixelOp((u16*)(temp_s0 + 0x5D8), (u16*)(D_8122C748 + 0xAC58), 0, 8, 6);
+        GbEmu_BlitWithPixelOp((u16*)(temp_s0 + 0x5E8), (u16*)(D_8122C748 + 0xACB8), 0, 8, 6);
+        GbEmu_BlitWithPixelOp((u16*)(temp_s0 + 0x5F8), (u16*)(D_8122C748 + 0xACB8), 0, 8, 6);
         var_s4 = temp_s0 + 0x608;
         break;
     default:
     case 0:
-        func_81201FBC(temp_s0 + 0xCE, temp_v1_2, 0x60);
+        GbEmu_DrawStretchedBorderRow(temp_s0 + 0xCE, temp_v1, 0x60);
         var_s4 = temp_s0 + 0x5D6;
         break;
     }
-    func_812015EC(var_s4, D_8122C748 + 0xC1D8, 0, 0xC, 0xC);
+    GbEmu_BlitWithPixelOp((u16*)(var_s4), (u16*)(D_8122C748 + 0xC1D8), 0, 0xC, 0xC);
+
     var_s0 = 0;
-    var_s2 = &D_8120D7F3;
-    var_s1 = 0x37;
-    do {
-        func_81201DDC((var_s0 * 2) + (var_s4 - 0x266), (((unk_func_8120241C_80*)((u8*)D_8120E580 + var_s2->unk116 + -var_s1))->unk80 * 0xC0) + gGbEmuFont2Data, 0xFFFE, 0xC, 0xC, 0x10);
-        var_s0 += D_8120E580[((unk_func_8120241C_80*)((u8*)D_8120E580 + var_s2->unk116 + -var_s1))->unk80];
+    var_s4 -= 0x266;
+    for (var_s2 = (u8*)&D_8120D7F3, var_s1 = 0x37; var_s1 < 0x42; var_s1++, var_s2--) {
+        func_81201DDC((var_s0 * 2) + var_s4,
+                      (D_8120E580[var_s2[0x116] - var_s1 + 0x80] * 0xC0) + gGbEmuFont2Data,
+                      0xFFFE, 0xC, 0xC, 0x10);
+        var_s0 += D_8120E580[D_8120E580[var_s2[0x116] - var_s1 + 0x80]];
         if (var_s1 == 0x3C) {
             var_s0 -= 1;
         }
         if (var_s1 == 0x3D) {
             var_s0 += 1;
         }
-        var_s1 += 1;
-        var_s2 -= 1;
-    } while (var_s1 != 0x42);
+    }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_7F9A0/func_8120241C.s")
-#endif
 
 #ifdef NON_MATCHING
 void func_81202758(s32 arg0, s32 arg1) {
@@ -1446,20 +1430,20 @@ void func_81202758(s32 arg0, s32 arg1) {
     temp_s4 = arg1 * 0x28 * 2;
     var_s0 = 0;
     do {
-        func_812015EC(var_s1, temp_s4 + D_8122C748 + 0x8910, 0, 8, 5);
+        GbEmu_BlitWithPixelOp((u16*)(var_s1), (u16*)(temp_s4 + D_8122C748 + 0x8910), 0, 8, 5);
         var_s0 += 1;
         var_s1 += 0x10;
     } while (var_s0 < 6);
     temp_s6 = arg1 << 7;
-    func_812015EC(var_s1, temp_s6 + D_8122C748 + 0x8F90, 0, 8, 8);
+    GbEmu_BlitWithPixelOp((u16*)(var_s1), (u16*)(temp_s6 + D_8122C748 + 0x8F90), 0, 8, 8);
     var_s1_2 = var_s1 + 0x1406;
     var_s0_2 = 0;
     do {
-        func_812015EC(var_s1_2, temp_s6 + D_8122C748 + 0x8090, 0, 8, 8);
+        GbEmu_BlitWithPixelOp((u16*)(var_s1_2), (u16*)(temp_s6 + D_8122C748 + 0x8090), 0, 8, 8);
         var_s0_2 += 1;
         var_s1_2 += 0x1400;
     } while (var_s0_2 < 5);
-    func_812015EC(var_s1_2, temp_s6 + D_8122C748 + 0x8510, 0, 8, 8);
+    GbEmu_BlitWithPixelOp((u16*)(var_s1_2), (u16*)(temp_s6 + D_8122C748 + 0x8510), 0, 8, 8);
     var_s1_3 = var_s1_2 + 0x10;
     switch(D_8122C771) {
         case 1:
@@ -1476,16 +1460,16 @@ void func_81202758(s32 arg0, s32 arg1) {
         break;
     }
     while (var_s0_3 > 0) {
-        func_812015EC(var_s1_3 + 0x780, temp_s4 + D_8122C748 + 0x8910, 0, 8, 5);
+        GbEmu_BlitWithPixelOp((u16*)(var_s1_3 + 0x780), (u16*)(temp_s4 + D_8122C748 + 0x8910), 0, 8, 5);
         var_s0_3 -= 1;
         var_s1_3 += 0x10;
     }
-    func_812015EC(var_s1_3, temp_s6 + D_8122C748 + 0x8B90, 0, 8, 8);
+    GbEmu_BlitWithPixelOp((u16*)(var_s1_3), (u16*)(temp_s6 + D_8122C748 + 0x8B90), 0, 8, 8);
     temp_s1 = var_s1_3 - 0x13FA;
-    func_812015EC(temp_s1, temp_s6 + D_8122C748 + 0x9390, 0, 8, 8);
+    GbEmu_BlitWithPixelOp((u16*)(temp_s1), (u16*)(temp_s6 + D_8122C748 + 0x9390), 0, 8, 8);
     temp_s1_2 = temp_s1 - 0x1400;
-    func_812015EC(temp_s1_2, temp_s6 + D_8122C748 + 0x9390, 0, 8, 8);
-    func_812015EC(temp_s1_2 - 0x1400, D_8122C748 + 0x8490, 0, 8, 8);
+    GbEmu_BlitWithPixelOp((u16*)(temp_s1_2), (u16*)(temp_s6 + D_8122C748 + 0x9390), 0, 8, 8);
+    GbEmu_BlitWithPixelOp((u16*)(temp_s1_2 - 0x1400), (u16*)(D_8122C748 + 0x8490), 0, 8, 8);
 }
 #else
 void func_81202758(s32, s32);
