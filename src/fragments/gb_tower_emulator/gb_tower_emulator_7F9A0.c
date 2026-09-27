@@ -1231,7 +1231,31 @@ void GbEmu_BlitWithPixelOp(u16* dst, u16* src, s32 mode, s32 width, s32 height) 
   }
 }
 
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_7F9A0/func_812016DC.s")
+void GbEmu_DrawFramedPanel(u16* dst) {
+    s32 i;
+    s32 y;
+
+    // edges: 4 tiles per side, opaque
+    for (i = 1; i < 5; i++) {
+        GbEmu_BlitWithPixelOp(dst + i * 8, (u16*)(D_8122C748 + 0x1180), 0xFFFF, 8, 8);
+        GbEmu_BlitWithPixelOp(dst + 38 * 320 + i * 8, (u16*)(D_8122C748 + 0x1400), 0xFFFF, 8, 8);
+        GbEmu_BlitWithPixelOp(dst + i * 8 * 320, (u16*)(D_8122C748 + 0x1280), 0xFFFF, 8, 8);
+        GbEmu_BlitWithPixelOp(dst + i * 8 * 320 + 38, (u16*)(D_8122C748 + 0x1300), 0xFFFF, 8, 8);
+    }
+
+    // corners: alpha-keyed
+    GbEmu_BlitWithPixelOp(dst, (u16*)(D_8122C748 + 0x1100), 0, 8, 8);
+    GbEmu_BlitWithPixelOp(dst + 38, (u16*)(D_8122C748 + 0x1200), 0, 8, 8);
+    GbEmu_BlitWithPixelOp(dst + 38 * 320, (u16*)(D_8122C748 + 0x1380), 0, 8, 8);
+    GbEmu_BlitWithPixelOp(dst + 38 * 320 + 38, (u16*)(D_8122C748 + 0x1480), 0, 8, 8);
+
+    // 30x30 interior fill
+    for (y = 0; y < 30; y++) {
+        for (i = 0; i < 30; i++) {
+            dst[(y + 8) * 320 + (i + 8)] = 0xC14;
+        }
+    }
+}
 
 void func_812018C0(u16* dst, u16* src, s32 color, s32 width, s32 height) {
     s32 x;
