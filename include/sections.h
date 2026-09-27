@@ -5,8 +5,8 @@
 extern u8 fragment1_TEXT_START[];
 extern u8 fragment1_ROM_START[];
 extern u8 fragment1_ROM_END[];
+extern u8 fragment1_misc_yay0_ROM_START[];
 extern u8 fragment1_relocs_ROM_END[];
-extern u8 fragment1_yay0_0_ROM_START[];
 extern u8 fragment1_yay0_0_ROM_END[];
 extern u8 fragment1_yay0_1_ROM_START[];
 extern u8 fragment1_yay0_1_ROM_END[];

@@ -329,11 +329,12 @@ extern u8* D_8122B2F4;
 extern unk_D_8122B2F8* D_8122B2F8;
 extern s32 D_8122B2FC;
 extern OSThread gGbPakServiceThread;
+extern u8 gGbPakServiceThreadStack[0x1000];
 extern OSMesg gGbPakServiceQueueMessages[4];
 extern OSMesgQueue gGbPakServiceQueue;
 extern OSMesgQueue* gGbPakSiEventQueue;
 extern s32 D_8122C4DC;
-extern u8 gGbPakServiceThreadActive;
+extern volatile u8 gGbPakServiceThreadActive;
 extern u8 gGbEmuPresentationMode;
 extern u8 D_8122C4E3;
 extern u8 D_8122C4E4;
@@ -1734,8 +1735,178 @@ void GbApu_Reset(unk_D_8122B2F8*);
 void func_81208F94(void);
 void GbAudio_SetAlternateRendererEnabled(s32);
 
-void func_812033F4(s32, s32, OSId, s32, OSMesgQueue*, u16 (*arg5)[6][0x640]);
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_7F9A0/func_812033F4.s")
+void func_812033F4(s32 arg0, s32 arg1, OSId arg2, s32 arg3, OSMesgQueue* arg4, u16 (*arg5)[6][0x640]) {
+    unk_D_8122B2C0* emu;
+    s32 pad[2];
+    s32 i;
+
+    D_8122B1E0 = GfxImage_Allocate(0, 2, 320, 288, 1);
+    D_8122B1E4 = GfxImage_Allocate(0, 2, 320, 288, 1);
+    D_8122B2F8 = main_pool_alloc(0x1FEAE8, 0);
+    if (D_8122B2F8 == NULL) {
+        D_8122C4DC = 1;
+        D_8122B2FC = 4;
+        return;
+    }
+    D_8122B2F4 = (u8*)D_8122B2F8;
+
+    osCreateMesgQueue(&D_8122B1E8[0].queue, D_8122B1E8[0].mesg, 1);
+    osCreateMesgQueue(&D_8122B1E8[1].queue, D_8122B1E8[1].mesg, 1);
+    D_8122B2F0 = 0;
+
+    switch (osTvType) {
+        case OS_TV_PAL:
+            osViSetMode(&D_800795C0);
+            break;
+        case OS_TV_MPAL:
+            osViSetMode(&osViModeMpalLpn1);
+            break;
+        case OS_TV_NTSC:
+            osViSetMode(&osViModeNtscLpn1);
+            break;
+    }
+    osViSetSpecialFeatures(OS_VI_GAMMA_OFF | OS_VI_GAMMA_DITHER_OFF | OS_VI_DIVOT_OFF);
+    osViSetSpecialFeatures(OS_VI_DITHER_FILTER_OFF);
+    osViBlack(TRUE);
+
+    gGbPakServiceThreadActive = 0;
+    gGbPakSiEventQueue = arg4;
+    osCreateMesgQueue(&gGbPakServiceQueue, gGbPakServiceQueueMessages, ARRAY_COUNT(gGbPakServiceQueueMessages));
+    osCreateThread(&gGbPakServiceThread, arg2, func_81200AA8, NULL, gGbPakServiceThreadStack + sizeof(gGbPakServiceThreadStack), arg3);
+    osStartThread(&gGbPakServiceThread);
+
+    D_8122B2B8 = 0;
+    D_8122B2EC = D_8122B2F4;
+    D_8122B2F4 += 0xC410;
+
+    for (i = 0; i < 1; i++) {
+        emu = (unk_D_8122B2C0*)D_8122B2F4;
+        (&D_8122B2C0)[i] = emu;
+        bzero(emu, sizeof(unk_D_8122B2C0));
+        D_8122B2F4 += sizeof(unk_D_8122B2C0);
+        emu->unk_53B4 = D_8122B2F4;
+        D_8122B2F4 += 0x6000;
+        if (i == 0) {
+            emu->unk_53A8 = D_8122B2F4;
+            D_8122B2F4 += 0x4D40;
+            emu->unk_53AC = D_8122B2F4;
+            D_8122B2F4 += 0x4D40;
+            emu->unk_53B0 = D_8122B2F4;
+            D_8122B2F4 += 0x4D40;
+            emu->unk_5388 = 0x400;
+            if (i == 0) {
+                emu->unk_53BC = D_8122B2F4;
+                D_8122B2F4 += 0x100000;
+            } else {
+                emu->unk_53BC = D_8122B2C0->unk_53BC;
+            }
+            GbEmu_ResetEmulatorState(emu);
+            if ((i == 0) && (arg1 >= 0)) {
+                if (arg1 < 4) {
+                    emu->unk_5DCA = 1;
+                }
+                emu->unk_5DCC = arg1;
+                osSendMesg(&gGbPakServiceQueue, emu, OS_MESG_BLOCK);
+            }
+        }
+    }
+
+    Dma_WriteChunks((u32)(D_8122B2F4 + 0xC5C0), (u32)D_102BA0, ((u32)fragment2_ROM_START + 1) & ~1, 0);
+    Yay0_Decompress((void*)((u32)D_8122B2F4 + 0xC5C0), D_8122B2F4);
+    D_8122C748 = D_8122B2F4;
+    D_8122B2F4 += 0xC5C0;
+    D_8122B2C0->unk_5C58 = D_8122C748;
+    D_8122C74C = 0;
+
+    for (i = 0; i < 2; i++) {
+        D_8122B1E8[i].unk_20 = 2;
+        D_8122B1E8[i].unk_24 = 0;
+        func_812029B0((u16*)(&D_8122B1E0)[i]->img_p, arg5, arg1, 0);
+        D_8122C758[i] = D_8122C754;
+    }
+
+    func_812070A0();
+    Dma_WriteChunks((u32)(D_8122B2F4 + 0x80000), (u32)fragment1_misc_yay0_ROM_START, ((u32)D_F4130 + 1) & ~1, 0);
+    Yay0_Decompress((void*)((u32)D_8122B2F4 + 0x80000), D_8122B2F4);
+    GbApu_Reset((unk_D_8122B2F8*)D_8122B2F4);
+    GbAudio_SetAlternateRendererEnabled(0);
+    GbApu_SelectRegionClock(0);
+    GbApu_ResetChannels();
+    func_81208C08(0xFF26, 0, 0);
+    func_81208C08(0xFF26, 0x8F, 0x10);
+    func_81208C08(0xFF24, 0x77, 0x20);
+    func_81208C08(0xFF25, 0xFF, 0x30);
+    func_81208F94();
+    D_8122B2F4 += 0x80000;
+
+    D_8122C4E4 = gGbEmuPresentationMode;
+    D_8122C4E3 = 0;
+    if (gGbEmuPresentationMode == 2) {
+        D_8122C4E5 = 2;
+    } else {
+        D_8122C4E5 = 1;
+    }
+
+    for (i = 0; i < 3; i++) {
+        ((u8**)D_8122B2C8)[i] = D_8122B2F4;
+        D_8122B2F4 += 0xE200;
+        bzero(D_8122B2F4, 0x2800);
+        ((u8**)D_8122B2D8)[i] = D_8122B2F4;
+        D_8122B2F4 += 0x2800;
+    }
+
+    switch (gGbEmuPresentationMode) {
+        case 2:
+            Dma_WriteChunks((u32)D_8122B2C8[0], (u32)D_FDE40, ((u32)D_102BA0_END + 1) & ~1, 0);
+            Yay0_Decompress(D_8122B2C8[0], D_8122B2C8[2]);
+            /* fallthrough */
+        case 1:
+            Dma_WriteChunks((u32)D_8122B2C8[0], (u32)D_F5450, ((u32)D_FDE40 + 1) & ~1, 0);
+            Yay0_Decompress(D_8122B2C8[0], D_8122B2C8[1]);
+            break;
+        case 0:
+        default:
+            Dma_WriteChunks((u32)D_8122B2C8[0], (u32)D_F4920, ((u32)D_F5450 + 1) & ~1, 0);
+            Yay0_Decompress(D_8122B2C8[0], D_8122B2C8[1]);
+            break;
+    }
+
+    while ((D_8122B2F4 - (u8*)D_8122B2F8) != 0x1FEAE8) {}
+
+    osWritebackDCacheAll();
+
+    emu = D_8122B2C0;
+    if (emu->unk_5DCA != 0) {
+        while (emu->unk_5DC8 != 0) {}
+        for (i = ((emu->unk_5DC5 != 0) ? 0x500 : 0) / 256; i < 0x80; i++) {
+            emu->unk_582C[i] = 0;
+        }
+        if (emu->unk_5DCA == 0) {
+            D_8122C4DC = 1;
+            D_8122B2FC = 1;
+            GbEmu_ClearFramebuffers();
+            return;
+        }
+        D_8122C4E8 = 0xFF;
+        func_81202210(0, 1);
+        func_81202210(1, 1);
+        func_8120241C();
+        if ((emu->unk_5DC5 == 0) || (emu->unk_5DC5 == 2)) {
+            D_8122C4DC = 1;
+            D_8122B2FC = 1;
+            GbEmu_ClearFramebuffers();
+            return;
+        }
+        D_8122C4DC = 5;
+        func_812029B0((u16*)D_8122B1E0->img_p, arg5, arg1, (emu->unk_5DC5 != 0) ? emu->unk_5DC5 - 1 : 0);
+        func_812029B0((u16*)D_8122B1E4->img_p, arg5, arg1, (emu->unk_5DC5 != 0) ? emu->unk_5DC5 - 1 : 0);
+    }
+
+    D_8122C760 = osGetCount();
+    D_8122C76C = D_8122C760;
+    osViSwapBuffer((&D_8122B1E0)[D_8122B2B8]->img_p);
+    D_8122B2B8 ^= 1;
+}
 
 void func_81203C58(unk_D_8122B2C0* arg0) {
     u16* var_s4;
