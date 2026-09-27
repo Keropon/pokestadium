@@ -550,27 +550,39 @@ typedef struct unk_D_8122B2C0 {
     /* 0x05394 */ u32 unk_5394;
     /* 0x05398 */ u32 unk_5398;
     /* 0x0539C */ u32 unk_539C;
-    /* 0x53A0 */ char unk053A0[0x8];
+    /* 0x053A0 */ char unk053A0[0x4];
+    /* 0x053A4 */ u32 unk_53A4;
     /* 0x053A8 */ void* unk_53A8;
     /* 0x053AC */ void* unk_53AC;
     /* 0x053B0 */ void* unk_53B0;
     /* 0x053B4 */ void* unk_53B4;
     /* 0x053B8 */ char unk053B8[0x4];
     /* 0x053BC */ void* unk_53BC;
-    /* 0x053C0 */ char unk053C0[0x2E];
+    /* 0x053C0 */ s32 unk_53C0;
+    /* 0x053C4 */ char unk053C4[0x24];
+    /* 0x053E8 */ u16 unk_53E8;
+    /* 0x053EA */ char unk053EA[0x4];
     /* 0x053EE */ u16 unk_53EE;
     /* 0x053F0 */ u16 unk_53F0;
-    /* 0x053F2 */ char unk053F1[0xA];
-    /* 0x053FC */ u8 unk_53FC;
+    /* 0x053F2 */ u16 unk_53F2;
+    /* 0x053F4 */ char unk053F4[0x2];
+    /* 0x053F6 */ u16 unk_53F6;
+    /* 0x053F8 */ char unk053F8[0x4];
+    /* 0x053FC */ s8 unk_53FC;
     /* 0x053FD */ s8 unk_53FD;
     /* 0x053FE */ u8 unk_53FE;
-    /* 0x053FF */ char unk053FF[0x86];
+    /* 0x053FF */ char unk053FF[0x5];
+    /* 0x05404 */ u8 unk_5404;
+    /* 0x05405 */ char unk05405[0x80];
     /* 0x05485 */ u8 unk_5485;
-    /* 0x05486 */ char unk05486[0x8];
+    /* 0x05486 */ char unk05486[0x7];
+    /* 0x0548D */ u8 unk_548D;
     /* 0x0548E */ u8 unk_548E;
-    /* 0x0548F */ char unk0548F[0xD];
-    /* 0x0549C */ u8 unk_549C[0x100];
-    /* 0x0559C */ u8 unk_559C[0x10];
+    /* 0x0548F */ char unk0548F[0x1];
+    /* 0x05490 */ u8 unk_5490;
+    /* 0x05491 */ char unk05491[0xB];
+    /* 0x0549C */ volatile u8 unk_549C[0x100];
+    /* 0x0559C */ volatile u8 unk_559C[0x10];
     /* 0x055AC */ u8 unk_55AC[0x40];
     /* 0x055EC */ u8 unk_55EC[0x40];
     /* 0x0562C */ u8 unk_562C[0x200];
@@ -578,7 +590,7 @@ typedef struct unk_D_8122B2C0 {
     /* 0x05A2C */ u8 unk_5A2C[0x200];
     /* 0x05C2C */ char unk05C2C[0x2C];
     /* 0x05C58 */ void* unk_5C58;
-    /* 0x05C5C */ char unk_5C5C[0x50];
+    /* 0x05C5C */ OSGbpakId unk_5C5C;
     /* 0x05CAC */ OSGbpakId gbpakId;
     /* 0x05CFC */ OSPfs* pfs;
     /* 0x05D00 */ char unk05D00[0x64];
@@ -590,11 +602,11 @@ typedef struct unk_D_8122B2C0 {
     /* 0x05D90 */ u32 unk_5D90[4];
     /* 0x05DA0 */ u16 unk_5DA0;
     /* 0x05DA2 */ u16 unk_5DA2;
-    /* 0x05DA4 */ char unk05DA4[0x20];
+    /* 0x05DA4 */ u8 unk_5DA4[0x20];
     /* 0x05DC4 */ u8 unk_5DC4;
     /* 0x05DC5 */ u8 unk_5DC5;
     /* 0x05DC6 */ u8 unk_5DC6;
-    /* 0x05DC7 */ char unk05DC7[0x1];
+    /* 0x05DC7 */ u8 unk_5DC7;
     /* 0x05DC8 */ volatile u8 unk_5DC8;
     /* 0x05DC9 */ volatile u8 unk_5DC9;
     /* 0x05DCA */ volatile u8 unk_5DCA;
@@ -606,6 +618,8 @@ typedef struct unk_D_8122B2C0 {
     /* 0x05DD0 */ u8 unk_5DD0;
     /* 0x05DD1 */ u8 unk05DD1[0x15287];
   } unk_D_8122B2C0; // size = 0x1B058
+
+#define GB_HEADER(emu, offset) (((u8*)(emu)->unk_53BC)[offset])
 
 extern s16 D_80075E40[];
 

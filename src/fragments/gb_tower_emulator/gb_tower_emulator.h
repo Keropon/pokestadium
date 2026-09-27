@@ -13,5 +13,8 @@ void func_81209078();
 void GbEmu_InitContext(unk_D_8122B2C0*);
 s32 osGbSetNextBuffer(void*, s32);
 void GbAudio_SetAlternateStreamId(s32);
+u8 GbMem_ReadIoRegister(u16);
+s32 GbCpu_Execute(unk_D_8122B2C0*, s32);
+void GbCpu_InitOpcodeTables(unk_D_8122B2C0*, void*);
 
 #endif /* _FRAGMENT1_H_ */
