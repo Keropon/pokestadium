@@ -597,7 +597,7 @@ typedef struct unk_D_8122B2C0 {
     /* 0x05DC7 */ char unk05DC7[0x1];
     /* 0x05DC8 */ volatile u8 unk_5DC8;
     /* 0x05DC9 */ u8 unk_5DC9;
-    /* 0x05DCA */ u8 unk_5DCA;
+    /* 0x05DCA */ volatile u8 unk_5DCA;
     /* 0x05DCB */ u8 status;
     /* 0x05DCC */ u8 unk_5DCC;
     /* 0x05DCD */ char unk05DCD[1];

@@ -4,6 +4,8 @@
 #include "global.h"
 #include "src/gb_tower_audio.h"
 
+extern u8 D_102BA0_END[];
+
 void GbEmu_Init(unk_D_800AA660*);
 void GbEmu_RunFrame(unk_D_800AA660*);
 void GbEmu_AudioVideoTick(unk_D_800AA664*);
