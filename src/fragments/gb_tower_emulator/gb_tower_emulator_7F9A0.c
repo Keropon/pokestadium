@@ -23,7 +23,9 @@ typedef struct unk_D_8122B1E8 {
   /* 0x1C */ char unk1C[0x4];
   /* 0x20 */ s32 unk_20;
   /* 0x24 */ s32 unk_24;
-  /* 0x28 */ char unk28[0x40];
+  /* 0x28 */ char unk28[0x14];
+  /* 0x3C */ s32 unk_3C;
+  /* 0x40 */ char unk40[0x28];
 } unk_D_8122B1E8; // size = 0x68
 
 typedef struct unk_func_812009D0 {
@@ -341,8 +343,11 @@ extern u8 D_8122C4E4;
 extern u8 D_8122C4E5;
 extern s8 D_8122C4E7;
 extern u8 D_8122C4E8;
+extern s16 D_8122C4F0;
 extern u16 D_8122C4F2;
 extern u16 D_8122C4F4;
+extern u8 D_8122C4F7;
+extern u8 D_8122C4F8;
 extern unk_D_8122C4FA gGbEmuButtonBindingSelections;
 extern u8 D_8122C4FC;
 extern u8 D_8122C500[0x1F];
@@ -361,6 +366,7 @@ extern u32 D_8122C768;
 extern u32 D_8122C76C;
 extern u8 D_8122C770;
 extern u8 D_8122C771;
+extern s32 D_8122C774;
 
 // D_8120D8FD / D_8120D8FE / D_8120D906 are interior aliases (undefined_syms.ld).
 u8 D_8120D820[0xEC] = {
@@ -1956,8 +1962,358 @@ void GbEmu_ApplyButtonMapping(void) {
   D_8122C4F4 = (gGbEmuButtonBindingSelections.unk_01 == 0) ? 0x1000 : (gGbEmuButtonBindingSelections.unk_01 == 2) ? 0x10 : (gGbEmuButtonBindingSelections.unk_01 == 3) ? 2 : (gGbEmuButtonBindingSelections.unk_01 == 4) ? 4 : 0x20;
 }
 
-void func_81203F3C(unk_D_8122B2C0*);
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_7F9A0/func_81203F3C.s")
+void func_81203F3C(unk_D_8122B2C0* arg0) {
+    u8 sel;
+
+    switch (arg0->unk_5DC9) {
+        case 8:
+            D_8122C4F7 = 0x12;
+            break;
+        case 9:
+            D_8122C4F7 = 0x13;
+            break;
+        case 10:
+            D_8122C4F7 = 0x14;
+            break;
+        case 11:
+            D_8122C4F7 = 0x15;
+            break;
+        default:
+            goto update_menu;
+    }
+
+    GbAudio_SetAlternateRendererEnabled(1);
+    GbAudio_SetAlternateStreamId(1);
+    gGbEmuButtonBindingSelections.unk_00 = (D_8122C4F2 == 0x20) ? 1 : (D_8122C4F2 == 0x10) ? 2 : (D_8122C4F2 == 2) ? 3 : (D_8122C4F2 == 4) ? 4 : 0;
+    gGbEmuButtonBindingSelections.unk_01 = (D_8122C4F2 == 0x1000) ? 0 : (D_8122C4F2 == 0x10) ? 2 : (D_8122C4F2 == 2) ? 3 : (D_8122C4F2 == 4) ? 4 : 1;
+    if (gGbEmuButtonBindingSelections.unk_01 == gGbEmuButtonBindingSelections.unk_00) {
+        gGbEmuButtonBindingSelections.unk_00 = 0;
+        gGbEmuButtonBindingSelections.unk_01 = 1;
+    }
+    return;
+
+update_menu:
+    if ((D_8122C4F7 == 0x12) || (D_8122C4F7 == 0x13) || (D_8122C4F7 == 0x14) || (D_8122C4F7 == 0x15)) {
+        GbAudio_SetAlternateStreamId(1);
+        GbAudio_SetAlternateRendererEnabled(0);
+        D_8122C4F7 = 0;
+        return;
+    }
+    if (D_8122C4F7 == 0) {
+        if ((gPlayer1Controller->buttonPressed & 8) && (arg0->unk_5DD0 == 0) && (D_8122C4F0 == 0x40)) {
+            arg0->unk_53FD = 0x40;
+            GbAudio_SetAlternateRendererEnabled(1);
+            GbAudio_SetAlternateStreamId(1);
+            D_8122C4F7 = 1;
+        }
+        return;
+    }
+
+    D_8122B1E8[D_8122B2B8].unk_3C = 0;
+
+    switch (D_8122C4F7) {
+        case 1:
+            arg0->unk_53FD -= 4;
+            if (arg0->unk_53FD > 0) {
+                break;
+            }
+            arg0->unk_53FD = 0;
+            if (gPlayer1Controller->buttonPressed & 0xD000) {
+            exit_menu:
+                D_8122C4F7 = 0x11;
+            } else if (gPlayer1Controller->buttonPressed & 0x800) {
+            select_3:
+                GbAudio_SetAlternateStreamId(7);
+                D_8122C4F7 = 3;
+            } else if (gPlayer1Controller->buttonPressed & 0x400) {
+            select_2:
+                GbAudio_SetAlternateStreamId(7);
+                D_8122C4F7 = 2;
+            }
+            break;
+
+        case 17:
+            if (gPlayer1Controller->buttonDown == 0) {
+                GbEmu_ApplyButtonMapping();
+                arg0->unk_53FD = 0x40;
+                GbAudio_SetAlternateStreamId(1);
+                GbAudio_SetAlternateRendererEnabled(0);
+                D_8122C4F7 = 0;
+            }
+            break;
+
+        case 2:
+            if (gPlayer1Controller->buttonPressed & 0x800) {
+            select_1:
+                GbAudio_SetAlternateStreamId(7);
+                D_8122C4F7 = 1;
+            } else if (gPlayer1Controller->buttonPressed & 0x400) {
+                goto select_3;
+            } else if (gPlayer1Controller->buttonPressed & 0x9000) {
+                GbAudio_SetAlternateStreamId(2);
+                D_8122C4F7 = 4;
+            } else if (gPlayer1Controller->buttonPressed & 0x4000) {
+                goto exit_menu;
+            }
+            break;
+
+        case 3:
+            if (gPlayer1Controller->buttonPressed & 0x800) {
+                goto select_2;
+            } else if (gPlayer1Controller->buttonPressed & 0x400) {
+                goto select_1;
+            } else if (gPlayer1Controller->buttonPressed & 0x9000) {
+                GbAudio_SetAlternateStreamId(6);
+                D_8122C4F7 = 6;
+            } else if (gPlayer1Controller->buttonPressed & 0x4000) {
+                goto exit_menu;
+            }
+            break;
+
+        case 4:
+        case 5:
+            if (gPlayer1Controller->buttonPressed & 0x4000) {
+                GbAudio_SetAlternateStreamId(8);
+                D_8122C4F7 = 2;
+            } else if (gPlayer1Controller->buttonPressed & 0x300) {
+                GbAudio_SetAlternateStreamId(5);
+                D_8122C4F7 = (D_8122C4F7 == 4) ? 5 : 4;
+            } else if (gPlayer1Controller->buttonPressed & 0x9000) {
+                if (D_8122C4F7 == 4) {
+                    D_8122C4F7 = 0xF;
+                } else {
+                    D_8122C4F7 = 1;
+                }
+            }
+            break;
+
+        case 6:
+            switch (gPlayer1Controller->buttonPressed) {
+                case 0x4000:
+                back_to_menu:
+                    GbAudio_SetAlternateStreamId(8);
+                    D_8122C4F7 = 3;
+                    break;
+                case 0x8000:
+                    GbAudio_SetAlternateStreamId(6);
+                    D_8122C774 = gGbEmuButtonBindingSelections.unk_00;
+                    D_8122C4F8 = 0;
+                    D_8122C4F7 = 7;
+                    break;
+                case 0x1000:
+                    sel = 0;
+                    goto set_sel0;
+                case 0x20:
+                    sel = 1;
+                    goto set_sel0;
+                case 0x10:
+                    sel = 2;
+                    goto set_sel0;
+                case 2:
+                    sel = 3;
+                    goto set_sel0;
+                case 4:
+                    sel = 4;
+                set_sel0:
+                    if (gGbEmuButtonBindingSelections.unk_01 == sel) {
+                        GbAudio_SetAlternateStreamId(3);
+                    } else {
+                        gGbEmuButtonBindingSelections.unk_00 = sel;
+                        GbAudio_SetAlternateStreamId(6);
+                        if (D_8122C4F7 == 8) {
+                            D_8122C4F7 = 9;
+                        }
+                    }
+                    break;
+                case 0x800:
+                case 0x400:
+                    GbAudio_SetAlternateStreamId(7);
+                    D_8122C4F7 = 0xA;
+                    break;
+            }
+            break;
+
+        case 10:
+            switch (gPlayer1Controller->buttonPressed) {
+                case 0x4000:
+                    goto back_to_menu;
+                case 0x8000:
+                    GbAudio_SetAlternateStreamId(6);
+                    D_8122C4F8 = 0;
+                    D_8122C774 = gGbEmuButtonBindingSelections.unk_01;
+                    D_8122C4F7 = 0xB;
+                    break;
+                case 0x1000:
+                    sel = 0;
+                    goto set_sel1;
+                case 0x20:
+                    sel = 1;
+                    goto set_sel1;
+                case 0x10:
+                    sel = 2;
+                    goto set_sel1;
+                case 2:
+                    sel = 3;
+                    goto set_sel1;
+                case 4:
+                    sel = 4;
+                set_sel1:
+                    if (gGbEmuButtonBindingSelections.unk_00 == sel) {
+                        GbAudio_SetAlternateStreamId(3);
+                    } else {
+                        gGbEmuButtonBindingSelections.unk_01 = sel;
+                        GbAudio_SetAlternateStreamId(6);
+                        if (D_8122C4F7 == 0xC) {
+                            D_8122C4F7 = 0xD;
+                        }
+                    }
+                    break;
+                case 0x800:
+                case 0x400:
+                    GbAudio_SetAlternateStreamId(7);
+                    D_8122C4F7 = 6;
+                    break;
+            }
+            break;
+
+        case 7:
+        case 11:
+            if (D_8122C4F8 < 10) {
+                D_8122C4F8++;
+            } else if (D_8122C4F7 == 7) {
+                D_8122C4F7 = 8;
+            } else {
+                D_8122C4F7 = 0xC;
+            }
+            break;
+
+        case 8:
+            switch (gPlayer1Controller->buttonPressed) {
+                case 0x4000:
+                    GbAudio_SetAlternateStreamId(8);
+                    gGbEmuButtonBindingSelections.unk_00 = D_8122C774;
+                    D_8122C4F7 = 9;
+                    break;
+                case 0x8000:
+                    if (gGbEmuButtonBindingSelections.unk_00 == gGbEmuButtonBindingSelections.unk_01) {
+                        GbAudio_SetAlternateStreamId(3);
+                    } else {
+                        GbAudio_SetAlternateStreamId(6);
+                        D_8122C4F7 = 9;
+                    }
+                    break;
+                case 0x200:
+                    gGbEmuButtonBindingSelections.unk_00--;
+                    if ((gGbEmuButtonBindingSelections.unk_00 < 0) || (gGbEmuButtonBindingSelections.unk_00 >= 5)) {
+                        gGbEmuButtonBindingSelections.unk_00 = 0;
+                    }
+                    GbAudio_SetAlternateStreamId(5);
+                    break;
+                case 0x100:
+                    gGbEmuButtonBindingSelections.unk_00++;
+                    if (gGbEmuButtonBindingSelections.unk_00 >= 5) {
+                        gGbEmuButtonBindingSelections.unk_00 = 4;
+                    }
+                    GbAudio_SetAlternateStreamId(5);
+                    break;
+                case 0x1000:
+                    sel = 0;
+                    goto set_sel0;
+                case 0x20:
+                    sel = 1;
+                    goto set_sel0;
+                case 0x10:
+                    sel = 2;
+                    goto set_sel0;
+                case 2:
+                    sel = 3;
+                    goto set_sel0;
+                case 4:
+                    sel = 4;
+                    goto set_sel0;
+            }
+            break;
+
+        case 12:
+            switch (gPlayer1Controller->buttonPressed) {
+                case 0x4000:
+                    GbAudio_SetAlternateStreamId(8);
+                    gGbEmuButtonBindingSelections.unk_01 = D_8122C774;
+                    D_8122C4F7 = 0xD;
+                    break;
+                case 0x8000:
+                    if (gGbEmuButtonBindingSelections.unk_00 == gGbEmuButtonBindingSelections.unk_01) {
+                        GbAudio_SetAlternateStreamId(3);
+                    } else {
+                        GbAudio_SetAlternateStreamId(6);
+                        D_8122C4F7 = 0xD;
+                    }
+                    break;
+                case 0x200:
+                    gGbEmuButtonBindingSelections.unk_01--;
+                    if ((gGbEmuButtonBindingSelections.unk_01 < 0) || (gGbEmuButtonBindingSelections.unk_01 >= 5)) {
+                        gGbEmuButtonBindingSelections.unk_01 = 0;
+                    }
+                    GbAudio_SetAlternateStreamId(5);
+                    break;
+                case 0x100:
+                    gGbEmuButtonBindingSelections.unk_01++;
+                    if (gGbEmuButtonBindingSelections.unk_01 >= 5) {
+                        gGbEmuButtonBindingSelections.unk_01 = 4;
+                    }
+                    GbAudio_SetAlternateStreamId(5);
+                    break;
+                case 0x1000:
+                    sel = 0;
+                    goto set_sel1;
+                case 0x20:
+                    sel = 1;
+                    goto set_sel1;
+                case 0x10:
+                    sel = 2;
+                    goto set_sel1;
+                case 2:
+                    sel = 3;
+                    goto set_sel1;
+                case 4:
+                    sel = 4;
+                    goto set_sel1;
+            }
+            break;
+
+        case 9:
+        case 13:
+            if (D_8122C4F8 != 0) {
+                D_8122C4F8--;
+            } else if (D_8122C4F7 == 9) {
+                D_8122C4F7 = 6;
+            } else {
+                D_8122C4F7 = 0xA;
+            }
+            break;
+
+        case 14:
+            if (gPlayer1Controller->buttonDown == 0) {
+                GbEmu_ApplyButtonMapping();
+                D_8122C4F7 = 0xF;
+            }
+            break;
+
+        case 15:
+            D_8122C4F0 -= 4;
+            if (D_8122C4F0 > 0) {
+                break;
+            }
+            D_8122C4F0 = 0;
+            D_8122C4F7 = 0x10;
+            /* fallthrough */
+        case 16:
+            GbAudio_SetAlternateStreamId(1);
+            GbAudio_SetAlternateRendererEnabled(0);
+            GbApu_ResetChannels();
+            break;
+    }
+}
 
 void func_81204A84(s32);
 #pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_7F9A0/func_81204A84.s")

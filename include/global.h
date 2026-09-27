@@ -562,7 +562,7 @@ typedef struct unk_D_8122B2C0 {
     /* 0x053F0 */ u16 unk_53F0;
     /* 0x053F2 */ char unk053F1[0xA];
     /* 0x053FC */ u8 unk_53FC;
-    /* 0x053FD */ u8 unk_53FD;
+    /* 0x053FD */ s8 unk_53FD;
     /* 0x053FE */ u8 unk_53FE;
     /* 0x053FF */ char unk053FF[0x86];
     /* 0x05485 */ u8 unk_5485;
@@ -596,7 +596,7 @@ typedef struct unk_D_8122B2C0 {
     /* 0x05DC6 */ u8 unk_5DC6;
     /* 0x05DC7 */ char unk05DC7[0x1];
     /* 0x05DC8 */ volatile u8 unk_5DC8;
-    /* 0x05DC9 */ u8 unk_5DC9;
+    /* 0x05DC9 */ volatile u8 unk_5DC9;
     /* 0x05DCA */ volatile u8 unk_5DCA;
     /* 0x05DCB */ u8 status;
     /* 0x05DCC */ u8 unk_5DCC;
