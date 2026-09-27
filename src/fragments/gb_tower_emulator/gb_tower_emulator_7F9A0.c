@@ -326,65 +326,6 @@ const u8 D_8122AD50[0x14] = {
     0x73, 0x72, 0x71, 0xA9, 0xAF, 0xA9, 0xB5, 0x9F, 0x90, 0x00,
 };
 
-// .bss
-extern unk_D_80068BB0* D_8122B1E0;
-extern unk_D_80068BB0* D_8122B1E4;
-extern unk_D_8122B1E8 D_8122B1E8[2];
-extern s32 D_8122B224[];
-extern s32 D_8122B2B8;
-extern unk_D_8122B2C0* D_8122B2C0;
-extern unk_D_8122B2F8* D_8122B2C8[3];
-extern u8* D_8122B2D8[3];
-extern s32 D_8122B2E0;
-extern s32 D_8122B2E8;
-extern void* D_8122B2EC;
-extern s32 D_8122B2F0;
-extern u8* D_8122B2F4;
-extern unk_D_8122B2F8* D_8122B2F8;
-extern s32 D_8122B2FC;
-extern OSThread gGbPakServiceThread;
-extern u8 gGbPakServiceThreadStack[0x1000];
-extern OSMesg gGbPakServiceQueueMessages[4];
-extern OSMesgQueue gGbPakServiceQueue;
-extern OSMesgQueue* gGbPakSiEventQueue;
-extern s32 D_8122C4DC;
-extern volatile u8 gGbPakServiceThreadActive;
-extern u8 gGbEmuPresentationMode;
-extern u8 D_8122C4E3;
-extern u8 D_8122C4E4;
-extern u8 D_8122C4E5;
-extern u8 D_8122C4E6;
-extern u8 D_8122C4E7;
-extern u8 D_8122C4E8;
-extern s32 D_8122C4EC;
-extern s16 D_8122C4F0;
-extern u16 D_8122C4F2;
-extern u16 D_8122C4F4;
-extern u8 D_8122C4F6;
-extern u8 D_8122C4F7;
-extern u8 D_8122C4F8;
-extern u8 D_8122C4F9;
-extern unk_D_8122C4FA gGbEmuButtonBindingSelections;
-extern u8 D_8122C4FC;
-extern u8 D_8122C500[0x1F];
-// extern s8 D_8122C51F;
-extern u8 D_8122C520[0x20];
-extern u8 D_8122C540[0x100];
-extern u8* gGbEmuFont1Data;
-extern u8* gGbEmuFont2Data;
-extern u8* D_8122C748;
-extern s32 D_8122C74C;
-extern s32 D_8122C750;
-extern u8* D_8122C754;
-extern u8* D_8122C758[2];
-extern u32 D_8122C760;
-extern u32 D_8122C764;
-extern u32 D_8122C768;
-extern u32 D_8122C76C;
-extern u8 D_8122C770;
-extern u8 D_8122C771;
-extern s32 D_8122C774;
-
 // D_8120D8FD / D_8120D8FE / D_8120D906 are interior aliases (undefined_syms.ld).
 u8 D_8120D820[0xEC] = {
     0xF0, 0xF0, 0xFC, 0xFC, 0xFC, 0xFC, 0xF3, 0xF3, 0x3C, 0x3C, 0x3C, 0x3C, 0x3C, 0x3C, 0x3C, 0x3C,
@@ -771,6 +712,66 @@ u8 D_8120E958[0xF8] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
+// .bss
+extern unk_D_80068BB0* D_8122B1E0;
+extern unk_D_80068BB0* D_8122B1E4;
+extern unk_D_8122B1E8 D_8122B1E8[2];
+extern s32 D_8122B224[];
+extern s32 D_8122B2B8;
+extern unk_D_8122B2C0* D_8122B2C0;
+extern unk_D_8122B2F8* D_8122B2C8[3];
+extern u8* D_8122B2D8[3];
+extern s32 D_8122B2E0;
+extern s32 D_8122B2E8;
+extern void* D_8122B2EC;
+extern s32 D_8122B2F0;
+extern u8* D_8122B2F4;
+extern unk_D_8122B2F8* D_8122B2F8;
+extern s32 D_8122B2FC;
+extern OSThread gGbPakServiceThread;
+extern u8 gGbPakServiceThreadStack[0x1000];
+extern OSMesg gGbPakServiceQueueMessages[4];
+extern OSMesgQueue gGbPakServiceQueue;
+extern OSMesgQueue* gGbPakSiEventQueue;
+extern s32 D_8122C4DC;
+extern volatile u8 gGbPakServiceThreadActive;
+extern u8 gGbEmuPresentationMode;
+extern u8 D_8122C4E3;
+extern u8 D_8122C4E4;
+extern u8 D_8122C4E5;
+extern u8 D_8122C4E6;
+extern u8 D_8122C4E7;
+extern u8 D_8122C4E8;
+extern s32 D_8122C4EC;
+extern s16 D_8122C4F0;
+extern u16 D_8122C4F2;
+extern u16 D_8122C4F4;
+extern u8 D_8122C4F6;
+extern u8 D_8122C4F7;
+extern u8 D_8122C4F8;
+extern u8 D_8122C4F9;
+extern unk_D_8122C4FA gGbEmuButtonBindingSelections;
+extern u8 D_8122C4FC;
+extern u8 D_8122C500[0x1F];
+// extern s8 D_8122C51F;
+extern u8 D_8122C520[0x20];
+extern u8 D_8122C540[0x100];
+extern u8 D_8122C640[0x100];
+extern u8* gGbEmuFont1Data;
+extern u8* gGbEmuFont2Data;
+extern u8* D_8122C748;
+extern s32 D_8122C74C;
+extern s32 D_8122C750;
+extern u8* D_8122C754;
+extern u8* D_8122C758[2];
+extern u32 D_8122C760;
+extern u32 D_8122C764;
+extern u32 D_8122C768;
+extern u32 D_8122C76C;
+extern u8 D_8122C770;
+extern u8 D_8122C771;
+extern s32 D_8122C774;
+
 s32 GbPak_CheckConnectorReady(unk_D_8122B2C0* arg0) {
   s32 result;
 
@@ -1098,8 +1099,235 @@ s32 GbPak_DetectSupportedCartridgeVariant(unk_func_812009D0* arg0) {
   return i;
 }
 
-void func_81200AA8(void *);
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_7F9A0/func_81200AA8.s")
+void func_81200AA8(s32 arg0) {
+    u16* entry;
+    s32 retries;
+    unk_D_8122B2C0* emu;
+    u32 value;
+    u16 sum;
+    u8* ptr;
+    s32 i;
+
+    gGbPakServiceThreadActive = 1;
+
+    for (;;) {
+        osRecvMesg(&gGbPakServiceQueue, (OSMesg*)&emu, OS_MESG_BLOCK);
+        if (emu == NULL) {
+            gGbPakServiceThreadActive = 0;
+            osDestroyThread(NULL);
+        }
+        emu->unk_5DC8 = 1;
+        if ((emu->unk_5DCA == 0) && (emu->unk_5DCC < 4)) {
+            emu->unk_5DC7 = 0;
+            emu->unk_5DC8 = 0;
+            continue;
+        }
+
+        emu->unk_5DCD = 0x49;
+    retry:
+        emu->unk_5DCD--;
+        if (emu->unk_5DCD <= 0) {
+            goto disconnect;
+        }
+        switch (emu->unk_5DC9) {
+            case 0:
+                emu->unk_5DC9 = 1;
+                bzero(&emu->unk_5C5C, sizeof(emu->unk_5C5C));
+                /* fallthrough */
+            case 1:
+                emu->unk_5DCD -= 9;
+                if (osGbpakInit(gGbPakSiEventQueue, (OSPfs*)&emu->pfs, emu->unk_5DCC) != 0) {
+                    goto retry;
+                }
+                if (osGbpakReadId((OSPfs*)&emu->pfs, &emu->unk_5C5C, &emu->status) != 0) {
+                    goto retry;
+                }
+                if (GbPak_CheckConnectorReady(emu) != 0) {
+                    goto retry;
+                }
+                if (GbPak_InitializeCartridgeMapper(emu) != 0) {
+                    goto retry;
+                }
+                emu->transferBuffer = emu->unk_5DA4;
+                emu->gbAddress = 0x9C000;
+                emu->transferSize = 0x20;
+                if (GbPak_ReadRomAndChecksum(emu) != 0) {
+                    goto retry;
+                }
+                if (!(emu->status & 1)) {
+                    goto retry;
+                }
+                emu->unk_5DC5 = GbPak_DetectSupportedCartridgeVariant((unk_func_812009D0*)&emu->unk_5C5C);
+                emu->unk_5DC9 = 2;
+                /* fallthrough */
+            case 2:
+                switch (emu->unk_5DC7) {
+                    case 1:
+                        emu->unk_5DCD -= 0x17;
+                        if (GbPak_ReadRomAndChecksum(emu) != 0) {
+                            goto retry;
+                        }
+                        break;
+                    case 2:
+                        emu->unk_5DCD -= 0x17;
+                        if (GbPak_TransferBankedRam(emu, 0) != 0) {
+                            goto retry;
+                        }
+                        break;
+                    case 3:
+                        emu->unk_5DCD -= 0x17;
+                        if (GbPak_TransferBankedRam(emu, 1) != 0) {
+                            goto retry;
+                        }
+                        break;
+                    case 5:
+                        emu->transferBuffer = D_8122C540;
+                        emu->transferSize = 0x100;
+                        if ((GbPak_TransferBankedRam(emu, 1) == 0) &&
+                            (emu->transferBuffer = D_8122C640, GbPak_TransferBankedRam(emu, 0) == 0) &&
+                            (bcmp(D_8122C540, D_8122C640, 0x100) == 0)) {
+                            if (emu->unk_5A2C[emu->gbAddress >> 8] != 0) {
+                                emu->unk_5A2C[emu->gbAddress >> 8] = 2;
+                            }
+                            break;
+                        }
+                        emu->status &= ~1;
+                        osGbpakPower((OSPfs*)&emu->pfs, 0);
+                        retries = 0x3C;
+                        emu->unk_5DC9 = 8;
+                        goto retry;
+                    case 6:
+                        emu->unk_5DCD -= 2;
+                        entry = (u16*)emu->unk_5D70[1];
+                        do {
+                            value = *entry;
+                            if (*entry & 0x8000) {
+                                if (emu->unk_559C[value & 0xF] == 0) {
+                                    emu->gbAddress = (value & 0xF) << 13;
+                                    emu->transferBuffer = (u8*)emu + emu->gbAddress + 0x12DF0;
+                                    emu->transferSize = 0x2000;
+                                    if (GbPak_TransferBankedRam(emu, 0) != 0) {
+                                        goto disconnect;
+                                    }
+                                    emu->unk_559C[entry[0] & 0xF] = 0xFF;
+                                }
+                                entry += 1;
+                            } else {
+                                if (emu->unk_549C[*entry] == 0) {
+                                    emu->gbAddress = value << 14;
+                                    emu->transferBuffer = (u8*)emu->unk_53BC + emu->gbAddress;
+                                    emu->transferSize = 0x4000;
+                                    if (GbPak_ReadRomAndChecksum(emu) != 0) {
+                                        goto retry;
+                                    }
+                                    sum = 0;
+                                    ptr = emu->transferBuffer;
+                                    for (i = 0; i < 0x2000; i++) {
+                                        sum += *ptr;
+                                        ptr++;
+                                    }
+                                    if (sum != entry[1]) {
+                                        goto retry;
+                                    }
+                                    sum = 0;
+                                    for (i = 0; i != 0x2000U; i++) {
+                                        sum += *ptr;
+                                        ptr++;
+                                    }
+                                    if (sum != entry[2]) {
+                                        goto retry;
+                                    }
+                                    emu->unk_549C[entry[0]] = 0xFF;
+                                }
+                                entry += 3;
+                            }
+                        } while (*entry);
+                        break;
+                    case 8:
+                        emu->unk_5DC4 = 0;
+                        if (GbPak_ProbeCartridge(emu) != 0) {
+                            goto retry;
+                        }
+                        if (GbPak_VerifyWritableProbeBlock(emu) != 0) {
+                            goto retry;
+                        }
+                        break;
+                    case 7:
+                        if (GbPak_CheckTransferStatus(emu) != 0) {
+                            goto retry;
+                        }
+                        break;
+                    case 4:
+                        emu->unk_5DCD -= 0x17;
+                        emu->status &= ~1;
+                        if (osGbpakPower((OSPfs*)&emu->pfs, 0) != 0) {
+                            goto retry;
+                        }
+                        break;
+                    case 0:
+                    default:
+                        break;
+                }
+                emu->unk_5DC7 = 0;
+                break;
+            case 8:
+            case 11:
+                if (emu->unk_5DC7 != 7) {
+                    break;
+                }
+                if (GbPak_CheckTransferStatus(emu) != 0) {
+                    if (--retries == 0) {
+                        retries = 5;
+                        emu->unk_5DC9 = 9;
+                    }
+                } else {
+                    retries = 0x3C;
+                }
+                break;
+            case 9:
+                if (osGbpakInit(gGbPakSiEventQueue, (OSPfs*)&emu->pfs, emu->unk_5DCC) != 0) {
+                    retries = 5;
+                } else {
+                    if (GbPak_CheckTransferStatus(emu) == 0) {
+                        if (--retries == 0) {
+                            i = GbPak_ProbeCartridge(emu);
+                            if (i != 0) {
+                                goto power_off;
+                            } else if (i == 0) {
+                                emu->unk_5DC9 = 10;
+                            }
+                        }
+                    } else {
+                        retries = 5;
+                    }
+                }
+                break;
+            case 10:
+                emu->transferBuffer = D_8122C540;
+                if ((GbPak_TransferBankedRam(emu, 1) == 0) &&
+                    (emu->transferBuffer = D_8122C640, GbPak_TransferBankedRam(emu, 0) == 0) &&
+                    (bcmp(D_8122C540, D_8122C640, 0x100) == 0)) {
+                    if (emu->unk_5A2C[emu->gbAddress >> 8] != 0) {
+                        emu->unk_5A2C[emu->gbAddress >> 8] = 2;
+                    }
+                    emu->unk_5DC9 = 2;
+                    emu->unk_5DC7 = 0;
+                    break;
+                }
+            power_off:
+                retries = 0x3C;
+                emu->status &= ~1;
+                osGbpakPower((OSPfs*)&emu->pfs, 0);
+                emu->unk_5DC9 = 11;
+                break;
+            default:
+            disconnect:
+                emu->unk_5DCA = 0;
+                break;
+        }
+        emu->unk_5DC8 = 0;
+    }
+}
 
 void func_812011D0(u16* fb, u8* cmd) {
     u8* ptr;
