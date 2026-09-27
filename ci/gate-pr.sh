@@ -148,6 +148,21 @@ if [ -d /work/.git ]; then
 fi
 
 if sync_tree /src/tools /work/tools --exclude=__pycache__ --exclude=vtxdis; then tools_changed=1; fi
+# yamls/us/header.yaml symbol_addrs_path lists these files as direct splat
+# extraction inputs (address->name resolution baked into asm/ at extract
+# time), same as the yamls themselves -- but they live under linker_scripts/,
+# so a lone rename/add/remove here must also trigger make extract below, not
+# just the full-recompile linker_changed already forces. Checked before the
+# general linker_scripts sync_tree overwrites /work, so this reflects what
+# actually changed, not the post-sync (already-identical) state.
+symbol_addrs_changed=0
+for f in /src/linker_scripts/us/symbol_addrs*.txt; do
+    [ -e "$f" ] || continue
+    rel="${f#/src/}"
+    if ! cmp -s "$f" "/work/$rel" 2>/dev/null; then
+        symbol_addrs_changed=1
+    fi
+done
 if sync_tree /src/linker_scripts /work/linker_scripts --exclude=auto --exclude=pokestadium.ld; then linker_changed=1; fi
 if sync_tree /src/lib /work/lib --exclude=build --exclude=extracted; then library_changed=1; fi
 makefile_changed=0
@@ -165,8 +180,15 @@ if ! cmp -s /src/requirements.txt /work/requirements.txt; then
     exit 3
 fi
 
-# A YAML change changes the split. Re-extract before compiling against it.
-if sync_tree /src/yamls /work/yamls; then
+# A YAML or symbol_addrs*.txt change changes the split. Re-extract before
+# compiling against it. Confirmed live, 2026-09-26 (PR #106): a clean,
+# yamls-untouched symbol_addrs_code.txt rename left the already-baked
+# /work/asm disassembly labeling the renamed address under its old name, so a
+# still-unmatched sibling GLOBAL_ASM block elsewhere that calls it failed to
+# link with an undefined reference -- even under the full rebuild
+# linker_changed alone already forces, since that only recompiles existing
+# asm/*.s text, it never regenerates it.
+if sync_tree /src/yamls /work/yamls || [ "${symbol_addrs_changed}" -eq 1 ]; then
     split_changed=1
     echo "gate-pr.sh: split inputs changed; re-running extraction" >&2
     make extract
