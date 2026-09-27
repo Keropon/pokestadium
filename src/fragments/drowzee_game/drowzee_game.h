@@ -41,27 +41,27 @@ extern Gfx D_86403FA0[];
 extern Gfx D_86403BB0[];
 extern Gfx D_86403F30[];
 
-void SnorlaxGame_UpdatePlayerTimingWindows(void);
-u16 SnorlaxGame_IsWindowMatch(u8 arg0);
-void SnorlaxGame_SetPlayerState(unk_D_86404778* arg0, s32 arg1, u8 arg2, s32 arg3, u8 arg4);
-void SnorlaxGame_InitPlayerSlots(void);
-void SnorlaxGame_LoopSnorlaxIdleAnim(void);
-void SnorlaxGame_AdvanceBreathPhase(unk_D_86405158* arg0);
-void SnorlaxGame_UpdatePlayerAnimations(void);
-void SnorlaxGame_ProcessElimination(u8 arg0);
-void SnorlaxGame_DrawPlayerOverlay(UNUSED s32 arg0);
-void SnorlaxGame_UpdateRoundTick(s32 arg0);
-void SnorlaxGame_JudgePlayerTiming(void);
-void SnorlaxGame_DrawTutorialScreen(s32 arg0);
-void SnorlaxGame_DrawFrame(s32 arg0);
-void SnorlaxGame_WaitForStart(void);
-void SnorlaxGame_MainLoop(void);
-void SnorlaxGame_ShowResultText(void);
-void SnorlaxGame_InitCamera(void);
-void SnorlaxGame_InitPlayerOverlays(void);
-void SnorlaxGame_LoadAssets(void);
-void SnorlaxGame_Main(UNUSED s32 arg0, UNUSED s32 arg1);
+void DrowzeeGame_UpdatePlayerTimingWindows(void);
+u16 DrowzeeGame_IsWindowMatch(u8 arg0);
+void DrowzeeGame_SetPlayerState(unk_D_86404778* arg0, s32 arg1, u8 arg2, s32 arg3, u8 arg4);
+void DrowzeeGame_InitPlayerSlots(void);
+void DrowzeeGame_LoopDrowzeeIdleAnim(void);
+void DrowzeeGame_AdvanceBreathPhase(unk_D_86405158* arg0);
+void DrowzeeGame_UpdatePlayerAnimations(void);
+void DrowzeeGame_ProcessElimination(u8 arg0);
+void DrowzeeGame_DrawPlayerOverlay(UNUSED s32 arg0);
+void DrowzeeGame_UpdateRoundTick(s32 arg0);
+void DrowzeeGame_JudgePlayerTiming(void);
+void DrowzeeGame_DrawTutorialScreen(s32 arg0);
+void DrowzeeGame_DrawFrame(s32 arg0);
+void DrowzeeGame_WaitForStart(void);
+void DrowzeeGame_MainLoop(void);
+void DrowzeeGame_ShowResultText(void);
+void DrowzeeGame_InitCamera(void);
+void DrowzeeGame_InitPlayerOverlays(void);
+void DrowzeeGame_LoadAssets(void);
+void DrowzeeGame_Main(UNUSED s32 arg0, UNUSED s32 arg1);
 
-s8 SnorlaxGame_ComputeAITimingBias(u8 arg0, s32 arg1);
+s8 DrowzeeGame_ComputeAITimingBias(u8 arg0, s32 arg1);
 
 #endif // _FRAGMENT10_H_

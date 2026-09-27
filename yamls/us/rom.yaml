@@ -847,14 +847,14 @@
     start: 0x134680
     vram: 0x86400000
     subsegments:
-    - [0x134680, textbin,   fragments/snorlax_game/snorlax_game_header]
-    - [0x1346A0, c,      fragments/snorlax_game/snorlax_game]
-    - [0x136D50, c,      fragments/snorlax_game/snorlax_game_1]
-    - [0x136E40, .data,   fragments/snorlax_game/snorlax_game]
-    - [0x137070, .data,   fragments/snorlax_game/snorlax_game_1]
-    - [0x1386E0, .rodata,   fragments/snorlax_game/snorlax_game]
+    - [0x134680, textbin,   fragments/drowzee_game/drowzee_game_header]
+    - [0x1346A0, c,      fragments/drowzee_game/drowzee_game]
+    - [0x136D50, c,      fragments/drowzee_game/drowzee_game_1]
+    - [0x136E40, .data,   fragments/drowzee_game/drowzee_game]
+    - [0x137070, .data,   fragments/drowzee_game/drowzee_game_1]
+    - [0x1386E0, .rodata,   fragments/drowzee_game/drowzee_game]
 
-    - {vram: 0x86404070, type:  .bss, name: fragments/snorlax_game/snorlax_game}
+    - {vram: 0x86404070, type:  .bss, name: fragments/drowzee_game/drowzee_game}
 
   - name: fragment10_relocs
     type: code

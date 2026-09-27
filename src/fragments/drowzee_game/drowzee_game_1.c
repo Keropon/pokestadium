@@ -1,4 +1,4 @@
-#include "snorlax_game.h"
+#include "drowzee_game.h"
 
 u16 D_864029F0[4][14][8] = {
     {
@@ -268,7 +268,7 @@ Gfx D_86403FA0[] = {
     gsSPEndDisplayList(),
 };
 
-s8 SnorlaxGame_ComputeAITimingBias(u8 arg0, s32 arg1) {
+s8 DrowzeeGame_ComputeAITimingBias(u8 arg0, s32 arg1) {
     u8 i;
     u16 var_a0;
     u16 var_a1;

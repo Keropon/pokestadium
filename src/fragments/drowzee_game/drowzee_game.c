@@ -1,4 +1,4 @@
-#include "snorlax_game.h"
+#include "drowzee_game.h"
 #include "src/geo_render.h"
 #include "src/model_animation.h"
 #include "src/model_animation_events.h"
@@ -72,7 +72,7 @@ static unk_D_86002F58_004_000* D_864052D0;
 static u8 D_864052D4;
 static s16 D_864052D6;
 
-void SnorlaxGame_UpdatePlayerTimingWindows(void) {
+void DrowzeeGame_UpdatePlayerTimingWindows(void) {
     u8 i;
 
     for (i = 0; i < 4; i++) {
@@ -83,27 +83,27 @@ void SnorlaxGame_UpdatePlayerTimingWindows(void) {
         }
 
         D_864052C8->unk_008 =
-            D_8640284C[D_864052CC->unk_000][2] + SnorlaxGame_ComputeAITimingBias(D_864052CC->unk_000, D_864052C8->unk_000);
+            D_8640284C[D_864052CC->unk_000][2] + DrowzeeGame_ComputeAITimingBias(D_864052CC->unk_000, D_864052C8->unk_000);
         D_864052C8->unk_00A =
-            D_8640284C[D_864052CC->unk_000][6] + SnorlaxGame_ComputeAITimingBias(D_864052CC->unk_000, D_864052C8->unk_000);
+            D_8640284C[D_864052CC->unk_000][6] + DrowzeeGame_ComputeAITimingBias(D_864052CC->unk_000, D_864052C8->unk_000);
     }
 }
 
-u16 SnorlaxGame_IsWindowMatch(u8 arg0) {
+u16 DrowzeeGame_IsWindowMatch(u8 arg0) {
     if ((D_864052D6 == D_86404778[arg0].unk_008) || (D_864052D6 == D_86404778[arg0].unk_00A)) {
         return 1;
     }
     return 0;
 }
 
-void SnorlaxGame_SetPlayerState(unk_D_86404778* arg0, s32 arg1, u8 arg2, s32 arg3, u8 arg4) {
+void DrowzeeGame_SetPlayerState(unk_D_86404778* arg0, s32 arg1, u8 arg2, s32 arg3, u8 arg4) {
     arg0->unk_018 = arg1;
     arg0->unk_01C = arg2;
     arg0->unk_020 = arg3;
     arg0->unk_024 = arg4;
 }
 
-void SnorlaxGame_InitPlayerSlots(void) {
+void DrowzeeGame_InitPlayerSlots(void) {
     s8 i;
 
     for (i = 0; i < 4; i++) {
@@ -115,13 +115,13 @@ void SnorlaxGame_InitPlayerSlots(void) {
     }
 }
 
-void SnorlaxGame_LoopSnorlaxIdleAnim(void) {
+void DrowzeeGame_LoopDrowzeeIdleAnim(void) {
     if (ModelAnim_IsFinished(&D_86404070) != 0) {
         ModelAnim_SetFrame(&D_86404070, 0);
     }
 }
 
-void SnorlaxGame_AdvanceBreathPhase(unk_D_86405158* arg0) {
+void DrowzeeGame_AdvanceBreathPhase(unk_D_86405158* arg0) {
     static u8 D_86402994 = 0;
     static u8 D_86402998[] = {
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x08, 0x09,
@@ -142,11 +142,11 @@ void SnorlaxGame_AdvanceBreathPhase(unk_D_86405158* arg0) {
             ModelAnim_SetFrame(&arg0->unk_004, 0);
         }
 
-        SnorlaxGame_UpdatePlayerTimingWindows();
+        DrowzeeGame_UpdatePlayerTimingWindows();
     }
 }
 
-void SnorlaxGame_UpdatePlayerAnimations(void) {
+void DrowzeeGame_UpdatePlayerAnimations(void) {
     u8 i;
     f32 temp_fv0;
     f32 var_fv1;
@@ -211,7 +211,7 @@ void SnorlaxGame_UpdatePlayerAnimations(void) {
     }
 }
 
-void SnorlaxGame_ProcessElimination(u8 arg0) {
+void DrowzeeGame_ProcessElimination(u8 arg0) {
     u8 i;
     u8 sp40[] = {
         0,
@@ -239,7 +239,7 @@ void SnorlaxGame_ProcessElimination(u8 arg0) {
 
         if (sp40[i] != 0) {
             D_864052C8->unk_00C = D_864029B4;
-            SnorlaxGame_SetPlayerState(D_864052C8, 0, 0, 0, 0);
+            DrowzeeGame_SetPlayerState(D_864052C8, 0, 0, 0, 0);
         }
     }
 
@@ -255,7 +255,7 @@ void SnorlaxGame_ProcessElimination(u8 arg0) {
 
             if (D_864052C8->unk_00C == 0) {
                 D_864052C8->unk_00C = 1;
-                SnorlaxGame_SetPlayerState(D_864052C8, 0, 0, 0, 0);
+                DrowzeeGame_SetPlayerState(D_864052C8, 0, 0, 0, 0);
             }
         }
 
@@ -278,7 +278,7 @@ void SnorlaxGame_ProcessElimination(u8 arg0) {
     }
 }
 
-void SnorlaxGame_DrawPlayerOverlay(UNUSED s32 arg0) {
+void DrowzeeGame_DrawPlayerOverlay(UNUSED s32 arg0) {
     u8 i;
     f32 temp_fs0;
     s16 temp_a3;
@@ -354,7 +354,7 @@ void SnorlaxGame_DrawPlayerOverlay(UNUSED s32 arg0) {
     }
 }
 
-void SnorlaxGame_UpdateRoundTick(s32 arg0) {
+void DrowzeeGame_UpdateRoundTick(s32 arg0) {
     s32 temp;
     s16 sp24[] = {
         0xFB1E,
@@ -436,7 +436,7 @@ void SnorlaxGame_UpdateRoundTick(s32 arg0) {
     }
 }
 
-void SnorlaxGame_JudgePlayerTiming(void) {
+void DrowzeeGame_JudgePlayerTiming(void) {
     static u8 D_864029C8 = 0;
 
     u8 i;
@@ -477,13 +477,13 @@ void SnorlaxGame_JudgePlayerTiming(void) {
                 if (D_864052C8->unk_01C >= 2) {
                     D_864052C8->unk_01C--;
                 } else {
-                    SnorlaxGame_SetPlayerState(D_864052C8, D_864052C8->unk_020, D_864052C8->unk_024, 0, 0);
+                    DrowzeeGame_SetPlayerState(D_864052C8, D_864052C8->unk_020, D_864052C8->unk_024, 0, 0);
                 }
 
                 if (D_864052C8->unk_000 == 4) {
                     D_86402844 = gControllers[i].buttonPressed & 0x8000;
                 } else {
-                    D_86402844 = SnorlaxGame_IsWindowMatch(i);
+                    D_86402844 = DrowzeeGame_IsWindowMatch(i);
                 }
 
                 if (D_86402844 != 0) {
@@ -504,17 +504,17 @@ void SnorlaxGame_JudgePlayerTiming(void) {
                             }
 
                             if (D_864052C8->unk_018 == 0) {
-                                SnorlaxGame_SetPlayerState(D_864052C8, 1, 0x14, 0, 0);
+                                DrowzeeGame_SetPlayerState(D_864052C8, 1, 0x14, 0, 0);
                             } else {
-                                SnorlaxGame_SetPlayerState(D_864052C8, 0, 1, 1, 0x14);
+                                DrowzeeGame_SetPlayerState(D_864052C8, 0, 1, 1, 0x14);
                             }
                         }
                     } else {
                         D_864052C8->unk_010 -= 1;
                         if (D_864052C8->unk_018 == 0) {
-                            SnorlaxGame_SetPlayerState(D_864052C8, 2, 0x14, 0, 0);
+                            DrowzeeGame_SetPlayerState(D_864052C8, 2, 0x14, 0, 0);
                         } else {
-                            SnorlaxGame_SetPlayerState(D_864052C8, 0, 1, 2, 0x14);
+                            DrowzeeGame_SetPlayerState(D_864052C8, 0, 1, 2, 0x14);
                         }
                     }
 
@@ -547,9 +547,9 @@ void SnorlaxGame_JudgePlayerTiming(void) {
                     if (D_864052C8->unk_014 == 0) {
                         D_864052C8->unk_010--;
                         if (D_864052C8->unk_018 == 0) {
-                            SnorlaxGame_SetPlayerState(D_864052C8, 2, 0x14, 0, 0);
+                            DrowzeeGame_SetPlayerState(D_864052C8, 2, 0x14, 0, 0);
                         } else {
-                            SnorlaxGame_SetPlayerState(D_864052C8, 0, 1, 2, 0x14);
+                            DrowzeeGame_SetPlayerState(D_864052C8, 0, 1, 2, 0x14);
                         }
                     } else {
                         D_864052C8->unk_014 = 0;
@@ -568,14 +568,14 @@ void SnorlaxGame_JudgePlayerTiming(void) {
             if (D_864052C8->unk_010 <= 0) {
                 D_864052C8->unk_010 = 0;
                 if ((D_864052C8->unk_012 > 0) && (D_864052C8->unk_00C == 0)) {
-                    SnorlaxGame_ProcessElimination(i);
+                    DrowzeeGame_ProcessElimination(i);
                 }
             }
         }
     }
 }
 
-void SnorlaxGame_DrawTutorialScreen(s32 arg0) {
+void DrowzeeGame_DrawTutorialScreen(s32 arg0) {
     if ((arg0 == 0) || ((arg0 == 3) && (D_87B000D0 == 1))) {
         Ui_DrawBorderedPanel(0x18, 0x16, 0x110, 0x90, 0x15);
         Ui_DrawBorderedPanel(0x18, 0xA5, 0x110, 0x36, 0x14B);
@@ -656,7 +656,7 @@ void SnorlaxGame_DrawTutorialScreen(s32 arg0) {
     Font_EndTexturedTextRendering();
 }
 
-void SnorlaxGame_DrawFrame(s32 arg0) {
+void DrowzeeGame_DrawFrame(s32 arg0) {
     BgStage_DrawFrame();
     GfxImage_FillCurrent(&gDisplayListHead, 0xA6BF);
 
@@ -667,7 +667,7 @@ void SnorlaxGame_DrawFrame(s32 arg0) {
     Geo_RenderRootNode(D_87B000E8);
 
     if (D_8780FC98 == 0) {
-        SnorlaxGame_DrawTutorialScreen(arg0);
+        DrowzeeGame_DrawTutorialScreen(arg0);
     }
 
     Widget_PauseMenuUpdate();
@@ -678,7 +678,7 @@ void SnorlaxGame_DrawFrame(s32 arg0) {
     }
 }
 
-void SnorlaxGame_WaitForStart(void) {
+void DrowzeeGame_WaitForStart(void) {
     u8 i;
     u8 var_s1;
     s32 var_s2;
@@ -701,11 +701,11 @@ void SnorlaxGame_WaitForStart(void) {
         }
 
         MiniGame_ReadInputs();
-        SnorlaxGame_UpdateRoundTick(0);
-        SnorlaxGame_DrawPlayerOverlay(0);
-        SnorlaxGame_UpdatePlayerAnimations();
-        SnorlaxGame_LoopSnorlaxIdleAnim();
-        SnorlaxGame_DrawFrame(0);
+        DrowzeeGame_UpdateRoundTick(0);
+        DrowzeeGame_DrawPlayerOverlay(0);
+        DrowzeeGame_UpdatePlayerAnimations();
+        DrowzeeGame_LoopDrowzeeIdleAnim();
+        DrowzeeGame_DrawFrame(0);
 
         if (var_s1 < 0x11) {
             var_s1++;
@@ -731,16 +731,16 @@ void SnorlaxGame_WaitForStart(void) {
             D_87B000C4--;
 
             MiniGame_ReadInputs();
-            SnorlaxGame_UpdateRoundTick(1);
-            SnorlaxGame_DrawPlayerOverlay(1);
-            SnorlaxGame_UpdatePlayerAnimations();
-            SnorlaxGame_LoopSnorlaxIdleAnim();
-            SnorlaxGame_DrawFrame(1);
+            DrowzeeGame_UpdateRoundTick(1);
+            DrowzeeGame_DrawPlayerOverlay(1);
+            DrowzeeGame_UpdatePlayerAnimations();
+            DrowzeeGame_LoopDrowzeeIdleAnim();
+            DrowzeeGame_DrawFrame(1);
         }
     }
 }
 
-void SnorlaxGame_MainLoop(void) {
+void DrowzeeGame_MainLoop(void) {
     static u8 D_864029DC = 0;
     static u8 D_864029E0 = 0;
 
@@ -749,11 +749,11 @@ void SnorlaxGame_MainLoop(void) {
     if (D_8780FC92 == 0) {
         Audio_DispatchSoundBankCommand(0x70002, 0, 0);
         MiniGame_ReadInputs();
-        SnorlaxGame_UpdateRoundTick(2);
-        SnorlaxGame_DrawPlayerOverlay(2);
-        SnorlaxGame_UpdatePlayerAnimations();
-        SnorlaxGame_LoopSnorlaxIdleAnim();
-        SnorlaxGame_DrawFrame(2);
+        DrowzeeGame_UpdateRoundTick(2);
+        DrowzeeGame_DrawPlayerOverlay(2);
+        DrowzeeGame_UpdatePlayerAnimations();
+        DrowzeeGame_LoopDrowzeeIdleAnim();
+        DrowzeeGame_DrawFrame(2);
 
         while (var_s2 != 0) {
             if (D_8780FC92 != 0) {
@@ -766,7 +766,7 @@ void SnorlaxGame_MainLoop(void) {
             }
 
             MiniGame_ReadInputs();
-            SnorlaxGame_UpdateRoundTick(2);
+            DrowzeeGame_UpdateRoundTick(2);
 
             if (D_87B000C8 == 0) {
                 if (D_864029E0 < 0x1E) {
@@ -780,22 +780,22 @@ void SnorlaxGame_MainLoop(void) {
                     }
                     ModelAnim_SetFrame(&D_864052CC->unk_004, 1);
                 } else {
-                    SnorlaxGame_JudgePlayerTiming();
-                    SnorlaxGame_AdvanceBreathPhase(D_864052CC);
+                    DrowzeeGame_JudgePlayerTiming();
+                    DrowzeeGame_AdvanceBreathPhase(D_864052CC);
                 }
             } else if (D_8780FC96 != 0) {
                 var_s2 = 0;
             }
 
-            SnorlaxGame_DrawPlayerOverlay(2);
-            SnorlaxGame_UpdatePlayerAnimations();
-            SnorlaxGame_LoopSnorlaxIdleAnim();
-            SnorlaxGame_DrawFrame(2);
+            DrowzeeGame_DrawPlayerOverlay(2);
+            DrowzeeGame_UpdatePlayerAnimations();
+            DrowzeeGame_LoopDrowzeeIdleAnim();
+            DrowzeeGame_DrawFrame(2);
         }
     }
 }
 
-void SnorlaxGame_ShowResultText(void) {
+void DrowzeeGame_ShowResultText(void) {
     u8 i;
 
     Audio_FadeCategories(1, 0x1E);
@@ -804,15 +804,15 @@ void SnorlaxGame_ShowResultText(void) {
 
     for (i = 0; i < 30; i++) {
         MiniGame_ReadInputs();
-        SnorlaxGame_UpdateRoundTick(3);
-        SnorlaxGame_DrawPlayerOverlay(3);
-        SnorlaxGame_UpdatePlayerAnimations();
-        SnorlaxGame_LoopSnorlaxIdleAnim();
-        SnorlaxGame_DrawFrame(3);
+        DrowzeeGame_UpdateRoundTick(3);
+        DrowzeeGame_DrawPlayerOverlay(3);
+        DrowzeeGame_UpdatePlayerAnimations();
+        DrowzeeGame_LoopDrowzeeIdleAnim();
+        DrowzeeGame_DrawFrame(3);
     }
 }
 
-void SnorlaxGame_InitCamera(void) {
+void DrowzeeGame_InitCamera(void) {
     D_87B000EC = D_87B000E8->unk_00.unk_0C;
 
     D_87B000F0 = 0x900;
@@ -828,7 +828,7 @@ void SnorlaxGame_InitCamera(void) {
     Camera_ComputeEyeFromAngles(&D_87B000EC->unk_60.at, &D_87B000EC->unk_60.eye, D_87B000F4, D_87B000F0, D_87B000F2);
 }
 
-void SnorlaxGame_InitPlayerOverlays(void) {
+void DrowzeeGame_InitPlayerOverlays(void) {
     u8 i;
     MemoryBlock* temp_s5 = MainPool_AllocState(main_pool_get_available(), 0);
 
@@ -841,7 +841,7 @@ void SnorlaxGame_InitPlayerOverlays(void) {
     MainPool_FinalizeAllocation(temp_s5);
 }
 
-void SnorlaxGame_LoadAssets(void) {
+void DrowzeeGame_LoadAssets(void) {
     u8 i;
     u8 x;
     u8 y;
@@ -887,7 +887,7 @@ void SnorlaxGame_LoadAssets(void) {
         D_864052C8->unk_014 = 0;
         D_864052C8->unk_015 = 0;
 
-        SnorlaxGame_SetPlayerState(D_864052C8, 0, 0, 0, 0);
+        DrowzeeGame_SetPlayerState(D_864052C8, 0, 0, 0, 0);
 
         for (x = 0; x < 14; x++) {
             for (y = 0; y < 8; y++) {
@@ -935,15 +935,15 @@ void SnorlaxGame_LoadAssets(void) {
         D_864052D0->unk_01E.z = D_864027C0[i].unk_1C;
     }
 
-    SnorlaxGame_InitPlayerOverlays();
-    SnorlaxGame_InitPlayerSlots();
-    SnorlaxGame_UpdatePlayerTimingWindows();
-    SnorlaxGame_InitCamera();
+    DrowzeeGame_InitPlayerOverlays();
+    DrowzeeGame_InitPlayerSlots();
+    DrowzeeGame_UpdatePlayerTimingWindows();
+    DrowzeeGame_InitCamera();
     Widget_CountdownInit();
     Widget_PauseMenuInit();
 }
 
-void SnorlaxGame_Main(UNUSED s32 arg0, UNUSED s32 arg1) {
+void DrowzeeGame_Main(UNUSED s32 arg0, UNUSED s32 arg1) {
     unk_func_80007444* sp24;
 
     main_pool_push_state('MINI');
@@ -953,11 +953,11 @@ void SnorlaxGame_Main(UNUSED s32 arg0, UNUSED s32 arg1) {
     D_87B000E0 = Font_Init(0x16, 0);
     ASSET_LOAD(D_1000000, common_menu1_ui, 0);
     FRAGMENT_LOAD(fragment31);
-    SnorlaxGame_LoadAssets();
+    DrowzeeGame_LoadAssets();
     StageContext_Activate(sp24);
-    SnorlaxGame_WaitForStart();
-    SnorlaxGame_MainLoop();
-    SnorlaxGame_ShowResultText();
+    DrowzeeGame_WaitForStart();
+    DrowzeeGame_MainLoop();
+    DrowzeeGame_ShowResultText();
     StageContext_Deactivate();
     Font_Free();
     Gfx_FreeDisplayListBuffers();
