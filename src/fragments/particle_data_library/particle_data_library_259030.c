@@ -1,6 +1,6 @@
 #include "particle_data_library.h"
 #include "src/gfx_buffer.h"
-#include "src/fragments/snorlax_game/snorlax_game.h"
+#include "src/fragments/drowzee_game/drowzee_game.h"
 
 void DisplayList_InitToggledBlendModeSegment(s32 arg0, DisplayListState* state) {
     Gfx* gfx;
