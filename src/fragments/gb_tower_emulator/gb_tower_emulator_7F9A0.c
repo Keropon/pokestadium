@@ -2560,8 +2560,305 @@ update_menu:
     }
 }
 
-void func_81204A84(s32);
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_7F9A0/func_81204A84.s")
+void func_81204A84(s32 arg0) {
+    s32 pad;
+    s32 j;
+    s32 i;
+    s32 c1;
+    s32 c2 = 0;
+    s32 c3;
+    s32 y;
+    s32 x;
+    u16* volatile fb;
+    u16* base;
+    s32 row;
+    u16* p;
+
+    if (D_8122C4F7 == 0) {
+        return;
+    }
+
+    fb = (u16*)arg0;
+    base = (u16*)arg0 - 14;
+
+    switch (D_8122C4F7) {
+        case 0x12:
+        case 0x13:
+            func_812011D0(base, D_8120E8C0);
+            goto transition;
+        case 0x14:
+            D_8122B2E8 ^= 1;
+            D_8122C4E7++;
+            if (D_8122C4E7 >= 11) {
+                D_8122C4E7 = 0;
+            }
+            goto transition;
+        case 0x15:
+            func_812011D0(base, D_8120E958);
+        transition:
+            func_812020C0((u16*)(D_8122B2D8[D_8122B2E8] + 0x9C), 1, D_8122C4E7);
+            D_8122B1E8[D_8122B2B8].unk_3C = 0x1010;
+            D_8122B1E8[D_8122B2B8].unk_38 = (s32)D_8122B2D8[D_8122B2E8];
+            D_8122B1E8[D_8122B2B8].unk_5C &= 0xFFFF;
+            func_812011D0(base, D_8120E8D8);
+            return;
+
+        default:
+            switch (D_8122C4F7) {
+        case 1:
+        case 17:
+            base = fb + 0x3C3E;
+            GbEmu_BlitWithPixelOp(base + 0x1B8A, (u16*)(D_8122C748 + 0xC2F8), 0, 16, 10);
+            c1 = 0xB;
+            c2 = 8;
+            c3 = 8;
+            goto draw_items;
+        case 4:
+        case 5:
+            c1 = 8;
+            c2 = 0xB;
+            c3 = 8;
+            base = fb + 0x3C3E;
+            goto draw_items;
+        case 2:
+            base = fb + 0x3C3E;
+            GbEmu_BlitWithPixelOp(base + 0x348A, (u16*)(D_8122C748 + 0xC2F8), 0, 16, 10);
+            c1 = 8;
+            c2 = 0xB;
+            c3 = 8;
+            goto draw_items;
+        case 3:
+            base = fb + 0x3C3E;
+            GbEmu_BlitWithPixelOp(base + 0x4D8A, (u16*)(D_8122C748 + 0xC2F8), 0, 16, 10);
+            c1 = 8;
+            c2 = 8;
+            c3 = 0xB;
+        draw_items:
+            func_812011D0(base, D_8120E688);
+            D_8120E694[4] = c1;
+            func_812011D0(base, D_8120E694);
+            D_8120E6A8[4] = c2;
+            func_812011D0(base, D_8120E6A8);
+            D_8120E6B8[4] = c3;
+            func_812011D0(base, D_8120E6B8);
+            for (i = 8; i < 0x94; i++) {
+                base[80 * 320 + i] = 0xFFFF;
+            }
+            break;
+            }
+            break;
+    }
+
+    switch (D_8122C4F7) {
+        case 1:
+        case 17:
+            func_812011D0(fb + 0x3C3E, D_8120E6D0);
+            break;
+        case 2:
+            func_812011D0(fb + 0x3C3E, D_8120E718);
+            break;
+        case 3:
+            func_812011D0(fb + 0x3C3E, D_8120E760);
+            break;
+        case 4:
+            GbEmu_BlitWithPixelOp(fb + 0xDC48, (u16*)(D_8122C748 + 0xC2F8), 0, 16, 10);
+            /* fallthrough */
+        case 14:
+            c1 = 0xB;
+            c2 = 8;
+            base = fb + 0x3C3E;
+            goto draw_submenu;
+        case 5:
+            base = fb + 0x3C3E;
+            GbEmu_BlitWithPixelOp(base + 0xA050, (u16*)(D_8122C748 + 0xC2F8), 0, 16, 10);
+            c1 = 8;
+            c2 = 0xB;
+        draw_submenu:
+            func_812011D0(base, D_8120E7A0);
+            D_8120E7CC[4] = c1;
+            D_8120E7DC[0] = c2;
+            func_812011D0(base, D_8120E7CC);
+            func_812011D0(base, D_8120E7D8);
+            break;
+    }
+
+    switch (D_8122C4F7) {
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+            base = fb + 0x3C3E;
+            y = 0x4A;
+            if (gGbEmuPresentationMode == 1) {
+                GbEmu_BlitWithPixelOp(base + 0x784, (u16*)(D_8122C748 + 0xB758), 0, 16, 12);
+                func_812011D0(base, D_8120E7E4);
+            } else if (gGbEmuPresentationMode == 2) {
+                GbEmu_BlitWithPixelOp(base + 0x784, (u16*)(D_8122C748 + 0xB758), 0, 16, 12);
+                func_812011D0(base, D_8120E834);
+            } else {
+                y = 0x32;
+            }
+            for (j = 1; j < 0x3F; j++) {
+                base[(y + j) * 320 + 1] = base[(y + j) * 320 + 2] = base[(y + j) * 320 + 0x9D] =
+                    base[(y + j) * 320 + 0x9E] = 0xFFFF;
+            }
+            for (i = 2; i < 0x9E; i++) {
+                if ((i < 0x10) || (i >= 0x43)) {
+                    base[y * 320 + i] = base[(y + 1) * 320 + i] = 0xFFFF;
+                }
+                base[(y + 62) * 320 + i] = base[(y + 63) * 320 + i] = 0xFFFF;
+            }
+            D_8120E898[2] = y - 5;
+            func_812011D0(base, D_8120E898);
+            GbEmu_BlitWithPixelOp(y * 320 + base + 0x3C1C, (u16*)(D_8122C748 + 0xB2D8), 0, 16, 12);
+            D_8120E8A8[2] = y + 0x30;
+            func_812011D0(base, D_8120E8A8);
+            break;
+    }
+
+    x = 0x28 - D_8122C4F8 * 4;
+    switch (D_8122C4F7) {
+        case 7:
+        case 8:
+        case 9:
+            i = 0;
+            row = y * 320;
+            base = fb + 0x3C3E;
+            goto draw_second;
+        case 11:
+        case 12:
+        case 13:
+            i = 0;
+            row = y * 320;
+            base = fb + 0x3C3E;
+            goto draw_first;
+        case 6:
+            i = 0;
+            row = y * 320;
+            base = fb + 0x3C3E;
+            goto draw_cursor;
+        case 10:
+            i = 0x14;
+            row = y * 320;
+            base = fb + 0x3C3E;
+        draw_cursor:
+            GbEmu_BlitWithPixelOp((y + i) * 320 + base + 0xF14, (u16*)(D_8122C748 + 0xC2F8), 0, 16, 10);
+            x = 0x28;
+            i = 1;
+        draw_first:
+            switch (gGbEmuButtonBindingSelections.unk_00) {
+                case 0:
+                default:
+                    j = 0xBBD8;
+                    break;
+                case 1:
+                    j = 0xB8D8;
+                    break;
+                case 2:
+                    j = 0xBA58;
+                    break;
+                case 3:
+                    j = 0xB5D8;
+                    break;
+                case 4:
+                    j = 0xB458;
+                    break;
+            }
+            GbEmu_BlitWithPixelOp((((i == 0) ? 0x28 : x) + row) + base + 0xCBC, (u16*)(D_8122C748 + j), 0, 16, 12);
+            if (i == 0) {
+                break;
+            }
+        draw_second:
+            switch (gGbEmuButtonBindingSelections.unk_01) {
+                case 0:
+                    j = 0xBBD8;
+                    break;
+                case 1:
+                default:
+                    j = 0xB8D8;
+                    break;
+                case 2:
+                    j = 0xBA58;
+                    break;
+                case 3:
+                    j = 0xB5D8;
+                    break;
+                case 4:
+                    j = 0xB458;
+                    break;
+            }
+            GbEmu_BlitWithPixelOp((((i == 0) ? 0x28 : x) + row) + base + 0x25BC, (u16*)(D_8122C748 + j), 0, 16, 12);
+            break;
+    }
+
+    switch (D_8122C4F7) {
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+            i = x + 8;
+            row = y * 320;
+            if (1) {
+                j = 0x30;
+            }
+            base = fb + 0x3C3E;
+            goto draw_arrows;
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+            i = 0x30;
+            row = y * 320;
+            if (1) {
+                j = x + 8;
+            }
+            base = fb + 0x3C3E;
+        draw_arrows:
+            p = (row + i) + base;
+            GbEmu_BlitWithPixelOp(p + 0xC80, (u16*)(D_8122C748 + 0xBF98), 0, 24, 12);
+            GbEmu_BlitWithPixelOp(p + 0xC98, (u16*)(D_8122C748 + 0xC438), 0, 16, 12);
+            p = (row + j) + base;
+            GbEmu_BlitWithPixelOp(p + 0x257E, (u16*)(D_8122C748 + 0xBD58), 0, 24, 12);
+            GbEmu_BlitWithPixelOp(p + 0x2598, (u16*)(D_8122C748 + 0xC438), 0, 16, 12);
+            break;
+    }
+
+    switch (D_8122C4F7) {
+        case 8:
+            j = gGbEmuButtonBindingSelections.unk_00;
+            i = 0;
+            base = fb + 0x3C3E;
+            break;
+        case 12:
+            i = 0x14;
+            j = gGbEmuButtonBindingSelections.unk_01;
+            base = fb + 0x3C3E;
+            break;
+        default:
+            return;
+    }
+    row = y + i;
+    p = row * 320 + base;
+    GbEmu_BlitWithPixelOp(p + 0xCBA, (u16*)(D_8122C748 + 0xBBD8), 0, 16, 12);
+    GbEmu_BlitWithPixelOp(p + 0xCCC, (u16*)(D_8122C748 + 0xB8D8), 0, 16, 12);
+    GbEmu_BlitWithPixelOp(p + 0xCDE, (u16*)(D_8122C748 + 0xBA58), 0, 16, 12);
+    GbEmu_BlitWithPixelOp(p + 0xCF0, (u16*)(D_8122C748 + 0xB5D8), 0, 16, 12);
+    GbEmu_BlitWithPixelOp(p + 0xD02, (u16*)(D_8122C748 + 0xB458), 0, 16, 12);
+    row += 7;
+    x = j * 0x12 + 0x37;
+    for (j = 1; j < 0x11; j++) {
+        base[(row + j) * 320 + x] = base[(row + j) * 320 + x + 1] = base[(row + j) * 320 + x + 0x10] =
+            base[(row + j) * 320 + x + 0x11] = 0xE71C;
+    }
+    for (i = 1; i < 0x10; i++) {
+        base[row * 320 + x + i] = base[(row + 1) * 320 + x + i] = base[(row + 16) * 320 + x + i] =
+            base[(row + 17) * 320 + x + i] = 0xE71C;
+    }
+}
 
 s32 func_8120572C(s32 arg0) {
     unk_D_8122B2C0* emu = (&D_8122B2C0)[arg0];
