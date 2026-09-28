@@ -44,7 +44,6 @@ u8 D_86A06210;
 u8 D_86A06211;
 u8 D_86A06212;
 unk_D_86A03014* D_86A06214;
-char** D_86A06218;
 u32 D_86A0621C;
 
 unk_D_86A025A0 D_86A025A0[9] = {
@@ -1524,26 +1523,27 @@ s32 Credits_InterpolateRoleColor(Color_RGBA8_u32* arg0, u16 arg1, u16 arg2, u8 a
     return 1;
 }
 
-#ifdef NON_MATCHING
 /**
- * Instruction-exact with the block-scope `static char** D_86A06218` below (a file-scope
- * definition, static or not, costs an extra callee-saved register and a larger frame), but
- * IDO then emits that static's `.lcomm` immediately *before* the file's non-static bss
- * symbols instead of after them, so it is allocated at 0x86A06200 rather than 0x86A06218
- * and D_86A06200 slides to 0x86A06204.
+ * The storage at 0x86A06218 is this function's block-scope `static char** D_86A06218`:
+ * only the block-scope spelling produces the target codegen (a file-scope definition,
+ * static or not, costs an extra callee-saved register that caches the symbol's address
+ * across the loop).
  *
- * The `.lcomm` order is not declaration order for block-scope statics and does not depend
- * on the symbol name, the type, or the position of the declaration within the function.
- * A block-scope static in most functions of this file is emitted last (correct), but one in
- * func_86A013C8 (or in Credits_InterpolateRoleColor) is emitted just ahead of the globals.
- *
- * Merging this file with credits_15A2B0.c so that D_86A06210/11 need not be extern does not
- * help: the bss run is per translation unit and already sized correctly here, and the merge
- * is independently wrong -- the ROM has 12 bytes of padding between the end of
- * Credits_DrawRoleList (0x15A294) and Credits_GetRoleCount (0x15A2A0) plus 8 more before
- * 0x15A2B0, which IDO only emits at object boundaries, so these are three separate
- * translation units.
+ * IDO emits a block-scope static's `.lcomm` in its internal symbol-table walk order, which
+ * for this translation unit interleaves the file's statics and globals with the externs
+ * referenced by the D_86A02700/D_86A03014 tables. On its own, this static's `.lcomm` would
+ * be emitted just ahead of D_86A06210 and the bss globals would slide four bytes. The six
+ * never-defined `lcomm_walk_pad_*` prototypes below exist only to grow that symbol table
+ * so the walk places this static between D_86A06214 and D_86A0621C; they emit no code,
+ * data, or bss. Deleting any one of them, or adding another, shifts the bss layout.
  */
+static void lcomm_walk_pad_0(void);
+static void lcomm_walk_pad_1(void);
+static void lcomm_walk_pad_2(void);
+static void lcomm_walk_pad_3(void);
+static void lcomm_walk_pad_4(void);
+static void lcomm_walk_pad_5(void);
+
 void func_86A013C8(u8 arg0, u8 arg1, unk_D_86A03014* arg2) {
     static char** D_86A06218;
 
@@ -1564,9 +1564,6 @@ void func_86A013C8(u8 arg0, u8 arg1, unk_D_86A03014* arg2) {
     D_86A06212 = 0;
     D_86A06214 = arg2;
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/credits/credits_158A00/func_86A013C8.s")
-#endif
 
 /**
  * The wrap-around arm widens the counter to 64 bits before subtracting, which is what makes
