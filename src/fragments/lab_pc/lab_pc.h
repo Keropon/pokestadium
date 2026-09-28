@@ -696,7 +696,7 @@ void LabPC_SetGridBorderActive(unk_func_88200FA0_030_030* arg0, s32 arg1);
 void LabPC_BoxGrid_BindMessagePanel(unk_func_8820BE14_02C_038* arg0, unk_func_88507D4C* arg1);
 s32 LabPC_ScrollableGrid_UpdateScroll(unk_func_8820BE14_02C_038* arg0);
 s32 LabPC_ScrollableGrid_DrawCells(unk_func_8820BE14_02C_038* arg0, s32 arg1, s32 arg2, s32 arg3);
-void func_88216000(unk_func_8820BE14_02C_038* arg0, s32 arg1, s32 arg2);
+s32 func_88216000(unk_func_8820BE14_02C_038* arg0, s32 arg1, s32 arg2);
 s32 func_882169D4(unk_func_8820BE14_02C_038* arg0, Controller* arg1);
 void LabPC_ScrollableGrid_SetSwapMode(unk_func_8820BE14_02C_038* arg0, s32 arg1);
 void LabPC_BindGridDeckData(unk_func_8820BE14_02C_038* arg0, unk_func_8820BE14_06C_000* arg1, u32 arg2);
