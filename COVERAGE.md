@@ -3,8 +3,8 @@
 # pokestadium decompilation coverage
 
 <!-- AUTO_COVERAGE:START -->
-- Functions with C implementations: **7,378 / 7,437 (99.2%)**
-- Remaining decompilable `GLOBAL_ASM` owners: **59** (across 39 source files)
+- Functions with C implementations: **7,384 / 7,437 (99.3%)**
+- Remaining decompilable `GLOBAL_ASM` owners: **53** (across 35 source files)
 - Separately managed `hasm` assembly segments: **9**
 <!-- AUTO_COVERAGE:END -->
 
@@ -24,26 +24,22 @@ The function denominator covers C source owners and `GLOBAL_ASM` stubs. `hasm` e
 | `src/fragments/battle_engine/battle_engine_356730.c` | 1 | `func_8436C6A4` |
 | `src/fragments/battle_engine/battle_engine_361050.c` | 2 | `func_8437B0CC`, `func_8437FD74` |
 | `src/fragments/clefairy_game/clefairy_game.c` | 1 | `func_86100C30` |
-| `src/fragments/credits/credits_158A00.c` | 1 | `func_86A013C8` |
 | `src/fragments/credits/credits_15A2B0.c` | 1 | `func_86A01CF0` |
 | `src/fragments/gallery_album/gallery_album.c` | 1 | `func_83501718` |
 | `src/fragments/gallery_camera/gallery_camera_150AC0.c` | 1 | `func_86905734` |
 | `src/fragments/gallery_rental_viewer/gallery_rental_viewer_2AFDB0.c` | 1 | `func_838043F8` |
-| `src/fragments/gb_tower_emulator/gb_tower_emulator_7F9A0.c` | 2 | `func_812029B0`, `func_81204A84` |
+| `src/fragments/gb_tower_emulator/gb_tower_emulator_7F9A0.c` | 1 | `func_812029B0` |
 | `src/fragments/gb_tower_emulator/gb_tower_emulator_86920.c` | 1 | `func_812070A0` |
 | `src/fragments/gb_tower_emulator/gb_tower_emulator_86CB0.c` | 4 | `func_8120806C`, `func_81208828`, `func_81209078`, `func_81209374` |
-| `src/fragments/lab_pc/lab_pc_1A9780.c` | 3 | `func_88201488`, `func_88203ED8`, `func_882052F4` |
+| `src/fragments/lab_pc/lab_pc_1A9780.c` | 2 | `func_88201488`, `func_88203ED8` |
 | `src/fragments/lab_pc/lab_pc_1AE680.c` | 3 | `func_88206110`, `func_88209B54`, `func_8820BE14` |
-| `src/fragments/lab_pc/lab_pc_1BCF10.c` | 1 | `func_88216000` |
 | `src/fragments/lab_pc_list/lab_pc_list_1CEA00.c` | 1 | `func_88304850` |
-| `src/fragments/lab_pc_list/lab_pc_list_1D7B40.c` | 1 | `func_88310854` |
 | `src/fragments/magikarp_game/magikarp_game.c` | 1 | `func_860005B8` |
 | `src/fragments/minigame_select/minigame_select_27BCC0.c` | 1 | `func_8250281C` |
 | `src/fragments/particle_data_library/particle_data_library_2558B0.c` | 1 | `func_810010BC` |
 | `src/fragments/particle_data_library/particle_data_library_2577F0.c` | 1 | `func_81002530` |
 | `src/fragments/particle_data_library/particle_data_library_257AF0.c` | 1 | `func_81002830` |
 | `src/fragments/particle_data_library/particle_data_library_258080.c` | 1 | `func_81003A54` |
-| `src/fragments/pokedex/pokedex_214920.c` | 1 | `func_88803614` |
 | `src/fragments/pokedex/pokedex_2190D0.c` | 2 | `func_88805AEC`, `func_88807D04` |
 | `src/fragments/sushi_game/sushi_game_144300.c` | 1 | `func_86800B38` |
 | `src/fragments/sushi_game/sushi_game_1462A0.c` | 1 | `func_86803C6C` |
