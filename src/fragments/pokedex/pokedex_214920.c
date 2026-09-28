@@ -785,10 +785,12 @@ void Pokedex_BuildRootWidget(unk_func_888044BC* arg0, s32 arg1, s32 arg2, u8* ar
     ((func8850068C)Memmap_GetFragmentVaddr(WidgetTree_AppendChild))(&arg0->unk_00.unk_00, &arg0->unk_54->unk_00.unk_00);
 }
 
-#ifdef NON_MATCHING
 s32 func_88803614(void) {
     s32 var_s0;
-    u16 var_s2 = 1;
+    s32 var_s2;
+    s32 var_s3;
+
+    var_s2 = var_s3 = 1;
 
     ((func88500A6C)Memmap_GetFragmentVaddr(WidgetTree_SelectPage))(D_88826940->unk_2C, 0);
     ((func88500A6C)Memmap_GetFragmentVaddr(WidgetTree_SelectPage))(D_88826940->unk_30, 0);
@@ -834,12 +836,11 @@ s32 func_88803614(void) {
         ((func885008C4)Memmap_GetFragmentVaddr(WidgetTree_Update))(D_88826940);
         ((func88500828)Memmap_GetFragmentVaddr(WidgetTree_Draw))(D_88826940, 0, 0);
         BgStage_AdvanceFrame();
-    }
-    return var_s2;
+        var_s3 = var_s2;
+    };
+
+    return var_s3;
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/pokedex/pokedex_214920/func_88803614.s")
-#endif
 
 s32 Pokedex_ShowEntryMenu(void) {
     s32 var_s0;
