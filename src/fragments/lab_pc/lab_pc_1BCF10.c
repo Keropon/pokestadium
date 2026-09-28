@@ -50,12 +50,12 @@ s32 LabPC_DrawTabWidget(unk_func_882149A0* arg0, s32 arg1, s32 arg2) {
 
     gDPLoadTextureBlock(gDisplayListHead++, D_4001638, G_IM_FMT_IA, G_IM_SIZ_8b, 8, 8, 0, G_TX_NOMIRROR | G_TX_CLAMP,
                         G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-    gSPTextureRectangle(gDisplayListHead++, arg1 << 2, (arg2 * 4) & 0xFFF, ((arg0->unk_00.unk_14.unk_00 + arg1) - 8) << 2,
+    gSPTextureRectangle(gDisplayListHead++, arg1 << 2, arg2 << 2, ((arg0->unk_00.unk_14.unk_00 + arg1) - 8) << 2,
                         (arg2 + 8) << 2, G_TX_RENDERTILE, 0, 0, 0x0400, 0x0400);
 
     gDPLoadTextureBlock(gDisplayListHead++, D_4001710, G_IM_FMT_IA, G_IM_SIZ_8b, 8, 8, 0, G_TX_NOMIRROR | G_TX_CLAMP,
                         G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-    gSPTextureRectangle(gDisplayListHead++, ((arg0->unk_00.unk_14.unk_00 + arg1) - 8) << 2, (arg2 * 4) & 0xFFF,
+    gSPTextureRectangle(gDisplayListHead++, ((arg0->unk_00.unk_14.unk_00 + arg1) - 8) << 2, arg2 << 2,
                         (arg0->unk_00.unk_14.unk_00 + arg1) << 2, ((arg2 + arg0->unk_00.unk_14.unk_02) - 8) << 2,
                         G_TX_RENDERTILE, 0, 0, 0x0400, 0x0400);
 
@@ -786,7 +786,7 @@ s32 LabPC_ModeToggleIcon_Draw(unk_func_88217740* arg0, s32 arg1, s32 arg2) {
     sp6C = D_88218238[(arg0->unk_2C != 0) ? 0 : 1];
 
     gDPSetPrimColor(gDisplayListHead++, 0, 0, sp6C.r, sp6C.g, sp6C.b, sp6C.a);
-    gSPTextureRectangle(gDisplayListHead++, arg1 << 2, (arg2 * 4) & 0xFFF, (arg1 + 0x20) << 2, (arg2 + 0x14) << 2,
+    gSPTextureRectangle(gDisplayListHead++, arg1 << 2, arg2 << 2, (arg1 + 0x20) << 2, (arg2 + 0x14) << 2,
                         G_TX_RENDERTILE, 0, 0, 0x0400, 0x0400);
 
     sp6C = D_88218238[(arg0->unk_2C == 0) ? 0 : 1];
@@ -794,7 +794,7 @@ s32 LabPC_ModeToggleIcon_Draw(unk_func_88217740* arg0, s32 arg1, s32 arg2) {
     gDPPipeSync(gDisplayListHead++);
 
     gDPSetPrimColor(gDisplayListHead++, 0, 0, sp6C.r, sp6C.g, sp6C.b, sp6C.a);
-    gSPTextureRectangle(gDisplayListHead++, (arg1 + 0x20) << 2, (arg2 * 4) & 0xFFF, (arg1 + 0x40) << 2, (arg2 + 0x14) << 2,
+    gSPTextureRectangle(gDisplayListHead++, (arg1 + 0x20) << 2, arg2 << 2, (arg1 + 0x40) << 2, (arg2 + 0x14) << 2,
                         G_TX_RENDERTILE, 0x0400, 0, 0x0400, 0x0400);
 
     return 0;
