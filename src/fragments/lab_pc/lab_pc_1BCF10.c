@@ -14,9 +14,9 @@ typedef struct unk_func_8820BE14_02C_038_02C {
     /* 0x00 */ s16 unk_3E;
     /* 0x00 */ char unk40[0xA];
     /* 0x00 */ s16 unk_4A;
-    /* 0x00 */ char unk4C[0x14];
+    /* 0x00 */ char unk4C[0xC];
     /* 0x00 */ s32 unk_58;
-} unk_func_8820BE14_02C_038_02C; // size >= 0x58
+} unk_func_8820BE14_02C_038_02C; // size >= 0x5C
 
 void LabPC_InitTabWidget(unk_func_882149A0* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6,
                    Color_RGBA8 arg7, Color_RGBA8 arg8, Color_RGBA8 arg9) {
@@ -50,12 +50,12 @@ s32 LabPC_DrawTabWidget(unk_func_882149A0* arg0, s32 arg1, s32 arg2) {
 
     gDPLoadTextureBlock(gDisplayListHead++, D_4001638, G_IM_FMT_IA, G_IM_SIZ_8b, 8, 8, 0, G_TX_NOMIRROR | G_TX_CLAMP,
                         G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-    gSPTextureRectangle(gDisplayListHead++, arg1 << 2, arg2 << 2, ((arg0->unk_00.unk_14.unk_00 + arg1) - 8) << 2,
+    gSPTextureRectangle(gDisplayListHead++, arg1 << 2, (arg2 * 4) & 0xFFF, ((arg0->unk_00.unk_14.unk_00 + arg1) - 8) << 2,
                         (arg2 + 8) << 2, G_TX_RENDERTILE, 0, 0, 0x0400, 0x0400);
 
     gDPLoadTextureBlock(gDisplayListHead++, D_4001710, G_IM_FMT_IA, G_IM_SIZ_8b, 8, 8, 0, G_TX_NOMIRROR | G_TX_CLAMP,
                         G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-    gSPTextureRectangle(gDisplayListHead++, ((arg0->unk_00.unk_14.unk_00 + arg1) - 8) << 2, arg2 << 2,
+    gSPTextureRectangle(gDisplayListHead++, ((arg0->unk_00.unk_14.unk_00 + arg1) - 8) << 2, (arg2 * 4) & 0xFFF,
                         (arg0->unk_00.unk_14.unk_00 + arg1) << 2, ((arg2 + arg0->unk_00.unk_14.unk_02) - 8) << 2,
                         G_TX_RENDERTILE, 0, 0, 0x0400, 0x0400);
 
@@ -327,23 +327,13 @@ s32 LabPC_ScrollableGrid_DrawCells(unk_func_8820BE14_02C_038* arg0, s32 arg1, s3
     return 0;
 }
 
-#ifdef NON_MATCHING
-void func_88216000(unk_func_8820BE14_02C_038* arg0, s32 arg1, s32 arg2) {
+s32 func_88216000(unk_func_8820BE14_02C_038* arg0, s32 arg1, s32 arg2) {
     s32 sp12C;
-    Gfx* sp104;
-    Gfx* sp100;
-    s32 spC;
+    s32 height = 16;
+    s32 width = 8;
     s32 temp_s0;
-    s32 temp_t3;
-    s32 temp_t4;
-    s32 temp_t4_2;
-    s32 var_t5;
-    unk_func_8820BE14_06C* temp_v0;
-    unk_func_8820BE14_06C* temp_v0_2;
-    void* temp_v1_42;
-    unk_func_8820BE14_02C_038_02C* ptr = arg0->unk_00.unk_2C;
 
-    sp12C = ptr->unk_3E * ptr->unk_4A;
+    sp12C = ((unk_func_8820BE14_02C_038_02C*)arg0->unk_00.unk_2C)->unk_3E * ((unk_func_8820BE14_02C_038_02C*)arg0->unk_00.unk_2C)->unk_4A;
 
     temp_s0 = ((arg0->unk_00.unk_00.unk_14.unk_00 / 2) + arg1) - 9;
 
@@ -355,10 +345,11 @@ void func_88216000(unk_func_8820BE14_02C_038* arg0, s32 arg1, s32 arg2) {
     gDPSetTextureFilter(gDisplayListHead++, G_TF_POINT);
     gDPSetCombineMode(gDisplayListHead++, G_CC_DECALRGBA, G_CC_DECALRGBA);
 
-    gDPLoadTextureBlock(gDisplayListHead++, D_40022E0, G_IM_FMT_I, G_IM_SIZ_8b, 8, 16, 0, G_TX_NOMIRROR | G_TX_WRAP,
-                        G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+    gDPLoadTextureBlock(gDisplayListHead++, D_40022E0, G_IM_FMT_I, G_IM_SIZ_8b, width, height, 0,
+                        G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
+                        G_TX_NOLOD);
 
-    gSPTextureRectangle(gDisplayListHead++, arg1 << 2, arg2 << 2, (arg0->unk_00.unk_00.unk_14.unk_00 + arg1) << 2,
+    gSPTextureRectangle(gDisplayListHead++, arg1 << 2, (arg2 * 4) & 0xFFF, (arg0->unk_00.unk_00.unk_14.unk_00 + arg1) << 2,
                         (arg2 + 0x10) << 2, G_TX_RENDERTILE, 0, 0, 0x0400, 0x0400);
 
     gDPPipeSync(gDisplayListHead++);
@@ -368,45 +359,43 @@ void func_88216000(unk_func_8820BE14_02C_038* arg0, s32 arg1, s32 arg2) {
     gDPSetAlphaCompare(gDisplayListHead++, G_AC_THRESHOLD);
     gDPSetTexturePersp(gDisplayListHead++, G_TP_NONE);
 
-    spC = (arg2 * 4) & 0xFFF;
     if (arg0->unk_00.unk_30 == 0) {
-        gDPLoadTextureBlock(gDisplayListHead++, (ptr->unk_58 > 0) ? D_4002368 : D_4002D88, G_IM_FMT_RGBA, G_IM_SIZ_16b,
-                            20, 16, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
-                            G_TX_NOLOD, G_TX_NOLOD);
-        gSPTextureRectangle(gDisplayListHead++, temp_s0 << 2, arg2 << 2, (temp_s0 + 0x11) << 2, (arg2 + 0xF) << 2,
+        gDPLoadTextureBlock(gDisplayListHead++, (((unk_func_8820BE14_02C_038_02C*)(arg0->unk_00.unk_2C))->unk_58 > 0) ? D_4002368 : D_4002D88,
+                            G_IM_FMT_RGBA, G_IM_SIZ_16b, 20, 16, 0, G_TX_NOMIRROR | G_TX_WRAP,
+                            G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+        gSPTextureRectangle(gDisplayListHead++, temp_s0 << 2, (arg2 * 4) & 0xFFF, (temp_s0 + 0x11) << 2, (arg2 + 0xF) << 2,
                             G_TX_RENDERTILE, 0, 0, 0x1000, 0x0400);
 
-        gDPLoadTextureBlock(gDisplayListHead++, (ptr->unk_58 > 0) ? D_4002878 : D_4003298, G_IM_FMT_RGBA, G_IM_SIZ_16b,
-                            20, 16, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
-                            G_TX_NOLOD, G_TX_NOLOD);
-        gSPTextureRectangle(gDisplayListHead++, (temp_s0 - 0x1C) << 2, arg2 << 2, (temp_s0 - 9) << 2, (arg2 + 0xF) << 2,
+        gDPLoadTextureBlock(gDisplayListHead++, (((unk_func_8820BE14_02C_038_02C*)(arg0->unk_00.unk_2C))->unk_58 > 0) ? D_4002878 : D_4003298,
+                            G_IM_FMT_RGBA, G_IM_SIZ_16b, 20, 16, 0, G_TX_NOMIRROR | G_TX_WRAP,
+                            G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+        gSPTextureRectangle(gDisplayListHead++, (temp_s0 - 0x1C) << 2, (arg2 * 4) & 0xFFF, (temp_s0 - 9) << 2, (arg2 + 0xF) << 2,
                             G_TX_RENDERTILE, 0, 0, 0x1000, 0x0400);
     } else {
-        var_t5 = 0;
-        if ((ptr->unk_2C != NULL) && ((ptr->unk_58 + sp12C) < (ptr->unk_3E * (ptr->unk_2C->unk_08 + 1)))) {
+        s32 var_t5 = 0;
+        if ((((unk_func_8820BE14_02C_038_02C*)(arg0->unk_00.unk_2C))->unk_2C != NULL) &&
+            ((((unk_func_8820BE14_02C_038_02C*)(arg0->unk_00.unk_2C))->unk_58 + sp12C) < (((unk_func_8820BE14_02C_038_02C*)(arg0->unk_00.unk_2C))->unk_3E * (((unk_func_8820BE14_02C_038_02C*)(arg0->unk_00.unk_2C))->unk_2C->unk_08 + 1)))) {
             var_t5 = 1;
         }
 
         gDPLoadTextureBlock(gDisplayListHead++, var_t5 != 0 ? D_40025F0 : D_4003010, G_IM_FMT_RGBA, G_IM_SIZ_16b, 20,
                             16, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
                             G_TX_NOLOD, G_TX_NOLOD);
-        gSPTextureRectangle(gDisplayListHead++, temp_s0 << 2, arg2 << 2, (temp_s0 + 0x11) << 2, (arg2 + 0xF) << 2,
+        gSPTextureRectangle(gDisplayListHead++, temp_s0 << 2, (arg2 * 4) & 0xFFF, (temp_s0 + 0x11) << 2, (arg2 + 0xF) << 2,
                             G_TX_RENDERTILE, 0, 0, 0x1000, 0x0400);
 
         gDPLoadTextureBlock(gDisplayListHead++, var_t5 != 0 ? D_4002B00 : D_4003520, G_IM_FMT_RGBA, G_IM_SIZ_16b, 20,
                             16, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
                             G_TX_NOLOD, G_TX_NOLOD);
-        gSPTextureRectangle(gDisplayListHead++, (temp_s0 + 0x1A) << 2, arg2 << 2, (temp_s0 + 0x2D) << 2,
+        gSPTextureRectangle(gDisplayListHead++, (temp_s0 + 0x1A) << 2, (arg2 * 4) & 0xFFF, (temp_s0 + 0x2D) << 2,
                             (arg2 + 0xF) << 2, G_TX_RENDERTILE, 0, 0, 0x1000, 0x0400);
     }
 
     gDPPipeSync(gDisplayListHead++);
 
     gDPSetAlphaCompare(gDisplayListHead++, G_AC_NONE);
+    return 0;
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/lab_pc/lab_pc_1BCF10/func_88216000.s")
-#endif
 
 s32 func_882169D4(unk_func_8820BE14_02C_038* arg0, Controller* arg1) {
     s32 sp24 = arg0->unk_00.unk_38;
@@ -797,7 +786,7 @@ s32 LabPC_ModeToggleIcon_Draw(unk_func_88217740* arg0, s32 arg1, s32 arg2) {
     sp6C = D_88218238[(arg0->unk_2C != 0) ? 0 : 1];
 
     gDPSetPrimColor(gDisplayListHead++, 0, 0, sp6C.r, sp6C.g, sp6C.b, sp6C.a);
-    gSPTextureRectangle(gDisplayListHead++, arg1 << 2, arg2 << 2, (arg1 + 0x20) << 2, (arg2 + 0x14) << 2,
+    gSPTextureRectangle(gDisplayListHead++, arg1 << 2, (arg2 * 4) & 0xFFF, (arg1 + 0x20) << 2, (arg2 + 0x14) << 2,
                         G_TX_RENDERTILE, 0, 0, 0x0400, 0x0400);
 
     sp6C = D_88218238[(arg0->unk_2C == 0) ? 0 : 1];
@@ -805,7 +794,7 @@ s32 LabPC_ModeToggleIcon_Draw(unk_func_88217740* arg0, s32 arg1, s32 arg2) {
     gDPPipeSync(gDisplayListHead++);
 
     gDPSetPrimColor(gDisplayListHead++, 0, 0, sp6C.r, sp6C.g, sp6C.b, sp6C.a);
-    gSPTextureRectangle(gDisplayListHead++, (arg1 + 0x20) << 2, arg2 << 2, (arg1 + 0x40) << 2, (arg2 + 0x14) << 2,
+    gSPTextureRectangle(gDisplayListHead++, (arg1 + 0x20) << 2, (arg2 * 4) & 0xFFF, (arg1 + 0x40) << 2, (arg2 + 0x14) << 2,
                         G_TX_RENDERTILE, 0x0400, 0, 0x0400, 0x0400);
 
     return 0;
