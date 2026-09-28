@@ -1396,7 +1396,6 @@ s32 LabPC_ConfirmSaveAndExit(unk_func_88203ED8* arg0, Controller* arg1) {
     return sp24;
 }
 
-#ifdef NON_MATCHING
 s32 func_882052F4(unk_func_88203ED8_064* arg0, Controller* arg1) {
     s32 sp34;
     s32 tmp;
@@ -1550,9 +1549,6 @@ s32 func_882052F4(unk_func_88203ED8_064* arg0, Controller* arg1) {
     }
     return sp34;
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/lab_pc/lab_pc_1A9780/func_882052F4.s")
-#endif
 
 void LabPC_BoxMenu_ModalLoop(unk_func_88203ED8* arg0, Controller* arg1) {
     s32 var_s1 = 0;
