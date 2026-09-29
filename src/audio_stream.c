@@ -106,59 +106,20 @@ void AudioStream_SetEnabled(s32 arg0) {
     }
 }
 
-#ifdef NON_MATCHING
 void func_80044EA4(void) {
-    s32 i;
-    s32 j;
-    s32 sp70;
-    u8* sp5C;
-    void** sp44;
-    unk_D_800FCF28* temp_s4;
-    s16** temp_s0;
-    s32 temp_a0;
-    s32 temp_a0_2;
-    s32 temp_a0_3;
-    s32 temp_a1;
-    s32 temp_a2_2;
-    s32 temp_a3;
-    s32 temp_fp;
-    s32 temp_t5;
-    s32 temp_v0_2;
-    s32 temp_v0_9;
-    s32 temp_v1;
-    s32 var_s1;
-    s32 var_v0;
-    s32 temp_s3;
-    s32* temp_v0_8;
-    u32 temp_a2;
-    u32 temp_lo;
-    u32 temp_lo_2;
-    u32 temp_lo_3;
-    u32 temp_t9;
-    u32 temp_t9_2;
-    u32 temp_v0_3;
-    u32 temp_v0_4;
-    u32 temp_v0_5;
-    u32 temp_v0_6;
-    u32 temp_v0_7;
+    UNUSED s32 pad;
+    u32 j;
     u32 var_s7;
-    u32 var_t0;
-    u32 var_t1;
-    u32 var_t2;
-    u32 var_v1;
-    u32 var_v1_2;
-    u32* temp_s2_2;
-    u32* temp_s2_3;
-    u8 temp_t6;
-    u8 temp_v0;
-    u8 temp_v1_2;
-    u8* temp_s2;
-    u8* var_a1;
-    void* var_a0;
-    s16 tmp;
+    s32 i;
+    u32 temp_a2;
+    s32 temp_v0_9;
+    s16 sample;
 
     for (i = 0; i < 2; i++) {
-        if (D_800FCEF0[i] != 2) {
+        if (D_800FCEF0[i] == 2U) {
+            continue;
+        }
+        {
             if (D_800FCF30[i] < D_800FCF38[i]) {
                 if ((D_800FCF38[i] - D_800FCF30[i]) < D_800FCEEC) {
                     var_s7 = D_800FCEEC;
@@ -172,34 +133,33 @@ void func_80044EA4(void) {
             }
 
             AudioStream_RefillAndDecode(D_800FCED8[i]);
-            if (D_800FCED8[i]->unk_25D1 == 2) {
+            if ((u8)D_800FCED8[i]->unk_25D1 == 2) {
                 osWritebackDCache(D_800FCF28[i], 0x1140);
                 AudioStream_MarkLoaded(D_800FCED8[i]);
                 D_800FCED0 = 1;
                 D_800FCF20[i] = 0;
-            } else {
-                if ((D_800FCEF0[i] != 0) && (D_800FCEF0[i] != 3) && (D_800FCED8[i]->unk_25D1 == 4)) {
-                    if (D_800FCF20[i] == 0) {
-                        AudioStream_Abort(D_800FCED8[i]);
-                        D_800FCF20[i] = 1;
-                    }
-                    D_800FCED0 = 0;
-                    D_800FCEF0[i] = 2;
-                    bzero(D_800FCEE0[i], 0x1400);
-                    bzero(D_800FCF28[i], 0x1140);
+            } else if ((D_800FCEF0[i] != 0) && (D_800FCEF0[i] != 3) && ((u8)D_800FCED8[i]->unk_25D1 == 4)) {
+                if (D_800FCF20[i] == 0) {
+                    AudioStream_Abort(D_800FCED8[i]);
+                    D_800FCF20[i] = 1;
                 }
+                D_800FCED0 = 0;
+                D_800FCEF0[i] = 2;
+                bzero(D_800FCEE0[i], 0x1400);
+                bzero(D_800FCF28[i], 0x1140);
             }
 
             AudioStream_ConsumeSamples(D_800FCED8[i], var_s7);
 
             temp_a2 = D_800FCED8[i]->unk_25C8 - var_s7;
             for (j = 0; j < var_s7; j++) {
-                D_800FCF28[i]->unk_000[(D_800FCF38[i] + j * 2) % 2208] =
-                    (D_800FCF00[i] * D_800FCEE0[i][temp_a2 % 2560]) >> 7;
+                sample = (D_800FCEE0[i][(temp_a2 + j) % 2560] * D_800FCF00[i]) >> 7;
+                D_800FCF28[i]->unk_000[(D_800FCF38[i] + (j << 1) + 1) % 2208] = sample;
+                D_800FCF28[i]->unk_000[(D_800FCF38[i] + (j << 1)) % 2208] = sample;
             }
 
             D_800FCF38[i] += var_s7 * 2;
-            D_800FCF38[i] %= 2208;
+            D_800FCF38[i] = (u32)D_800FCF38[i] % 2208;
             osWritebackDCache(D_800FCF28[i], 0x1140);
 
             switch (D_800FCEF0[i]) {
@@ -223,8 +183,7 @@ void func_80044EA4(void) {
                     break;
 
                 case 3:
-                    D_800FCF10[i]--;
-                    if (D_800FCF10[i] == 0) {
+                    if (--D_800FCF10[i] == 0) {
                         D_800FCEF0[i] = 0;
                     }
                     break;
@@ -242,9 +201,7 @@ void func_80044EA4(void) {
         }
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/audio_stream/func_80044EA4.s")
-#endif
+
 
 void AudioStream_DmaReadChunk(u32 arg0, u32 arg1, u32 arg2, OSMesgQueue* arg3) {
     OSIoMesg sp48;
