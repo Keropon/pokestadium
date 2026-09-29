@@ -3,8 +3,8 @@
 # pokestadium decompilation coverage
 
 <!-- AUTO_COVERAGE:START -->
-- Functions with C implementations: **7,385 / 7,437 (99.3%)**
-- Remaining decompilable `GLOBAL_ASM` owners: **52** (across 35 source files)
+- Functions with C implementations: **7,386 / 7,437 (99.3%)**
+- Remaining decompilable `GLOBAL_ASM` owners: **51** (across 35 source files)
 - Separately managed `hasm` assembly segments: **9**
 <!-- AUTO_COVERAGE:END -->
 
@@ -30,7 +30,7 @@ The function denominator covers C source owners and `GLOBAL_ASM` stubs. `hasm` e
 | `src/fragments/gallery_rental_viewer/gallery_rental_viewer_2AFDB0.c` | 1 | `func_838043F8` |
 | `src/fragments/gb_tower_emulator/gb_tower_emulator_7F9A0.c` | 1 | `func_812029B0` |
 | `src/fragments/gb_tower_emulator/gb_tower_emulator_86920.c` | 1 | `func_812070A0` |
-| `src/fragments/gb_tower_emulator/gb_tower_emulator_86CB0.c` | 4 | `func_8120806C`, `func_81208828`, `func_81209078`, `func_81209374` |
+| `src/fragments/gb_tower_emulator/gb_tower_emulator_86CB0.c` | 3 | `func_81208828`, `func_81209078`, `func_81209374` |
 | `src/fragments/lab_pc/lab_pc_1A9780.c` | 2 | `func_88201488`, `func_88203ED8` |
 | `src/fragments/lab_pc/lab_pc_1AE680.c` | 3 | `func_88206110`, `func_88209B54`, `func_8820BE14` |
 | `src/fragments/lab_pc_list/lab_pc_list_1CEA00.c` | 1 | `func_88304850` |
