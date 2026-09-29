@@ -288,23 +288,22 @@ s16 func_80049DF0(void);
 s16 func_8004A474(void);
 s16 func_8004A89C(void);
 
-#ifdef NON_MATCHING
 void func_80049A60(u32 arg0) {
     s32 pad[3];
     s16 sp4C[4];
     u32 i;
     f32 var_fs0;
     s16 var_a0;
-    u32 var_a2;
-    u32 var_a3;
-    u32 tmp2;
     s32 var_s4;
-    u32 var_v1;
     s16 tmp;
+    u8 var_t;
 
     var_fs0 = 0.0f;
     var_s4 = 1;
     arg0 >>= 1;
+
+    var_t = D_800FD6E1;
+    var_a0 = ((var_t & 1) ? -1 : 0) + ((var_t & 2) ? -1 : 0) + ((var_t & 8) ? -1 : 0);
 
     if (D_800FD6F4 < D_800FD6F0) {
         if ((0xB80 - (arg0 * 4)) < (D_800FD6F0 - D_800FD6F4)) {
@@ -330,9 +329,10 @@ void func_80049A60(u32 arg0) {
             sp4C[1] = func_8004A474();
             sp4C[3] = func_8004A89C();
 
+            var_t = D_800FD008.unk_2A;
             var_a0 =
-                ((u32)((sp4C[0] & ((D_800FD008.unk_2A & 1) ? -1 : 0)) + (sp4C[1] & ((D_800FD008.unk_2A & 2) ? -1 : 0)) +
-                       (sp4C[3] & ((D_800FD008.unk_2A & 8) ? -1 : 0))) >>
+                ((u32)((sp4C[0] & ((var_t & 1) ? -1 : 0)) + (sp4C[1] & ((var_t & 2) ? -1 : 0)) +
+                       (sp4C[3] & ((var_t & 8) ? -1 : 0))) >>
                  5) *
                 (D_800FD6E0 + 1);
         } else {
@@ -365,9 +365,6 @@ void func_80049A60(u32 arg0) {
         var_fs0 += D_800FD6E4;
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/gb_audio_render/func_80049A60.s")
-#endif
 
 void GbAudio_ApplyQueuedWrites(u16 arg0) {
     while (D_800FD068[D_800FD6A8].unk_06 >= arg0) {
