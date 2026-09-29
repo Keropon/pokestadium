@@ -26,7 +26,7 @@ typedef struct GbApuChannelState {
   /* 0x12 */ u16 unk_12;
   /* 0x14 */ s32 unk_14;
   /* 0x18 */ s32 unk_18;
-  /* 0x1C */ char unk1C[0x4];
+  /* 0x1C */ s32 unk_1C;
   /* 0x20 */ u8 unk_20;
   /* 0x21 */ u8 unk_21;
   /* 0x22 */ char unk22[0x2];
@@ -58,6 +58,66 @@ typedef struct unk_D_8122EEA8 {
   /* 0x02 */ u8 unk_02;
   /* 0x03 */ u8 unk_03;
 } unk_D_8122EEA8; // size = 0x4
+
+// Game Boy sound registers NR10 (0xFF10) through NR52 (0xFF26), mirrored in
+// D_8120EA70 (indexed by register address - 0xFF10).
+typedef struct GbApuRegs {
+    /* 0x00 NR10 */ u32 : 1;
+                    u32 sweepTime : 3;
+                    u32 sweepDir : 1;
+                    u32 sweepShift : 3;
+    /* 0x01 NR11 */ u32 duty1 : 2;
+                    u32 length1 : 6;
+    /* 0x02 NR12 */ u32 volume1 : 4;
+                    u32 envDir1 : 1;
+                    u32 envSweep1 : 3;
+    /* 0x03 NR13 */ u32 freqLo1 : 8;
+    /* 0x04 NR14 */ u32 trigger1 : 1;
+                    u32 counter1 : 1;
+                    u32 : 3;
+                    u32 freqHi1 : 3;
+    /* 0x05 */      u32 : 8;
+    /* 0x06 NR21 */ u32 duty2 : 2;
+                    u32 length2 : 6;
+    /* 0x07 NR22 */ u32 volume2 : 4;
+                    u32 envDir2 : 1;
+                    u32 envSweep2 : 3;
+    /* 0x08 NR23 */ u32 freqLo2 : 8;
+    /* 0x09 NR24 */ u32 trigger2 : 1;
+                    u32 counter2 : 1;
+                    u32 : 3;
+                    u32 freqHi2 : 3;
+    /* 0x0A NR30 */ u32 waveOn : 1;
+                    u32 : 7;
+    /* 0x0B NR31 */ u32 length3 : 8;
+    /* 0x0C NR32 */ u32 : 1;
+                    u32 level3 : 2;
+                    u32 : 5;
+    /* 0x0D NR33 */ u32 freqLo3 : 8;
+    /* 0x0E NR34 */ u32 trigger3 : 1;
+                    u32 counter3 : 1;
+                    u32 : 3;
+                    u32 freqHi3 : 3;
+    /* 0x0F */      u32 : 8;
+    /* 0x10 NR41 */ u32 : 2;
+                    u32 length4 : 6;
+    /* 0x11 NR42 */ u32 volume4 : 4;
+                    u32 envDir4 : 1;
+                    u32 envSweep4 : 3;
+    /* 0x12 NR43 */ u16 shift4 : 4;
+                    u32 width4 : 1;
+                    u32 ratio4 : 3;
+    /* 0x13 NR44 */ u32 trigger4 : 1;
+                    u32 counter4 : 1;
+                    u32 : 6;
+    /* 0x14 NR50 */ u32 : 8;
+    /* 0x15 NR51 */ u32 : 8;
+    /* 0x16 NR52 */ u32 power : 1;
+                    u32 : 7;
+    /* 0x17 */      u32 : 8;
+} GbApuRegs; // size = 0x18
+
+#define GB_APU_REGS (*(GbApuRegs*)D_8120EA70)
 
 extern u8 gGbMemoryMap[];
 extern u16 D_8120EA86;
@@ -7136,8 +7196,213 @@ u8 D_8122869C[0x4] = {
     0x00, 0x00, 0x00, 0x00,
 };
 
-void func_8120806C(u16, u8);
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_86CB0/func_8120806C.s")
+void func_8120806C(u16 reg, u8 value) {
+    s32 pad;
+    s32 i;
+    s32 pad2;
+
+    if ((reg == 0x26) && !(value & 0x80)) {
+        for (i = 0x23; i != 0xF; i--) {
+            func_8120806C(i, 0);
+        }
+    }
+
+    if ((reg < 0x24) && !GB_APU_REGS.power) {
+        return;
+    }
+
+    D_8120EA70[reg - 0x10] = value;
+
+    switch (reg) {
+        case 0x10:
+            gGbApuSquare1.unk_34 = GB_APU_REGS.sweepTime * 400;
+            gGbApuSquare1.unk_39 = GB_APU_REGS.sweepDir;
+            gGbApuSquare1.unk_38 = GB_APU_REGS.sweepShift;
+            if (gGbApuSquare1.unk_3A == 0) {
+                gGbApuSquare1.unk_30 = 0;
+            }
+            if (gGbApuSquare1.unk_34 == 0) {
+                gGbApuSquare1.unk_3A = 0;
+            } else {
+                gGbApuSquare1.unk_3A = 1;
+            }
+            break;
+        case 0x11:
+            gGbApuSquare1.unk_3B = GB_APU_REGS.duty1;
+            gGbApuSquare1.unk_1C = 0x40 - GB_APU_REGS.length1;
+            break;
+        case 0x12:
+            gGbApuSquare1.unk_21 = GB_APU_REGS.volume1;
+            if ((GB_APU_REGS.volume1 == 0) && (GB_APU_REGS.envDir1 == 0)) {
+                gGbApuSquare1.unk_00 = 0;
+            }
+            break;
+        case 0x13:
+            gGbApuSquare1.unk_10 = GB_APU_REGS.freqLo1 | (GB_APU_REGS.freqHi1 << 8);
+            gGbApuSquare1.unk_0C = GbApu_FreqToStep2x(gGbApuSquare1.unk_10);
+            break;
+        case 0x14:
+            gGbApuSquare1.unk_18 = GB_APU_REGS.counter1;
+            gGbApuSquare1.unk_10 = GB_APU_REGS.freqLo1 | (GB_APU_REGS.freqHi1 << 8);
+            gGbApuSquare1.unk_0C = GbApu_FreqToStep2x(gGbApuSquare1.unk_10);
+            if ((s32)GB_APU_REGS.trigger1 == 1) {
+                gGbApuSquare1.unk_14 = gGbApuSquare1.unk_1C * 200;
+                gGbApuSquare1.unk_20 = D_8120EB14[gGbApuSquare1.unk_21];
+                gGbApuSquare1.unk_24 = 0;
+                gGbApuSquare1.unk_30 = 0;
+                gGbApuSquare1.unk_2E = GB_APU_REGS.envDir1;
+                gGbApuSquare1.unk_28 = GB_APU_REGS.envSweep1 * 800;
+                gGbApuSquare1.unk_2D = gGbApuSquare1.unk_21;
+                if (GB_APU_REGS.power) {
+                    gGbApuSquare1.unk_00 = 1;
+                }
+            }
+            if (gGbApuSquare1.unk_34 == 0) {
+                gGbApuSquare1.unk_3A = 0;
+            } else {
+                gGbApuSquare1.unk_3A = 1;
+            }
+            break;
+        case 0x16:
+            gGbApuSquare2.unk_3B = GB_APU_REGS.duty2;
+            gGbApuSquare2.unk_1C = 0x40 - GB_APU_REGS.length2;
+            break;
+        case 0x17:
+            gGbApuSquare2.unk_21 = GB_APU_REGS.volume2;
+            if ((GB_APU_REGS.volume2 == 0) && (GB_APU_REGS.envDir2 == 0)) {
+                gGbApuSquare2.unk_00 = 0;
+            }
+            break;
+        case 0x18:
+            gGbApuSquare2.unk_10 = GB_APU_REGS.freqLo2 | (GB_APU_REGS.freqHi2 << 8);
+            gGbApuSquare2.unk_0C = GbApu_FreqToStep2x(gGbApuSquare2.unk_10);
+            break;
+        case 0x19:
+            gGbApuSquare2.unk_18 = GB_APU_REGS.counter2;
+            gGbApuSquare2.unk_10 = GB_APU_REGS.freqLo2 | (GB_APU_REGS.freqHi2 << 8);
+            gGbApuSquare2.unk_0C = GbApu_FreqToStep2x(gGbApuSquare2.unk_10);
+            if ((s32)GB_APU_REGS.trigger2 == 1) {
+                gGbApuSquare2.unk_14 = gGbApuSquare2.unk_1C * 200;
+                gGbApuSquare2.unk_08.unk_02 = 0;
+                gGbApuSquare2.unk_20 = D_8120EB14[gGbApuSquare2.unk_21];
+                gGbApuSquare2.unk_24 = 0;
+                gGbApuSquare2.unk_2E = GB_APU_REGS.envDir2;
+                gGbApuSquare2.unk_28 = GB_APU_REGS.envSweep2 * 800;
+                gGbApuSquare2.unk_2D = gGbApuSquare2.unk_21;
+                if (GB_APU_REGS.power) {
+                    gGbApuSquare2.unk_00 = 1;
+                }
+            }
+            break;
+        case 0x1A:
+            if (GB_APU_REGS.waveOn == 0) {
+                gGbApuWave.unk_00 = GB_APU_REGS.waveOn;
+            }
+            break;
+        case 0x1B:
+            gGbApuWave.unk_1C = 0x100 - GB_APU_REGS.length3;
+            break;
+        case 0x1C:
+            gGbApuWave.unk_21 = GB_APU_REGS.level3;
+            gGbApuWave.unk_20 = D_8120EB24[gGbApuWave.unk_21];
+            break;
+        case 0x1D:
+            gGbApuWave.unk_10 = GB_APU_REGS.freqLo3 | (GB_APU_REGS.freqHi3 << 8);
+            gGbApuWave.unk_0C = GbApu_FreqToStep(gGbApuWave.unk_10);
+            break;
+        case 0x1E:
+            gGbApuWave.unk_10 = GB_APU_REGS.freqLo3 | (GB_APU_REGS.freqHi3 << 8);
+            gGbApuWave.unk_0C = GbApu_FreqToStep(gGbApuWave.unk_10);
+            gGbApuWave.unk_18 = GB_APU_REGS.counter3;
+            if ((s32)GB_APU_REGS.trigger3 == 1) {
+                gGbApuWave.unk_14 = gGbApuWave.unk_1C * 200;
+                gGbApuWave.unk_04 = 0x140;
+                if (GB_APU_REGS.power && ((s32)GB_APU_REGS.waveOn == 1)) {
+                    gGbApuWave.unk_00 = 1;
+                }
+            }
+            break;
+        case 0x30:
+        case 0x31:
+        case 0x32:
+        case 0x33:
+        case 0x34:
+        case 0x35:
+        case 0x36:
+        case 0x37:
+        case 0x38:
+        case 0x39:
+        case 0x3A:
+        case 0x3B:
+        case 0x3C:
+        case 0x3D:
+        case 0x3E:
+        case 0x3F:
+            D_8122EE58[(reg - 0x30) * 2 + 0] = (D_8120EA70[reg - 0x10] >> 4) & 0xF;
+            D_8122EE58[(reg - 0x30) * 2 + 1] = D_8120EA70[reg - 0x10] & 0xF;
+            break;
+        case 0x20:
+            gGbApuNoise.unk_1C = 0x40 - GB_APU_REGS.length4;
+            break;
+        case 0x21:
+            gGbApuNoise.unk_21 = GB_APU_REGS.volume4;
+            if ((GB_APU_REGS.volume4 == 0) && (GB_APU_REGS.envDir4 == 0)) {
+                gGbApuNoise.unk_00 = 0;
+            }
+            break;
+        case 0x22:
+            gGbApuNoise.unk_10 = GB_APU_REGS.shift4;
+            gGbApuNoise.unk_0C = func_81207494(GB_APU_REGS.shift4, GB_APU_REGS.width4, GB_APU_REGS.ratio4);
+            if (gGbApuNoise.unk_00 == 0) {
+                gGbApuNoise.unk_40 = gGbApuNoise.unk_0C;
+            }
+            if (gGbApuNoise.unk_40 < gGbApuNoise.unk_0C) {
+                gGbApuNoise.unk_48 = gGbApuNoise.unk_0C - gGbApuNoise.unk_40;
+            } else {
+                gGbApuNoise.unk_48 = gGbApuNoise.unk_40 - gGbApuNoise.unk_0C;
+            }
+            gGbApuNoise.unk_48 >>= 7;
+            if (gGbApuNoise.unk_48 == 0) {
+                gGbApuNoise.unk_48 = 1;
+            }
+            break;
+        case 0x23:
+            gGbApuNoise.unk_18 = GB_APU_REGS.counter4;
+            if ((s32)GB_APU_REGS.trigger4 == 1) {
+                gGbApuNoise.unk_14 = gGbApuNoise.unk_1C * 200;
+                if (gGbApuNoise.unk_00 == 0) {
+                    gGbApuNoise.unk_08.unk_02 = 0;
+                }
+                gGbApuNoise.unk_2D = gGbApuNoise.unk_21;
+                switch ((s32)GB_APU_REGS.width4) {
+                    case 0:
+                        gGbApuNoise.unk_20 = D_8120EB28[gGbApuNoise.unk_2D];
+                        break;
+                    case 1:
+                        gGbApuNoise.unk_20 = D_8120EB38[gGbApuNoise.unk_2D];
+                        break;
+                }
+                if ((gGbApuNoise.unk_00 == 0) || (gGbApuNoise.unk_3C < gGbApuNoise.unk_20)) {
+                    gGbApuNoise.unk_3C = gGbApuNoise.unk_20;
+                }
+                gGbApuNoise.unk_24 = 0;
+                gGbApuNoise.unk_2E = GB_APU_REGS.envDir4;
+                gGbApuNoise.unk_28 = GB_APU_REGS.envSweep4 * 800;
+                if (GB_APU_REGS.power) {
+                    gGbApuNoise.unk_00 = 1;
+                }
+            }
+            break;
+        case 0x26:
+            if (!(value & 0x80)) {
+                gGbApuSquare1.unk_00 = 0;
+                gGbApuSquare2.unk_00 = 0;
+                gGbApuWave.unk_00 = 0;
+                gGbApuNoise.unk_00 = 0;
+            }
+            break;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_86CB0/func_81208828.s")
 
