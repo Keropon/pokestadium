@@ -862,7 +862,6 @@ void func_8130306C(u8* arg0) {
     gDisplayListHead = gfx;
 }
 
-#ifdef NON_MATCHING
 void func_8130337C(void) {
     Gfx* gfx = gDisplayListHead;
     u8* sp30;
@@ -917,27 +916,13 @@ void func_8130337C(void) {
                      AA_EN | CVG_DST_CLAMP | ZMODE_OPA | CVG_X_ALPHA | ALPHA_CVG_SEL | FORCE_BL | G_RM_NOOP2);
     gDPSetCombineMode(gfx++, G_CC_DECALRGBA, G_CC_DECALRGBA);
 
-    gDPPipeSync(gfx++);
-
-    gDPLoadTextureBlock(gfx++, &sp30[0], G_IM_FMT_RGBA, G_IM_SIZ_16b, 128, 16, 0, G_TX_NOMIRROR | G_TX_CLAMP,
-                        G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-    gSPTextureRectangle(gfx++, 0x03E8, 0x0334, 0x05E8, 0x0374, G_TX_RENDERTILE, 0, 0, 0x0400, 0x0400);
-
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < 9; i++) {
         gDPPipeSync(gfx++);
 
-        gDPLoadTextureBlock(gfx++, &sp30[0x1000 + (i * 0x2000)], G_IM_FMT_RGBA, G_IM_SIZ_16b, 128, 16, 0,
+        gDPLoadTextureBlock(gfx++, &sp30[i * 0x1000], G_IM_FMT_RGBA, G_IM_SIZ_16b, 128, 16, 0,
                             G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
                             G_TX_NOLOD, G_TX_NOLOD);
-        gSPTextureRectangle(gfx++, 0x03E8, (0xDD + (i * 0x20)) << 2, 0x05E8, (0xED + (i * 0x20)) << 2, G_TX_RENDERTILE,
-                            0, 0, 0x0400, 0x0400);
-
-        gDPPipeSync(gfx++);
-
-        gDPLoadTextureBlock(gfx++, &sp30[0x2000 + (i * 0x2000)], G_IM_FMT_RGBA, G_IM_SIZ_16b, 128, 16, 0,
-                            G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
-                            G_TX_NOLOD, G_TX_NOLOD);
-        gSPTextureRectangle(gfx++, 0x03E8, (0xED + (i * 0x20)) << 2, 0x05E8, (0xFD + (i * 0x20)) << 2, G_TX_RENDERTILE,
+        gSPTextureRectangle(gfx++, 0x03E8, (0xCD + (i * 0x10)) << 2, 0x05E8, (0xDD + (i * 0x10)) << 2, G_TX_RENDERTILE,
                             0, 0, 0x0400, 0x0400);
     }
 
@@ -947,6 +932,3 @@ void func_8130337C(void) {
 
     gDisplayListHead = gfx;
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/transfer_pak_select/transfer_pak_select/func_8130337C.s")
-#endif
