@@ -110,14 +110,36 @@ typedef struct GbApuRegs {
     /* 0x13 NR44 */ u32 trigger4 : 1;
                     u32 counter4 : 1;
                     u32 : 6;
-    /* 0x14 NR50 */ u32 : 8;
-    /* 0x15 NR51 */ u32 : 8;
+    /* 0x14 NR50 */ u32 vinLeft : 1;
+                    u32 leftVolume : 3;
+                    u32 vinRight : 1;
+                    u32 rightVolume : 3;
+    /* 0x15 NR51 */ u32 noiseLeft : 1;
+                    u32 waveLeft : 1;
+                    u32 sq2Left : 1;
+                    u32 sq1Left : 1;
+                    u32 noiseRight : 1;
+                    u32 waveRight : 1;
+                    u32 sq2Right : 1;
+                    u32 sq1Right : 1;
     /* 0x16 NR52 */ u32 power : 1;
                     u32 : 7;
     /* 0x17 */      u32 : 8;
 } GbApuRegs; // size = 0x18
 
 #define GB_APU_REGS (*(GbApuRegs*)D_8120EA70)
+
+// A queued APU register write, packed into an OSMesg as (reg << 24) | (value << 16) | time.
+typedef struct GbApuWrite {
+    /* 0x0 */ u8 reg;
+    /* 0x1 */ u8 value;
+    /* 0x2 */ u16 time;
+} GbApuWrite; // size = 0x4
+
+typedef union GbApuMesg {
+    OSMesg mesg;
+    GbApuWrite write;
+} GbApuMesg;
 
 extern u8 gGbMemoryMap[];
 extern u16 D_8120EA86;
@@ -135,6 +157,7 @@ extern u8 D_8122EE58[40];
 extern s32 D_8122EE98;
 extern unk_D_8122EEA8 D_8122EEA8;
 extern OSMesgQueue D_8122EEB0;
+extern GbApuWrite D_8122C8D8[];
 extern OSMesg D_8122EEC8;
 extern void* D_812346E0;
 
@@ -7404,7 +7427,124 @@ void func_8120806C(u16 reg, u8 value) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_86CB0/func_81208828.s")
+void func_81208828(s32 numSamples, s16* out) {
+    s32 i;
+    u32 sq1R;
+    u32 sq1L;
+    u32 sq2R;
+    u32 sq2L;
+    u32 waveR;
+    u32 waveL;
+    u32 noiseR;
+    u32 noiseL;
+    u32 right;
+    u32 left;
+    s32 sq1;
+    s32 sq2;
+    GbApuWrite msg;
+    s32 wave;
+    s32 noise;
+    s32 count;
+    s32 idx;
+    f32 step;
+    f32 pos;
+    s32 flush;
+    s32 first;
+    s32 startTime;
+    u32 lastTime;
+    s32 pad[3];
+
+    first = TRUE;
+    count = 0;
+    idx = 0;
+    lastTime = 0;
+    while (TRUE) {
+        if (osRecvMesg(&D_8122EEB0, (OSMesg*)&msg, OS_MESG_NOBLOCK) == -1) {
+            break;
+        }
+        if (first) {
+            startTime = msg.time;
+            first = FALSE;
+        }
+        if (msg.time < lastTime) {
+            if (startTime < D_8120EAD0) {
+                osJamMesg(&D_8122EEB0, *(OSMesg*)&msg, OS_MESG_NOBLOCK);
+                break;
+            }
+            startTime = 0;
+            D_8122C8D8[count++] = msg;
+            lastTime = msg.time;
+        } else {
+            D_8122C8D8[count++] = msg;
+            lastTime = msg.time;
+        }
+    }
+
+    pos = 0.0f;
+    step = (f32)D_8120EAC4 / (f32)numSamples;
+    if (numSamples < count) {
+        flush = TRUE;
+    } else {
+        flush = FALSE;
+    }
+
+    for (i = 0; i < numSamples; i++) {
+        pos += step;
+        if (flush) {
+            while (TRUE) {
+                if (count == 0) {
+                    break;
+                }
+                if (((s32)pos & 0xFFFF) < D_8122C8D8[idx].time) {
+                    break;
+                }
+                func_8120806C(D_8122C8D8[idx].reg, D_8122C8D8[idx].value);
+                count--;
+                idx++;
+            }
+        } else if ((count != 0) && (((s32)pos & 0xFFFF) >= D_8122C8D8[idx].time)) {
+            func_8120806C(D_8122C8D8[idx].reg, D_8122C8D8[idx].value);
+            count--;
+            idx++;
+        }
+
+        sq1 = GbApu_UpdateSquare1Channel();
+        sq2 = GbApu_UpdateSquare2Channel();
+        wave = GbApu_UpdateWaveChannel();
+        noise = func_81207DF8();
+
+        noiseL = GB_APU_REGS.noiseLeft ? noise : 0;
+        noiseR = GB_APU_REGS.noiseRight ? noise : 0;
+        waveL = GB_APU_REGS.waveLeft ? wave : 0;
+        waveR = GB_APU_REGS.waveRight ? wave : 0;
+        sq2L = GB_APU_REGS.sq2Left ? sq2 : 0;
+        sq2R = GB_APU_REGS.sq2Right ? sq2 : 0;
+        sq1L = GB_APU_REGS.sq1Left ? sq1 : 0;
+        sq1R = GB_APU_REGS.sq1Right ? sq1 : 0;
+
+        right = (sq1R + sq2R + waveR + noiseR) / (8 - GB_APU_REGS.rightVolume);
+        left = (sq1L + sq2L + waveL + noiseL) / (8 - GB_APU_REGS.leftVolume);
+        if (right >= 0x8000) {
+            right = 0x7FFF;
+        }
+        if (left >= 0x8000) {
+            left = 0x7FFF;
+        }
+        out[i * 2 + 0] = left;
+        out[i * 2 + 1] = right;
+    }
+
+    while (count != 0) {
+        func_8120806C(D_8122C8D8[idx].reg, D_8122C8D8[idx].value);
+        count--;
+        idx++;
+    }
+
+    D_8122EEA8.unk_00 = 0;
+    D_8122EEA8.unk_01 = 0;
+    D_8122EEA8.unk_02 = 0;
+    D_8122EEA8.unk_03 = 0;
+}
 
 void func_81208C08(u16 arg0, u8 arg1, u16 arg2) {
     s32 temp_v1;
