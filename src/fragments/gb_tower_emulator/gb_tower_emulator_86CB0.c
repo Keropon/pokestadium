@@ -159,7 +159,27 @@ extern unk_D_8122EEA8 D_8122EEA8;
 extern OSMesgQueue D_8122EEB0;
 extern GbApuWrite D_8122C8D8[];
 extern OSMesg D_8122EEC8;
-extern void* D_812346E0;
+typedef struct unk_D_81234690 {
+    /* 0x00 */ u8 pad0[2];
+    /* 0x02 */ u16 unk_02;
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ s16 unk_06;
+    /* 0x08 */ s16 unk_08;
+    /* 0x0A */ s16 unk_0A;
+    /* 0x0C */ s16 unk_0C;
+    /* 0x0E */ u8 pad0E[0x2A];
+} unk_D_81234690; // size = 0x38
+
+extern unk_D_81234690 D_81234690;
+extern volatile s32 D_812346C8;
+extern s32 D_812346D0;
+extern s32 D_812346D4;
+extern s16* D_812346E0[3];
+extern s16 D_812346EC[3];
+extern u32 D_812346F4;
+extern volatile u32 D_812346FC;
+
+void func_81209374(s32 numSamples, s16* out);
 
 s32 D_8120EA60 = 0;
 u8 D_8120EA64[0xC] = {
@@ -606,16 +626,17 @@ u8 D_8120EB70[0x8] = {
 };
 
 s32 D_8120EB78 = 0;
-s32 D_8120EB7C = 0;
-u8 D_8120EB80[0x4] = {
-    0x00, 0x00, 0x00, 0x00,
-};
-u8 D_8120EB84[0x8] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-};
-u8 D_8120EB8C[0x8] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-};
+// A streamed sample: stream id (index into GB_AUDIO_STREAM_DATA/SIZE) and read position.
+typedef struct GbAudioStream {
+    /* 0x0 */ s32 id;
+    /* 0x4 */ s32 pos;
+} GbAudioStream; // size = 0x8
+
+// D_8120EB7C: pending stream to start; D_8120EB84: current stream; D_8120EB8C: previous
+// stream, kept playing (at D_8122869C) under the new one.
+GbAudioStream D_8120EB7C = { 0, 0 };
+GbAudioStream D_8120EB84 = { 0, 0 };
+GbAudioStream D_8120EB8C = { 0, 0 };
 u8 D_8120EB94[0x6B40] = {
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x01, 0x06, 0x09, 0x09, 0x03, 0xFA,
     0xF5, 0xF5, 0x01, 0x08, 0x21, 0x02, 0xDA, 0xDC, 0xF0, 0x29, 0x37, 0x2B, 0xEF, 0xC2, 0xC6, 0xE4,
@@ -7215,9 +7236,10 @@ u8 D_81228678[0x24] = {
     0x00, 0x00, 0x28, 0xD0, 0x00, 0x00, 0x1A, 0xE0, 0x00, 0x00, 0x41, 0x90, 0x00, 0x00, 0x32, 0x60,
     0x00, 0x00, 0x1C, 0xE0,
 };
-u8 D_8122869C[0x4] = {
-    0x00, 0x00, 0x00, 0x00,
-};
+u32 D_8122869C = 0;
+
+#define GB_AUDIO_STREAM_DATA ((s8**)D_81228654)
+#define GB_AUDIO_STREAM_SIZE ((s32*)D_81228678)
 
 void func_8120806C(u16 reg, u8 value) {
     s32 pad;
@@ -7628,7 +7650,7 @@ void GbApu_Reset(s32 arg0) {
 }
 
 void func_81208E4C(void) {
-    void* sp34 = D_812346E0;
+    void* sp34 = D_812346E0[0];
     f32 x = (f32) D_8122C790;
     f32 y = (f32) D_8122C792;
     f32 dx = x / 640.0f;
@@ -7686,18 +7708,140 @@ u8 GbMem_ReadIoRegister(u16 arg0) {
   return gGbMemoryMap[arg0 & 0xFFFF];
 }
 
-void func_81209078();
+#ifdef NON_MATCHING
+s32 func_81209078(void) {
+    u32 aiLen;
+    s32 pad1;
+    s32 idx;
+    s32 pad2[2];
+    s16* buf;
+    s32 pad3[2];
+    s16* len;
+    s16** bufPtr;
+
+    D_812346C8++;
+    D_812346D0 ^= 1;
+    D_812346D4++;
+    D_812346D4 %= 3;
+    idx = (D_812346D4 + 2) % 3;
+    aiLen = osAiGetLength() >> 2;
+
+    if (D_812346FC < 16) {
+        len = &D_812346EC[idx];
+        if (*len != 0) {
+            bufPtr = &D_812346E0[idx];
+            if (osGbSetNextBuffer(*bufPtr, *len * 4) == -1) {
+                do {
+                } while (0);
+            } else {
+                D_8122C790 = (*bufPtr)[*len * 2 - 2];
+                D_8122C792 = (*bufPtr)[*len * 2 - 1];
+            }
+        }
+    }
+
+    if (D_812346FC > 16) {
+        return 0;
+    }
+    if (D_812346FC != 0) {
+        D_812346FC++;
+    }
+
+    idx = D_812346D4;
+    bufPtr = &D_812346E0[idx];
+    len = &D_812346EC[idx];
+    buf = *bufPtr;
+    *len = ((D_81234690.unk_06 - aiLen + 0x80) & 0xFFF0) + 0x10;
+    if (*len < D_81234690.unk_0A) {
+        *len = D_81234690.unk_0A;
+    }
+    if (D_81234690.unk_08 < *len) {
+        *len = D_81234690.unk_08;
+    }
+    if (D_8120EB78 == 0) {
+        func_81208828(*len, buf);
+    } else {
+        func_81209374(*len, buf);
+    }
+    osWritebackDCache(buf, *len * 4);
+    D_812346F4 = osGetCount() * (D_812346C8 + D_812346F4);
+    D_812346F4 += (*bufPtr)[D_812346C8 & 0xFF];
+    return 0;
+}
+#else
 #pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_86CB0/func_81209078.s")
+#endif
 
 void GbAudio_SetAlternateRendererEnabled(s32 arg0) {
   D_8120EB78 = arg0;
 }
 
 void GbAudio_SetAlternateStreamId(s32 arg0) {
-  D_8120EB7C = arg0;
+  D_8120EB7C.id = arg0;
 }
 
+#ifdef NON_MATCHING
+void func_81209374(s32 numSamples, s16* out) {
+    s32 i;
+    s8* mainData;
+    s8* altData;
+    s32 mainEnd;
+    s32 altEnd;
+    u32 vol;
+    s32 a;
+    s32 b;
+
+    mainData = NULL;
+    altData = NULL;
+    if (D_8120EB7C.id != 0) {
+        D_8120EB8C = D_8120EB84;
+        D_8120EB84 = D_8120EB7C;
+        D_8120EB84.pos = 0;
+        D_8120EB7C.id = 0;
+        D_8122869C = 0x400;
+    }
+    if (D_8120EB84.id != 0) {
+        mainData = GB_AUDIO_STREAM_DATA[D_8120EB84.id];
+        mainEnd = GB_AUDIO_STREAM_SIZE[D_8120EB84.id];
+    }
+    if (D_8120EB8C.id != 0) {
+        altData = GB_AUDIO_STREAM_DATA[D_8120EB8C.id];
+        altEnd = GB_AUDIO_STREAM_SIZE[D_8120EB8C.id];
+    }
+
+    vol = D_8122869C;
+    for (i = 0; i < numSamples; i++) {
+        if (mainData != NULL) {
+            if (mainEnd == D_8120EB84.pos) {
+                D_8120EB84.id = 0;
+                mainData = NULL;
+                a = 0;
+            } else {
+                a = mainData[D_8120EB84.pos++];
+            }
+        } else {
+            a = 0;
+        }
+        if (altData != NULL) {
+            if (altEnd == D_8120EB8C.pos) {
+                D_8120EB8C.id = 0;
+                altData = NULL;
+                b = 0;
+            } else {
+                b = (s32)(altData[D_8120EB8C.pos++] * vol) / 1024;
+            }
+        } else {
+            b = 0;
+        }
+        out[i * 2 + 0] = (a + b) << 6;
+        out[i * 2 + 1] = (a - b) << 6;
+    }
+    D_8122869C = vol;
+}
+#else
+void func_81209374(s32, s16*);
 #pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_86CB0/func_81209374.s")
+#endif
 
 void func_81209688(UNUSED s32 arg0) {
 }

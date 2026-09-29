@@ -16,5 +16,6 @@ void GbAudio_SetAlternateStreamId(s32);
 u8 GbMem_ReadIoRegister(u16);
 s32 GbCpu_Execute(unk_D_8122B2C0*, s32);
 void GbCpu_InitOpcodeTables(unk_D_8122B2C0*, void*);
+void func_81209374(s32, s16*);
 
 #endif /* _FRAGMENT1_H_ */
