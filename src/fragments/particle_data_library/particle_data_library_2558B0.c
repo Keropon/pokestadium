@@ -2,6 +2,7 @@
 #include "battle_hud.h"
 #include "geo_render.h"
 #include "gfx_buffer.h"
+#include "src/matrix.h"
 
 typedef struct unk_D_810047E0 {
     /* 0x00 */ s16 active;
@@ -16,7 +17,7 @@ typedef struct unk_D_810047E0 {
 typedef struct unk_arg2_func_81001D80 {
     /* 0x00 */ s32 unk_00;
     /* 0x04 */ s32 unk_04;
-    /* 0x08 */ s32 unk_08;
+    /* 0x08 */ s32 unk_08[1];
 } unk_arg2_func_81001D80; // size = 0xC
 
 typedef struct unk_D_81003FE0 {
@@ -303,23 +304,23 @@ void Particle31_UpdateSpeciesEffectTrigger(unk_D_810047E0* arg0) {
     }
 }
 
-#ifdef NON_MATCHING
 Gfx* func_810010BC(Gfx* gfx, unk_D_810047E0* arg1, unk_arg2_func_81001D80* arg2, s16 arg3) {
     Mtx* sp294;
     Mtx sp250;
     Mtx sp210;
     Mtx sp1D0;
     Mtx sp190;
-    s32 pad1;
+    s16 temp_v1;
     MtxF sp14C;
     MtxF sp10C;
-    s32 pad2;
+    f32 temp_f0;
     f32 sp104;
     f32 sp100;
     f32 spFC;
+    unk_D_86002F58_004_000* ptr;
 
-    sp294 = func_80005F5C(0x40);
-    func_80031EF4(&sp14C, &D_8006F088->unk_60.mtxf);
+    sp294 = Gfx_AllocDisplayList(0x40);
+    MtxF_ExtractScale(&sp14C, &D_8006F088->unk_60.mtxf);
     guMtxF2L(sp14C.mf, &sp1D0);
     if (D_8006F09C->unk_0A6 == 0xFE) {
         guScale(&sp250, D_8006F09C->unk_030.x * arg1->scale.x * 0.1f, D_8006F09C->unk_030.y * arg1->scale.y * 0.1f, D_8006F09C->unk_030.z * arg1->scale.z * 0.1f);
@@ -328,7 +329,7 @@ Gfx* func_810010BC(Gfx* gfx, unk_D_810047E0* arg1, unk_arg2_func_81001D80* arg2,
     }
     if (D_8006F09C->unk_0A6 == 0xFF) {
         if ((D_8006F09C->unk_01A == 0x5C) || (D_8006F09C->unk_01A == 0x6D) || (D_8006F09C->unk_01A == 0x6E)) {
-            func_8000ED4C(&sp10C, func_800123D4(0));
+            MtxF_Copy(&sp10C, GeoRender_GetRelativeMatrix(0));
             guMtxXFMF(sp10C.mf, 0, 0, 0, &spFC, &sp100, &sp104);
             guTranslate(&sp190, spFC, sp100, sp104);
             guMtxCatL(&sp250, &sp190, sp294);
@@ -337,7 +338,7 @@ Gfx* func_810010BC(Gfx* gfx, unk_D_810047E0* arg1, unk_arg2_func_81001D80* arg2,
             guMtxCatL(&sp250, &sp210, sp294);
         }
     } else if (D_8006F09C->unk_01A == 0x5C) {
-        func_8000ED4C(&sp10C, func_800123D4(0));
+        MtxF_Copy(&sp10C, GeoRender_GetRelativeMatrix(0));
         guMtxXFMF(sp10C.mf, 0, 0, 0, &spFC, &sp100, &sp104);
         guTranslate(&sp190, spFC, sp100, sp104);
         guMtxCatL(&sp250, &sp190, sp294);
@@ -346,83 +347,60 @@ Gfx* func_810010BC(Gfx* gfx, unk_D_810047E0* arg1, unk_arg2_func_81001D80* arg2,
         guMtxCatL(&sp250, &sp210, sp294);
     }
     guMtxCatL(&sp1D0, sp294, sp294);
-    {    Gfx *_gfx = (Gfx *)(gfx++);    _gfx->words.w0 = 0xDA380002;    _gfx->words.w1 = sp294;    }
+    gSPMatrix(gfx++, sp294, G_MTX_PUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(gfx++, arg2->unk_00);
     switch (D_8006F09C->unk_01A) {                              
     case 0x6D:                                      
     case 0x6E:                                      
-        {    Gfx *_gfx = (Gfx *)(gfx++);    _gfx->words.w0 = 0xFD900000;    _gfx->words.w1 = (s32) (arg2 + (((s16) arg1->misc / 2) * 4))->unk_08;    }
-        gDPSetTile(gfx++, G_IM_FMT_I, G_IM_SIZ_16b, 0, 0x0000, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
-        gDPLoadSync(gfx++);
-        gDPLoadBlock(gfx++, G_TX_LOADTILE, 0, 0, 255, 1024);
-        gDPPipeSync(gfx++);
-        gDPSetTile(gfx++, G_IM_FMT_I, G_IM_SIZ_4b, 2, 0x0000, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
-        gDPSetTileSize(gfx++, G_TX_RENDERTILE, 0, 0, 0x007C, 0x007C);
-        {    Gfx *_gfx = (Gfx *)(gfx++);    _gfx->words.w0 = 0xFA000000;    _gfx->words.w1 = (s32) (((0xC8 - (arg1->misc * 0xD)) & 0xFF) | 0x0A000000);    }
+        gDPLoadTextureBlock_4b(gfx++, arg2->unk_08[arg1->misc / 2], G_IM_FMT_I, 32, 32, 0, G_TX_NOMIRROR | G_TX_CLAMP,
+                               G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+        gDPSetPrimColor(gfx++, 0, 0, 0x0A, 0x00, 0x00, 0xC8 - (arg1->misc * 0xD));
         break;
     case 0x5C:
-        {    Gfx *_gfx = (Gfx *)(gfx++);    _gfx->words.w0 = 0xFD900000;    _gfx->words.w1 = (s32) (arg2 + (((s16) arg1->misc / 2) * 4))->unk_08;    }
-        gDPSetTile(gfx++, G_IM_FMT_I, G_IM_SIZ_16b, 0, 0x0000, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
-        gDPLoadSync(gfx++);
-        gDPLoadBlock(gfx++, G_TX_LOADTILE, 0, 0, 255, 1024);
-        gDPPipeSync(gfx++);
-        gDPSetTile(gfx++, G_IM_FMT_I, G_IM_SIZ_4b, 2, 0x0000, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
-        gDPSetTileSize(gfx++, G_TX_RENDERTILE, 0, 0, 0x007C, 0x007C);
+        gDPLoadTextureBlock_4b(gfx++, arg2->unk_08[arg1->misc / 2], G_IM_FMT_I, 32, 32, 0, G_TX_NOMIRROR | G_TX_CLAMP,
+                               G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
         gDPSetEnvColor(gfx++, 0x32, 0x14, 0x46, 0x00);
         if (arg1->misc < 0xA) {
             gDPSetPrimColor(gfx++, 0, 0, 0x64, 0x46, 0x82, 0xFF);
         } else {
-            {    Gfx *_gfx = (Gfx *)(gfx++);    _gfx->words.w0 = 0xFA000000;    _gfx->words.w1 = (s32) (((0x28F - (arg1->misc * 0x28)) & 0xFF) | 0x64468200);    }
+            gDPSetPrimColor(gfx++, 0, 0, 0x64, 0x46, 0x82, 0x28F - (arg1->misc * 0x28));
         }
         break;
-    case 0x4D:                                      
-    case 0x4E:                                      
-    case 0x92:                                      
-        {    Gfx *_gfx = (Gfx *)(gfx++);    _gfx->words.w0 = 0xFD900000;    _gfx->words.w1 = (s32) (arg2 + (((s16) arg1->misc / 2) * 4))->unk_08;    }
-        gDPSetTile(gfx++, G_IM_FMT_I, G_IM_SIZ_16b, 0, 0x0000, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
-        gDPLoadSync(gfx++);
-        gDPLoadBlock(gfx++, G_TX_LOADTILE, 0, 0, 255, 1024);
-        gDPPipeSync(gfx++);
-        gDPSetTile(gfx++, G_IM_FMT_I, G_IM_SIZ_4b, 2, 0x0000, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
-        gDPSetTileSize(gfx++, G_TX_RENDERTILE, 0, 0, 0x007C, 0x007C);
-        {    Gfx *_gfx = (Gfx *)(gfx++);    _gfx->words.w0 = 0xFA000000;    _gfx->words.w1 = (s32) (((0xFA - (arg1->misc * 3)) & 0xFF) | 0xFFFF0000);    }
+    case 0x92:
+    case 0x4D:
+    case 0x4E:
+        gDPLoadTextureBlock_4b(gfx++, arg2->unk_08[arg1->misc / 2], G_IM_FMT_I, 32, 32, 0, G_TX_NOMIRROR | G_TX_CLAMP,
+                               G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+        gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0xFF, 0x00, 0xFA - (arg1->misc * 3));
         break;
     case 0x86:                                      
     case 0x90:                                      
-        {    Gfx *_gfx = (Gfx *)(gfx++);    _gfx->words.w0 = 0xFD700000;    _gfx->words.w1 = (s32) (arg2 + (((s16) arg1->misc / 2) * 4))->unk_08;    }
-        gDPSetTile(gfx++, G_IM_FMT_IA, G_IM_SIZ_16b, 0, 0x0000, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
-        gDPLoadSync(gfx++);
-        gDPLoadBlock(gfx++, G_TX_LOADTILE, 0, 0, 1023, 256);
-        gDPPipeSync(gfx++);
-        gDPSetTile(gfx++, G_IM_FMT_IA, G_IM_SIZ_16b, 8, 0x0000, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
-        gDPSetTileSize(gfx++, G_TX_RENDERTILE, 0, 0, 0x007C, 0x007C);
+        gDPLoadTextureBlock(gfx++, arg2->unk_08[arg1->misc / 2], G_IM_FMT_IA, G_IM_SIZ_16b, 32, 32, 0,
+                            G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
+                            G_TX_NOLOD);
         if (arg1->misc < 4) {
-            {    Gfx *_gfx = (Gfx *)(gfx++);    _gfx->words.w0 = 0xFA000000;    _gfx->words.w1 = (s32) ((((arg1->misc * 0x14) + 0xB4) & 0xFF) | ~0xFF);    }
+            gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0xFF, 0xFF, (arg1->misc * 0x14) + 0xB4);
         } else {
-            {    Gfx *_gfx = (Gfx *)(gfx++);    _gfx->words.w0 = 0xFA000000;    _gfx->words.w1 = (s32) (((0x122 - (arg1->misc * 0xA)) & 0xFF) | ~0xFF);    }
+            gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0xFF, 0xFF, 0x122 - (arg1->misc * 0xA));
         }
         break;
     default:                                        
-        {    Gfx *_gfx = (Gfx *)(gfx++);    _gfx->words.w0 = 0xFD900000;    _gfx->words.w1 = (s32) (arg2 + (((s16) arg1->misc / 2) * 4))->unk_08;    }
-        gDPSetTile(gfx++, G_IM_FMT_I, G_IM_SIZ_16b, 0, 0x0000, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
-        gDPLoadSync(gfx++);
-        gDPLoadBlock(gfx++, G_TX_LOADTILE, 0, 0, 255, 1024);
-        gDPPipeSync(gfx++);
-        gDPSetTile(gfx++, G_IM_FMT_I, G_IM_SIZ_4b, 2, 0x0000, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
-        gDPSetTileSize(gfx++, G_TX_RENDERTILE, 0, 0, 0x007C, 0x007C);
-        {    Gfx *_gfx = (Gfx *)(gfx++);    _gfx->words.w0 = 0xFA000000;    _gfx->words.w1 = (s32) (((0xC8 - (arg1->misc * 0xD)) & 0xFF) | 0x0A000000);    }
+        gDPLoadTextureBlock_4b(gfx++, arg2->unk_08[arg1->misc / 2], G_IM_FMT_I, 32, 32, 0, G_TX_NOMIRROR | G_TX_CLAMP,
+                               G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+        gDPSetPrimColor(gfx++, 0, 0, 0x0A, 0x00, 0x00, 0xC8 - (arg1->misc * 0xD));
         break;
     }
     gSPDisplayList(gfx++, arg2->unk_04);
-    {    Gfx *_gfx = (Gfx *)(gfx++);    _gfx->words.w0 = 0xD8380002;    _gfx->words.w1 = 0x40;    }
+    gSPPopMatrix(gfx++, G_MTX_MODELVIEW);
     if (func_800325AC() == 0) {
-        switch (D_8006F09C->unk_01A) {                          
+        ptr = D_8006F09C;
+        switch (ptr->unk_01A) {                          
         case 0x6D:                                  
         case 0x6E:                                  
-            if (D_8006F09C->unk_0A6 != 0xFF) {
+            if (ptr->unk_0A6 != 0xFF) {
+                arg1->position.y += 0.5f * ptr->unk_030.y;
                 arg1->misc++;
                 arg1->scale.x += 0.1f;
-                arg1->position.y += 0.5f * D_8006F09C->unk_030.y;
                 arg1->scale.y += 0.1f;
                 arg1->scale.z += 0.1f;
                 if (arg1->misc >= 0x10) {
@@ -431,7 +409,7 @@ Gfx* func_810010BC(Gfx* gfx, unk_D_810047E0* arg1, unk_arg2_func_81001D80* arg2,
             }
             break;
         case 0x5C:                                  
-            if (D_8006F09C->unk_0A6 == 0xFF) {
+            if (ptr->unk_0A6 == 0xFF) {
                 arg1->misc += 2;
             } else {
                 arg1->misc++;
@@ -441,8 +419,8 @@ Gfx* func_810010BC(Gfx* gfx, unk_D_810047E0* arg1, unk_arg2_func_81001D80* arg2,
             }
             break;
         case 0x92:                                  
+            arg1->position.y += 1.5f * ptr->unk_030.y;
             arg1->misc++;
-            arg1->position.y += 1.5f * D_8006F09C->unk_030.y;
             arg1->scale.x += 0.005f;
             arg1->scale.y += 0.005f;
             arg1->scale.z += 0.005f;
@@ -451,9 +429,9 @@ Gfx* func_810010BC(Gfx* gfx, unk_D_810047E0* arg1, unk_arg2_func_81001D80* arg2,
             }
             break;
         case 0x4D:                                  
+            arg1->position.y += 0.75f * ptr->unk_030.y;
             arg1->misc++;
             arg1->scale.x += 0.005f;
-            arg1->position.y += 0.75f * D_8006F09C->unk_030.y;
             arg1->scale.y += 0.005f;
             arg1->scale.z += 0.005f;
             if (arg1->misc >= 0x10) {
@@ -461,7 +439,7 @@ Gfx* func_810010BC(Gfx* gfx, unk_D_810047E0* arg1, unk_arg2_func_81001D80* arg2,
             }
             break;
         case 0x4E:                                  
-            arg1->position.y += D_8006F09C->unk_030.y;
+            arg1->position.y += ptr->unk_030.y;
             arg1->misc++;
             arg1->scale.x += 0.005f;
             arg1->scale.y += 0.005f;
@@ -471,21 +449,25 @@ Gfx* func_810010BC(Gfx* gfx, unk_D_810047E0* arg1, unk_arg2_func_81001D80* arg2,
             }
             break;
         case 0x90:                                  
+            arg1->position.y -= 0.5f * ptr->unk_030.y;
             arg1->misc++;
-            arg1->position.y -= 0.5f * D_8006F09C->unk_030.y;
-            arg1->scale.x = D_810040DC[arg1->misc % 12];
-            arg1->scale.y = D_810040DC[arg1->misc % 12];
-            arg1->scale.z = D_810040DC[arg1->misc % 12];
-            if ((arg1->misc >= 0xC) || (arg1->position.y < 0.0f)) {
+            temp_v1 = arg1->misc;
+            temp_f0 = D_810040DC[temp_v1 % 12];
+            arg1->scale.x = temp_f0;
+            arg1->scale.y = temp_f0;
+            arg1->scale.z = temp_f0;
+            if ((temp_v1 >= 0xC) || (arg1->position.y < 0.0f)) {
                 arg1->active = 0;
             }
             break;
         case 0x86:                                  
             arg1->misc++;
-            arg1->scale.x = D_810040DC[arg1->misc % 12];
-            arg1->scale.y = D_810040DC[arg1->misc % 12];
-            arg1->scale.z = D_810040DC[arg1->misc % 12];
-            if ((arg1->misc >= 0xC) || (arg1->position.y < 0.0f)) {
+            temp_v1 = arg1->misc;
+            temp_f0 = D_810040DC[temp_v1 % 12];
+            arg1->scale.x = temp_f0;
+            arg1->scale.y = temp_f0;
+            arg1->scale.z = temp_f0;
+            if ((temp_v1 >= 0xC) || (arg1->position.y < 0.0f)) {
                 arg1->active = 0;
             }
             break;
@@ -506,10 +488,6 @@ Gfx* func_810010BC(Gfx* gfx, unk_D_810047E0* arg1, unk_arg2_func_81001D80* arg2,
     D_81004B50 += 1;
     return gfx;
 }
-#else
-Gfx* func_810010BC(Gfx*, unk_D_810047E0*, unk_arg2_func_81001D80*, s16);
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/particle_data_library/particle_data_library_2558B0/func_810010BC.s")
-#endif
 
 Gfx* Particle31_BuildDisplayList(Gfx* gfx, unk_D_810047E0* arg1, unk_arg2_func_81001D80* arg2, s16 arg3) {
     s32 i;

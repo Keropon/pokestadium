@@ -3182,7 +3182,7 @@ s32 BattleAI_InsertRankedCandidateGroup(BattleAiTeamState* arg0, s32* arg1, s32 
 void BattleAI_SelectRandomFallbackOrder(BattleAiTeamState* arg0, u8* arg1, s32 arg2);
 s32 BattleAI_SelectRandomUsableCandidate(BattleAiTeamState* arg0);
 s32 BattleAI_SelectRandomUsableMoveSlot(BattleMonRuntime* arg0);
-s32 func_8437FD74(BattleAiTeamState* arg0, s32* arg1, s32* arg2, u8 arg3);
+s32 func_8437FD74(BattleAiTeamState* arg0, u8* arg1, s32* arg2, u8 arg3);
 s32 BattleAI_SelectLeadFromScoredGroup(BattleAiTeamState* arg0, BattleAiTeamState* arg1, u8* arg2, u8* arg3, s32* arg4);
 s32 BattleAI_TryBuildScoredOrder(BattleAiTeamState* arg0, BattleAiTeamState* arg1, u8* arg2, u8* arg3, s32 arg4);
 void BattleAI_UpdateTeamAdvantageBias(void);

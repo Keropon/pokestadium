@@ -4295,48 +4295,25 @@ s32 BattleAI_SelectRandomUsableMoveSlot(BattleMonRuntime* arg0) {
 }
 
 #ifdef NON_MATCHING
-s32 func_8437FD74(BattleAiTeamState* arg0, s32* arg1, s32* arg2, u8 arg3) {
+s32 func_8437FD74(BattleAiTeamState* arg0, u8* arg1, s32* arg2, u8 arg3) {
     u8 i;
     u8 j;
     u8 k;
     u8 l;
     u8 m;
-    u8 spBF;
-    u8 spBE;
     u8 spBA;
+    u8 var_a3;
+    u8 var_s2;
+    u8 temp_v0_2;
+    u8 var_a0_3;
+    u8 var_a1;
+    u8 temp_l;
     s32 sp94[8];
     u8 sp90[3];
     u8 sp78[0x18];
+    u8 spBF;
     u8 sp76;
-    s32 sp60;
-    s32 sp5C;
-    s32 temp_t2;
-    s32 temp_t8;
-    u8 temp_v0_2;
-    s32 temp_v0_3;
-    s32 temp_v0_4;
-    s32 temp_v1_2;
-    s32 var_a0_2;
-    u8 var_a0_3;
-    u8 var_a1;
     s32 var_s0;
-    u8 var_s2;
-    s32 var_s3_2;
-    s32 var_v0;
-    s32 var_v0_2;
-    s32 var_v1_3;
-    s32 temp_t0;
-    u8 var_s1;
-    u8 var_s3;
-    u8 var_v1_2;
-    u8 temp_v0;
-    u8 temp_v1;
-    u8 var_a0;
-    u8 var_a3;
-    u8 var_t1;
-    u8 var_v1;
-    u8 tmp1;
-    u8 tmp2;
 
     sp76 = 0;
 
@@ -4358,10 +4335,9 @@ s32 func_8437FD74(BattleAiTeamState* arg0, s32* arg1, s32* arg2, u8 arg3) {
             sp94[j] = 0x80000002;
         }
 
-        sp5C = arg0->unk_04[i];
-
-        if (sp5C < arg0->unk_01[i]) {
-            if (arg0->unk_04[i] == 3) {
+        temp_l = arg0->unk_04[i];
+        if (temp_l < arg0->unk_01[i]) {
+            if (temp_l == 3) {
                 var_s2 = 0;
                 temp_v0_2 = arg0->unk_01[i] + var_a3;
 
@@ -4395,6 +4371,7 @@ s32 func_8437FD74(BattleAiTeamState* arg0, s32* arg1, s32* arg2, u8 arg3) {
 
                 if (var_s2 > 0) {
                     var_a0_3 = 1;
+                    var_a1 = var_s2;
                     if (D_843C5564->unk_00 & 0x10000) {
                         var_a0_3 = 2;
                     }
@@ -4405,8 +4382,6 @@ s32 func_8437FD74(BattleAiTeamState* arg0, s32* arg1, s32* arg2, u8 arg3) {
 
                     if (var_a0_3 < var_s2) {
                         var_a1 = var_a0_3;
-                    } else {
-                        var_a1 = var_s2;
                     }
 
                     // var_a1 = (var_a0_3 < var_s2) ? var_a0_3 : var_s2;
