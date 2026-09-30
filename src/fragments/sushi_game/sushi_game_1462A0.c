@@ -945,7 +945,6 @@ f32 SushiGame_ComputeEatFadeEnvelope(s16 arg0, s32 arg1) {
     return ret;
 }
 
-#ifdef NON_MATCHING
 void func_86803C6C(unk_D_86807558* arg0) {
     s32 pad;
     s32 pad1;
@@ -1001,7 +1000,7 @@ void func_86803C6C(unk_D_86807558* arg0) {
             }
 
             if (!(arg0->unk_006 & 0xF)) {
-                arg0->unk_0E0 = Rand_Range(0x10000);
+                arg0->unk_0E0 = Rand_Range(0x10000) & 0xFFFF;
             }
 
             spAC = COSS(arg0->unk_0E0) * spB8;
@@ -1019,9 +1018,9 @@ void func_86803C6C(unk_D_86807558* arg0) {
             break;
     }
 
-    temp_fa0 = SQ(spAC) + SQ(spA8);
-    if (temp_fa0 > 1.0f) {
-        temp_fa0 = 1.0f / sqrtf(temp_fa0);
+    var_fv1 = SQ(spAC) + SQ(spA8);
+    if (var_fv1 > 1.0f) {
+        temp_fa0 = 1.0f / sqrtf(var_fv1);
         spAC *= temp_fa0;
         spA8 *= temp_fa0;
     }
@@ -1054,15 +1053,15 @@ void func_86803C6C(unk_D_86807558* arg0) {
     } else {
         if (((sp64.x * sp58.x) + (sp64.z * sp58.z)) >= 0.0f) {
             if (sp70.y > 0.0f) {
-                var_fv1 = D_86806FA0;
+                tmp = D_86806FA0;
             } else {
-                var_fv1 = D_86806F9C;
+                tmp = D_86806F9C;
             }
         } else {
-            var_fv1 = D_86806FA4;
+            tmp = D_86806FA4;
         }
-        sp58.x *= var_fv1;
-        sp58.z *= var_fv1;
+        sp58.x *= tmp;
+        sp58.z *= tmp;
     }
 
     arg0->unk_074.x = sp64.x + sp58.x;
@@ -1073,8 +1072,9 @@ void func_86803C6C(unk_D_86807558* arg0) {
     arg0->unk_074.y = ABS_NORMALIZED(arg0->unk_074.y);
     arg0->unk_074.z = ABS_NORMALIZED(arg0->unk_074.z);
 
+    tmp = SQ(arg0->unk_074.x) + SQ(arg0->unk_074.z);
     if (arg0->unk_060 == 0) {
-        if ((SQ(arg0->unk_074.x) + SQ(arg0->unk_074.z)) < 0.25f) {
+        if (tmp < 0.25f) {
             if (arg0->unk_0C0 == 1) {
                 arg0->unk_0C0 = 0;
                 arg0->unk_0C8 = 1.0f;
@@ -1097,15 +1097,16 @@ void func_86803C6C(unk_D_86807558* arg0) {
         sp4C.x *= temp_fa0;
         sp4C.z *= temp_fa0;
 
-        if (((arg0->unk_098.unk_00.x * sp4C.x) + (sp4C.z * arg0->unk_098.unk_00.z)) < -0.95f) {
-            var_fv1 = 0.3f;
+        tmp = (arg0->unk_098.unk_00.x * sp4C.x) + (sp4C.z * arg0->unk_098.unk_00.z);
+        if (tmp < -0.95f) {
+            tmp = 0.3f;
         } else {
-            var_fv1 = 0.0f;
+            tmp = 0.0f;
         }
 
-        arg0->unk_098.unk_00.x += (sp4C.x * D_86806FAC) + (var_fv1 * arg0->unk_098.unk_18.x);
+        arg0->unk_098.unk_00.x += (sp4C.x * D_86806FAC) + (tmp * arg0->unk_098.unk_18.x);
         arg0->unk_098.unk_00.y = 0.0f;
-        arg0->unk_098.unk_00.z += (sp4C.z * D_86806FAC) + (var_fv1 * arg0->unk_098.unk_18.z);
+        arg0->unk_098.unk_00.z += (sp4C.z * D_86806FAC) + (tmp * arg0->unk_098.unk_18.z);
 
         arg0->unk_098.unk_00.x = ABS_NORMALIZED(arg0->unk_098.unk_00.x);
         arg0->unk_098.unk_00.z = ABS_NORMALIZED(arg0->unk_098.unk_00.z);
@@ -1126,10 +1127,6 @@ void func_86803C6C(unk_D_86807558* arg0) {
         }
     }
 }
-#else
-void func_86803C6C(unk_D_86807558* arg0);
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/sushi_game/sushi_game_1462A0/func_86803C6C.s")
-#endif
 
 unk_D_868084D8* func_86804634(unk_D_86807558* arg0) {
     UNUSED s32 pad;
