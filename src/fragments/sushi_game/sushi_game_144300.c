@@ -258,15 +258,13 @@ void SushiGame_DrawDishIcon(s32 arg0, s16 arg1, s16 arg2, f32 arg3) {
     }
 }
 
-#ifdef NON_MATCHING
 void func_86800B38(void) {
     s32 pad1;
     s32 pad2;
     s32 i;
     Color_RGB8 spD8[4];
     Color_RGB8 spD0[2];
-    Color_RGB8 spC4[4];
-    Color_RGB8 spB8[4];
+    Color_RGB8 spB8[8];
     Color_RGB8 spB4 = D_86806F40;
     s32 var_v0;
 
@@ -343,6 +341,7 @@ void func_86800B38(void) {
         Gfx_SetEnvColor(0xFF, 0xFF, 0xFF, 0xFF);
         Gfx_SetPrimColor(0xFF, 0xFF, 0xFF, 0xFF);
 
+        var_v0 = 60;
         for (i = 0; i < 8; i++) {
             pad1 = i % 4;
             if (pad1) {}
@@ -350,7 +349,7 @@ void func_86800B38(void) {
             sp9C = Font_MeasureTextExtent(0, 0, Text_GetString(NULL, 0, D_87806330, 0x36));
             sp98 = Font_MeasureTextExtent(0, 0, Text_GetString(NULL, 0, D_87806330, i + 0x36));
 
-            Font_Printf((((pad1 * 60) + sp9C) - sp98) + 0x46, ((i / 4) << 5) + 0x72,
+            Font_Printf((((var_v0 * pad1) + sp9C) - sp98) + 0x46, ((i / 4) << 5) + 0x72,
                           Text_GetString(NULL, 0, D_87806330, i + 0x36));
         }
     }
@@ -358,6 +357,7 @@ void func_86800B38(void) {
     switch (D_8680750C) {
         s32 var_s4;
         s32 var_s7;
+        unk_D_86807558* ptr;
 
         case 4:
             break;
@@ -366,10 +366,8 @@ void func_86800B38(void) {
         case 3:
             if (D_8680753E == 0) {
                 Font_SetActive(4, 0);
-                for (i = 0; i < 4; i++) {
-                    f32 v;
-
-                    if ((D_86807558[i].unk_040.unk_00 != 0) && (D_86807558[i].unk_040.unk_00 != 1)) {
+                for (i = 0, ptr = D_86807558; i < 4; i++, ptr++) {
+                    if ((ptr->unk_040.unk_00 != 0) && (ptr->unk_040.unk_00 != 1)) {
                         if ((i / 2) != 0) {
                             var_s7 = -0x14;
                         } else {
@@ -382,20 +380,19 @@ void func_86800B38(void) {
                             var_s4 = 0x1E;
                         }
 
-                        if (D_86807558[i].unk_03E < 5) {
-                            Gfx_SetEnvColor(0xFF, 0xFF, 0xFF, D_86807558[i].unk_040.unk_18);
+                        if (ptr->unk_03E < 5) {
+                            Gfx_SetEnvColor(0xFF, 0xFF, 0xFF, ptr->unk_040.unk_18);
                             Gfx_SetPrimColor(D_86806F44[i].r, D_86806F44[i].g, D_86806F44[i].b,
-                                          D_86807558[i].unk_040.unk_18);
+                                          ptr->unk_040.unk_18);
                         } else {
                             SushiGame_InterpolateColorCycle(spD8, D_86806F68, 4, 4, 0);
-                            Gfx_SetEnvColor(spD8[0].r, spD8[0].g, spD8[0].b, D_86807558[i].unk_040.unk_18);
-                            Gfx_SetPrimColor(spD8[0].r, spD8[0].g, spD8[0].b, D_86807558[i].unk_040.unk_18);
+                            Gfx_SetEnvColor(spD8[0].r, spD8[0].g, spD8[0].b, ptr->unk_040.unk_18);
+                            Gfx_SetPrimColor(spD8[0].r, spD8[0].g, spD8[0].b, ptr->unk_040.unk_18);
                         }
 
-                        v = D_86807558[i].unk_040.unk_08;
-                        Font_Printf(D_86806D78[i] + var_s7 + (s16)v,
-                                      (D_86806D80[i] + var_s4) - (s16)D_86807558[i].unk_040.unk_0C, "x%d",
-                                      D_86807558[i].unk_03E);
+                        Font_Printf((s16)ptr->unk_040.unk_08 + (D_86806D78[i] + var_s7),
+                                      (D_86806D80[i] + var_s4) - (s16)ptr->unk_040.unk_0C, "x%d",
+                                      ptr->unk_03E);
                     }
                 }
             }
@@ -405,14 +402,14 @@ void func_86800B38(void) {
         case 6:
             Font_SetActive(4, 0);
 
-            for (i = 0; i < 4; i++) {
+            for (i = 0, ptr = D_86807558; i < 4; i++, ptr++) {
                 char sp78[16];
 
                 spD0[0] = spB4;
                 spD0[1] = D_86806F44[i];
 
                 SushiGame_InterpolateColorCycle(&spB8[i], spD0, 2, 0x1E, 0);
-                SushiGame_InterpolateColorCycle(&spC4[i], spD0, 2, 0x1E, 1);
+                SushiGame_InterpolateColorCycle(&spB8[i + 4], spD0, 2, 0x1E, 1);
 
                 if ((i / 2) != 0) {
                     var_s7 = -0x32;
@@ -426,8 +423,8 @@ void func_86800B38(void) {
                     var_s4 = 0x1E;
                 }
 
-                if ((D_86807558[i].unk_028 == 1) && (D_86807558[i].unk_01C == D_86807558[i].unk_018) &&
-                    (D_86807558[i].unk_018 > 0)) {
+                if ((ptr->unk_028 == 1) && (ptr->unk_018 == ptr->unk_01C) &&
+                    (ptr->unk_018 > 0)) {
                     SushiGame_InterpolateColorCycle(&spD8, &D_86806F50, 3, 4, 0);
                     Gfx_SetEnvColor(spD8[0].r, spD8[0].g, spD8[0].b, 0xFF);
                     SushiGame_InterpolateColorCycle(&spD8, &D_86806F5C, 3, 4, 0);
@@ -437,7 +434,7 @@ void func_86800B38(void) {
                     Gfx_SetPrimColor(spB8[i + 4].r, spB8[i + 4].g, spB8[i + 4].b, 0xFF);
                 }
 
-                Text_SetNumberToken(6, D_86807558[i].unk_01C);
+                Text_SetNumberToken(6, ptr->unk_01C);
                 Font_Printf(D_86806D78[i] + var_s7, D_86806D80[i] + var_s4,
                               Text_GetString(&sp78, 0x20, D_87806330, 0x5E));
             }
@@ -467,9 +464,6 @@ void func_86800B38(void) {
         Widget_DrawSplitBanner(0, 0x19, 0xA6);
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/sushi_game/sushi_game_144300/func_86800B38.s")
-#endif
 
 void SushiGame_DrawFrame(void) {
     BgStage_DrawFrame();
