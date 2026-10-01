@@ -1,0 +1,59 @@
+# clangd configuration for pokestadium
+#
+# Teaches clangd (and therefore VS Code / clangd LSP) how every file in this
+# decompilation repo resolves against each other:
+#
+#   - `CompileFlags.Add` mirrors the include search paths (`IINC`) and
+#     preprocessor defines from the Makefile, so `#include "global.h"`,
+#     `#include <ultra64.h>`, `#include <PR/...>` and the flat headers under
+#     `src/` all resolve the same way the real build does.
+#   - `CompileFlags.Compiler` points at the host C compiler, because the
+#     actual toolchain (IDO/Egcs for MIPS) cannot be used for indexing.
+#     VS Code's C/C++ extension also reads this field, so the intellisense
+#     engine gets a valid compiler in the same move.
+#   - `Diagnostics` and `Index` keep the experience fast on this large repo.
+#
+# Paths are relative to this file (repo root).
+
+CompileFlags:
+  Add:
+    # ---- include search paths (Makefile: IINC) ----
+    - -Iinclude
+    - -Iinclude/audio
+    - -Iinclude/libleo
+    - -Isrc
+    - -Isrc/libnaudio
+    - -Ilib/ultralib/include
+    - -Ilib/ultralib/include/PR
+    - -Ilib/ultralib/include/ido
+    - -Ilib/ultralib
+    - -I.
+
+    # ---- preprocessor defines (Makefile: C_DEFINES / GBI_DEFINES / RELEASE_DEFINES) ----
+    - -DLANGUAGE_C
+    - -D_LANGUAGE_C
+    - -DF3DEX_GBI_2
+    - -DNDEBUG
+    - -D_FINALROM
+    - -DN_MICRO
+
+    # ---- language / warning hygiene ----
+    # gnu89 to match the CC_CHECK std; clangd is lenient but this keeps
+    # behavior consistent with the repo's own syntax-check target.
+    - -std=gnu89
+    - -fno-builtin
+    - -funsigned-char
+
+  # The real target is MIPS (IDC/Egcs); the host compiler is all clangd
+  # needs for semantic analysis, and this value is what VS Code's C/C++
+  # extension picks up for IntelliSense.
+  Compiler: cc
+
+Diagnostics:
+  # Keep indexing responsive on a repo this size; only surface real issues.
+  UnusedIncludes: None
+  MissingIncludes: None
+
+Index:
+  Background: Build
+  Prioritize: Yes
