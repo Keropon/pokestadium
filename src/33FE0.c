@@ -730,53 +730,32 @@ void func_80034254(StadiumModel* model) {
         var_a2++;
     }
 }
-#ifdef NON_MATCHING
+
 void func_80034348(ModelSegment* segment, ModelVertex* vertices) {
     s32 i;
-    f32 spF0;
-    s32 pad1[5];
-    f32 spD8;
-    s32 pad2[6];
-    s16 spBE;
-    s16 spBC;
-    s16 spBA;
-    s32 pad3[12];
-    s16* var_t2;
-    s32 pad4[6];
-    f32 sp60;
-    f32 sp5C;
-    f32 sp58;
-    f32 temp_fa1;
-    f32 temp_fs0;
-    f32 temp_fs1;
-    f32 temp_fs4;
-    f32 temp_fs5;
-    f32 temp_ft4;
-    f32 temp_fv0;
-    f32 temp_fv0_3;
-    f32 temp_fv0_4;
-    f32 temp_fv0_5;
-    f32 temp_fv0_6;
-    f32 temp_fv0_7;
-    f32 temp_fv0_8;
-    f32 temp_fv1;
-    f32 temp_fv1_2;
-    f32 var_fs0;
-    f32 var_fs1;
-    f32 var_fs2;
-    s16* var_s0;
+    f32 x0, y0, z0;
+    f32 x1, y1, z1;
+    f32 x2, y2, z2;
+    f32 nx, ny, nz;
+    f32 len;
+    s16 i0, i1, i2;
+    f32 scale;
+    s16* indices;
     s16 triangleCount;
     s16 vertexCount;
-    ModelVertex* temp_a0_2;
-    ModelVertex* temp_v0;
-    ModelVertex* temp_v1;
+    ModelVertex* v0;
+    ModelVertex* v1;
+    ModelVertex* v2;
     ModelVertex* vtx;
     Vec3fCounter* counter;
+    UNUSED s32 pad[4];
+    s16* remap;
+    UNUSED s32 pad2[5];
 
     triangleCount = segment->triangleCount;
     vertexCount = segment->vertexCount;
-    var_s0 = Memmap_GetSegmentVaddr(segment->indexSegment);
-    var_t2 = Memmap_GetSegmentVaddr(segment->remapSegment);
+    indices = Memmap_GetSegmentVaddr(segment->indexSegment);
+    remap = Memmap_GetSegmentVaddr(segment->remapSegment);
     counter = D_800B2F50;
     for (i = 0; i < vertexCount; i++) {
         counter->x = 0.0f;
@@ -786,69 +765,61 @@ void func_80034348(ModelSegment* segment, ModelVertex* vertices) {
         counter++;
     }
     for (i = 0; i < triangleCount; i++) {
-        spBE = var_t2[var_s0[0]];
-        temp_v0 = &vertices[spBE];
-        spF0 = temp_v0->position.base.x;
-        spBC = var_t2[var_s0[1]];
-        spBA = var_t2[var_s0[2]];
-        var_s0 += 3;
-        temp_v1 = &vertices[spBC];
-        temp_fs4 = temp_v1->position.base.x;
-        temp_fv0 = temp_v1->position.base.y;
-        temp_fv1 = temp_v1->position.base.z;
-        temp_fs5 = temp_fv0 - temp_v0->position.base.y;
-        temp_fs1 = temp_fv1 - temp_v0->position.base.z;
-        temp_a0_2 = &vertices[spBA];
-        spD8 = temp_a0_2->position.base.x;
-        sp5C = temp_fs1;
-        temp_fs0 = temp_a0_2->position.base.z - temp_fv1;
-        sp58 = temp_a0_2->position.base.y - temp_fv0;
-        sp60 = temp_fs0;
-        temp_fa1 = spD8 - temp_fs4;
-        temp_ft4 = temp_fs4 - spF0;
-        var_fs0 = (sp5C * temp_fa1) - (temp_ft4 * sp60);
-        var_fs2 = (temp_fs5 * sp60) - (temp_fs1 * sp58);
-        var_fs1 = (temp_ft4 * sp58) - (temp_fs5 * temp_fa1);
-        temp_fv0_3 = sqrtf((var_fs2 * var_fs2) + (var_fs0 * var_fs0) + (var_fs1 * var_fs1));
-        if ((s32) temp_fv0_3 > 0) {
-            temp_fv1_2 = 120.0f / temp_fv0_3;
-            var_fs2 *= temp_fv1_2;
-            var_fs0 *= temp_fv1_2;
-            var_fs1 *= temp_fv1_2;
+        i0 = remap[indices[0]];
+        v0 = &vertices[i0];
+        x0 = v0->position.base.x;
+        y0 = v0->position.base.y;
+        z0 = v0->position.base.z;
+        i1 = remap[indices[1]];
+        v1 = &vertices[i1];
+        x1 = v1->position.base.x;
+        y1 = v1->position.base.y;
+        z1 = v1->position.base.z;
+        i2 = remap[indices[2]];
+        v2 = &vertices[i2];
+        x2 = v2->position.base.x;
+        y2 = v2->position.base.y;
+        z2 = v2->position.base.z;
+        indices += 3;
+        nx = ((y1 - y0) * (z2 - z1)) - ((z1 - z0) * (y2 - y1));
+        ny = ((z1 - z0) * (x2 - x1)) - ((x1 - x0) * (z2 - z1));
+        nz = ((x1 - x0) * (y2 - y1)) - ((y1 - y0) * (x2 - x1));
+        len = sqrtf((nx * nx) + (ny * ny) + (nz * nz));
+        if ((s32) len > 0) {
+            scale = 120.0f / len;
+            nx *= scale;
+            ny *= scale;
+            nz *= scale;
         }
-        counter = &D_800B2F50[spBE];
-        counter->x += var_fs2;
-        counter->y += var_fs0;
-        counter->z += var_fs1;
+        counter = &D_800B2F50[i0];
+        counter->x += nx;
+        counter->y += ny;
+        counter->z += nz;
         counter->count++;
-        counter = &D_800B2F50[spBC];
-        counter->x += var_fs2;
-        counter->y += var_fs0;
-        counter->z += var_fs1;
+        counter = &D_800B2F50[i1];
+        counter->x += nx;
+        counter->y += ny;
+        counter->z += nz;
         counter->count++;
-        counter = &D_800B2F50[spBA];
-        counter->x += var_fs2;
-        counter->y += var_fs0;
-        counter->z += var_fs1;
+        counter = &D_800B2F50[i2];
+        counter->x += nx;
+        counter->y += ny;
+        counter->z += nz;
         counter->count++;
     }
     counter = D_800B2F50;
     vtx = vertices;
     for (i = 0; i < vertexCount; i++) {
         if (counter->count > 0) {
-            temp_fv0_4 = (f32) counter->count;
-            vtx->position.color.r = (f32) (counter->x / temp_fv0_4);
-            vtx->position.color.g = (f32) (counter->y / temp_fv0_4);
-            vtx->position.color.b = (f32) (counter->z / temp_fv0_4);
+            len = counter->count;
+            vtx->position.color.r = counter->x / len;
+            vtx->position.color.g = counter->y / len;
+            vtx->position.color.b = counter->z / len;
         }
         counter++;
         vtx++;
     }
 }
-#else
-void func_80034348(ModelSegment*, ModelVertex*);
-#pragma GLOBAL_ASM("asm/us/nonmatchings/33FE0/func_80034348.s")
-#endif
 
 #ifdef NON_MATCHING
 void func_80034824(ModelSegment* segment, StadiumTransform* xf, s32 index, ModelVertex* vertices) {
