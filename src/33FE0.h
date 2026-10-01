@@ -49,7 +49,8 @@ typedef struct ModelVertex {
 } ModelVertex;                      // size = 0x94
 
 typedef struct StadiumTransform {
-    /* 0x00 */ s32  unk_00;
+    /* 0x00 */ s16  unk_00;
+    /* 0x02 */ s16  unk_02;
     /* 0x04 */ f32  maxDist;
     /* 0x08 */ f32  x0;
     /* 0x0C */ f32  y0;

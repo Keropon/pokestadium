@@ -592,121 +592,100 @@ void func_80033D1C(StadiumModel* model, MtxF* mtx) {
 }
 
 #ifdef NON_MATCHING
-void func_80033D44(StadiumModel* model, s16 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, MtxF* arg9) {
-    f32 sp138;
-    f32 sp134;
-    f32 sp130;
-    f32 sp12C;
-    f32 sp128;
-    f32 sp124;
-    f32 sp120;
-    f32 sp11C;
-    f32 sp118;
-    f32 sp114;
-    f32 sp110;
-    f32 sp10C;
-    f32 sp108;
-    f32 sp104;
-    f32 spF4;
-    f32 spF0;
-    f32 spEC;
-    f32 spE8;
-    f32 spE4;
-    f32 spE0;
-    f32 spD8;
-    f32 spD4;
-    f32 spD0;
-    f32 spCC;
-    f32 spC8;
-    f32 spC4;
-    f32 temp_fs0;
-    f32 temp_fs0_2;
-    f32 temp_fs1;
-    f32 temp_fs1_2;
-    f32 temp_fs2;
-    f32 temp_fs2_3;
-    f32 temp_fs3_2;
-    f32 temp_fv0;
-    f32 temp_fv0_2;
-    f32 var_fs0_2;
-    f32 var_fs1_2;
-    f32 var_fs2;
-    s16 temp_v1;
-    s32 i;
+void func_80033D44(StadiumModel* model, s16 maxDist, f32 radius, f32 ax, f32 ay, f32 az, f32 bx, f32 by, f32 bz, MtxF* mtx) {
     ModelSegment* segment;
-    ModelBlendWeight* temp_s1;
-    StadiumTransform* temp_v0;
-    StadiumTransform* temp_v1_2;
+    f32 cx, cy, cz;
+    f32 dx, dy, dz;
+    f32 tax, tay, taz;
+    f32 tbx, tby, tbz;
+    f32 tcx, tcy, tcz;
+    f32 tdx, tdy, tdz;
+    f32 x, y, z;
+    f32 nx, ny, nz;
+    f32 dir[3];
     ModelVertex* mvtx;
+    f32 up[3];
+    f32 px, py, pz;
+    f32 dist;
+    f32 len;
+    ModelBlendWeight* w;
+    f32 vx, vy, vz;
+    StadiumTransform* t;
+    s16 index;
+    s32 i;
 
-    segment = Memmap_GetSegmentVaddr(model->modelSegment);
-    temp_v1 = model->unk_02;
-    model->unk_02 = (s16) (temp_v1 + 1);
-    temp_fs0 = arg6 - arg3;
-    temp_fs1 = arg7 - arg4;
-    temp_fs2 = arg8 - arg5;
-    temp_fv0 = sqrtf((temp_fs0 * temp_fs0) + (temp_fs1 * temp_fs1) + (temp_fs2 * temp_fs2));
-    if (temp_fv0 != 0.0f) {
-        spD8 = -1.0f;
-        spD4 = 0.0f;
-        spD0 = 0.0f;
-        spE8 = temp_fs0 / temp_fv0;
-        spE4 = temp_fs1 / temp_fv0;
-        spE0 = temp_fs2 / temp_fv0;
-        if (0.9f < Math_FAbs((spE8 * -1.0f) + (spE4 * 0.0f) + (spE0 * 0.0f))) {
-            spD4 = 1.0f;
-            spD8 = 0.0f;
-            spD0 = 0.0f;
-            if (0.9f < Math_FAbs(spE4)) {
-                spD0 = 1.0f;
-                spD4 = 0.0f;
+    segment = (ModelSegment*) Memmap_GetSegmentVaddr(model->modelSegment);
+    index = model->unk_02++;
+
+    vx = bx - ax;
+    vy = by - ay;
+    vz = bz - az;
+    len = sqrtf((vx * vx) + (vy * vy) + (vz * vz));
+    if (len != 0.0f) {
+        dir[0] = vz / len;
+        dir[2] = vx / len;
+        up[0] = up[1] = 0;
+        up[2] = -1.0f;
+        x = vy / len;
+        dist = Math_FAbs((dir[2] * up[2]) + (x * up[1]) + (dir[0] * up[0]));
+        vx = up[1];
+        vz = up[0];
+        if (0.9f < dist) {
+            vx = 1.0f;
+            up[2] = 0.0f;
+            vz = 0.0f;
+            if (0.9f < Math_FAbs(x)) {
+                vz = 1.0f;
+                vx = 0.0f;
             }
         }
-        Math_CrossProduct(spE8, spE4, spE0, spD8, spD4, spD0, &spCC, &spC8, &spC4);
-        temp_fs0_2 = arg3 + spCC;
-        temp_fs1_2 = arg4 + spC8;
-        temp_fs2_3 = arg5 + spC4;
-        Math_CrossProduct(spE8, spE4, spE0, spCC, spC8, spC4, &spCC, &spC8, &spC4);
-        temp_fs3_2 = arg3 + spCC;
-        temp_v0 = &model->transforms[temp_v1];
-        sp138 = arg4 + spC8;
-        temp_v1_2 = temp_v0 + 4;
-        sp134 = arg5 + spC4;
-        temp_v0->maxDist = arg1;
-        temp_v0->x0 = arg2;
-        temp_v0->y0 = arg3;
-        temp_v0->z0 = arg4;
-        temp_v0->x1 = arg5;
-        temp_v0->y1 = arg6;
-        temp_v0->z1 = arg7;
-        temp_v0->x2 = arg8;
-        temp_v0->y2 = temp_fs0_2;
-        temp_v0->z2 = temp_fs1_2;
-        temp_v0->x3 = temp_fs2_3;
-        temp_v0->y3 = temp_fs3_2;
-        temp_v1_2->y3 = sp138;
-        temp_v1_2->mtx = arg9;
-        temp_v1_2->z3 = sp134;
-        guMtxXFMF(arg9->mf, arg3, arg4, arg5, &sp130, &sp12C, &sp128);
-        guMtxXFMF(arg9->mf, arg6, arg7, arg8, &sp124, &sp120, &sp11C);
-        guMtxXFMF(arg9->mf, temp_fs0_2, temp_fs1_2, temp_fs2_3, &sp118, &sp114, &sp110);
-        guMtxXFMF(arg9->mf, temp_fs3_2, sp138, sp134, &sp10C, &sp108, &sp104);
+        Math_CrossProduct(dir[2], x, dir[0], up[2], vx, vz, &px, &py, &pz);
+        cx = ax + px;
+        cy = ay + py;
+        cz = az + pz;
+        Math_CrossProduct(dir[2], x, dir[0], px, py, pz, &px, &py, &pz);
+        dx = ax + px;
+        dy = ay + py;
+        dz = az + pz;
+
+        t = &model->transforms[index];
+        t->unk_00 = maxDist;
+        t->maxDist = radius;
+        t->x0 = ax;
+        t->y0 = ay;
+        t->z0 = az;
+        t->x1 = bx;
+        t->y1 = by;
+        t->z1 = bz;
+        t->x2 = cx;
+        t->y2 = cy;
+        t->z2 = cz;
+        t->x3 = dx;
+        t->y3 = dy;
+        t->z3 = dz;
+        t->mtx = mtx;
+
+        guMtxXFMF(mtx->mf, ax, ay, az, &tax, &tay, &taz);
+        guMtxXFMF(mtx->mf, bx, by, bz, &tbx, &tby, &tbz);
+        guMtxXFMF(mtx->mf, cx, cy, cz, &tcx, &tcy, &tcz);
+        guMtxXFMF(mtx->mf, dx, dy, dz, &tdx, &tdy, &tdz);
+
         mvtx = &model->mvtx;
-        for(i = 0; i < segment->vertexCount; i++) {
-            var_fs0_2 = mvtx->position.base.x;
-            var_fs1_2 = mvtx->position.base.y;
-            var_fs2 = mvtx->position.base.z;
-            temp_fv0_2 = func_80033568(var_fs0_2, var_fs1_2, var_fs2, sp130, sp12C, sp128, sp124, sp120, sp11C, &spF4, &spF0, &spEC);
-            temp_s1 = &mvtx->cmd.weights[temp_v1];
-            if (temp_fv0_2 > 0.0f) {
-                var_fs0_2 = (((var_fs0_2 - spF4) * arg2) / temp_fv0_2) + spF4;
-                var_fs1_2 = (((var_fs1_2 - spF0) * arg2) / temp_fv0_2) + spF0;
-                var_fs2 = (((var_fs2 - spEC) * arg2) / temp_fv0_2) + spEC;
+        for (i = 0; i < segment->vertexCount; i++) {
+            x = mvtx->position.base.x;
+            y = mvtx->position.base.y;
+            z = mvtx->position.base.z;
+            dist = func_80033568(x, y, z, tax, tay, taz, tbx, tby, tbz, &nx, &ny, &nz);
+            if (dist > 0.0f) {
+                x = (((x - nx) * radius) / dist) + nx;
+                y = (((y - ny) * radius) / dist) + ny;
+                z = (((z - nz) * radius) / dist) + nz;
             }
-            temp_s1->w0 = func_800334C0(var_fs0_2, var_fs1_2, var_fs2, sp130, sp12C, sp128, sp124, sp120, sp11C);
-            temp_s1->w1 = func_800334C0(var_fs0_2, var_fs1_2, var_fs2, sp130, sp12C, sp128, sp118, sp114, sp110);
-            temp_s1->w2 = func_800334C0(var_fs0_2, var_fs1_2, var_fs2, sp130, sp12C, sp128, sp10C, sp108, sp104);
-            temp_s1->dist = temp_fv0_2;
+            w = &mvtx->cmd.weights[index];
+            w->w0 = func_800334C0(x, y, z, tax, tay, taz, tbx, tby, tbz);
+            w->w1 = func_800334C0(x, y, z, tax, tay, taz, tcx, tcy, tcz);
+            w->w2 = func_800334C0(x, y, z, tax, tay, taz, tdx, tdy, tdz);
+            w->dist = dist;
             mvtx++;
         }
     }
