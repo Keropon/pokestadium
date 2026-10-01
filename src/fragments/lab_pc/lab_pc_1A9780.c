@@ -106,54 +106,52 @@ s32 LabPC_AllBoxesEmpty(unk_func_88205880_A030* arg0) {
     return 1;
 }
 
-#ifdef NON_MATCHING
 void func_88201488(s32 arg0, s32 arg1, unk_func_88201488_arg2** arg2, s32 arg3, s32 arg4, unk_func_88200FA0_030_030* arg5) {
     static Color_RGBA8 D_88217C20 = { 0xF0, 0xF0, 0xF0, 0xFF };
     static Color_RGBA8 D_88217C24 = { 0x28, 0x28, 0x64, 0xFF };
     static Color_RGBA8 D_88217C28 = { 0x3C, 0x3C, 0x82, 0xFF };
     static Color_RGBA8 D_88217C2C = { 0x78, 0x78, 0x96, 0xFF };
-    s32 temp_t1;
-    s32 pad[5];
-    s32 color;
+    s32 pad;
 
     gDPPipeSync(gDisplayListHead++);
     gDPSetCycleType(gDisplayListHead++, G_CYC_FILL);
     gDPSetRenderMode(gDisplayListHead++, G_RM_NOOP, G_RM_NOOP2);
 
     {
-        color = GPACK_RGBA5551(D_88217C24.r, D_88217C24.g, D_88217C24.b, 1);
-
+        s32 color = GPACK_RGBA5551(D_88217C24.r, D_88217C24.g, D_88217C24.b, 1);
         gDPPipeSync(gDisplayListHead++);
         gDPSetFillColor(gDisplayListHead++, (color << 16) | color);
-        gDPFillRectangle(gDisplayListHead++, arg0 + 1, arg1 + 1, (arg5->unk_3C + arg0) - 2, arg1 + 0x31);
+        gDPFillRectangle(gDisplayListHead++, arg0 + 1, arg1 + 1, ((0, arg0) + arg5->unk_3C) - 2, arg1 + 0x31);
     }
     {
-        color = GPACK_RGBA5551(D_88217C28.r, D_88217C28.g, D_88217C28.b, 1);
-
+        s32 color = GPACK_RGBA5551(D_88217C28.r, D_88217C28.g, D_88217C28.b, 1);
         gDPPipeSync(gDisplayListHead++);
         gDPSetFillColor(gDisplayListHead++, (color << 16) | color);
-        gDPFillRectangle(gDisplayListHead++, arg0 + 1, arg1 + 0x32, (arg0 + arg5->unk_3C) - 2, arg1 + 0x49);
+        gDPFillRectangle(gDisplayListHead++, arg0 + 1, arg1 + 0x32, ((0, arg0) + arg5->unk_3C) - 2, arg1 + 0x49);
     }
     {
-        color = GPACK_RGBA5551(D_88217C2C.r, D_88217C2C.g, D_88217C2C.b, 1);
-
-        temp_t1 = (color << 16) | color;
+        s32 color = GPACK_RGBA5551(D_88217C2C.r, D_88217C2C.g, D_88217C2C.b, 1);
         gDPPipeSync(gDisplayListHead++);
-        gDPSetFillColor(gDisplayListHead++, temp_t1);
+        gDPSetFillColor(gDisplayListHead++, (color << 16) | color);
         gDPFillRectangle(gDisplayListHead++, arg0, arg1, (arg5->unk_3C + arg0) - 1, arg1);
-        temp_t1 = (color << 16) | color;
-
+    }
+    {
+        s32 color = GPACK_RGBA5551(D_88217C2C.r, D_88217C2C.g, D_88217C2C.b, 1);
         gDPPipeSync(gDisplayListHead++);
-        gDPSetFillColor(gDisplayListHead++, temp_t1);
+        gDPSetFillColor(gDisplayListHead++, (color << 16) | color);
         gDPFillRectangle(gDisplayListHead++, arg0, (arg1 + arg5->unk_3E) - 1, (arg5->unk_3C + arg0) - 1,
                          (arg1 + arg5->unk_3E) - 1);
-
+    }
+    {
+        s32 color = GPACK_RGBA5551(D_88217C2C.r, D_88217C2C.g, D_88217C2C.b, 1);
         gDPPipeSync(gDisplayListHead++);
-        gDPSetFillColor(gDisplayListHead++, temp_t1);
+        gDPSetFillColor(gDisplayListHead++, (color << 16) | color);
         gDPFillRectangle(gDisplayListHead++, arg0, arg1 + 1, arg0, (arg1 + arg5->unk_3E) - 2);
-
+    }
+    {
+        s32 color = GPACK_RGBA5551(D_88217C2C.r, D_88217C2C.g, D_88217C2C.b, 1);
         gDPPipeSync(gDisplayListHead++);
-        gDPSetFillColor(gDisplayListHead++, temp_t1);
+        gDPSetFillColor(gDisplayListHead++, (color << 16) | color);
         gDPFillRectangle(gDisplayListHead++, (arg5->unk_3C + arg0) - 1, arg1 + 1, (arg5->unk_3C + arg0) - 1,
                          (arg1 + arg5->unk_3E) - 2);
     }
@@ -195,14 +193,6 @@ void func_88201488(s32 arg0, s32 arg1, unk_func_88201488_arg2** arg2, s32 arg3, 
         Font_EndTexturedTextRendering();
     }
 }
-#else
-void func_88201488();
-static Color_RGBA8 D_88217C20 = { 0xF0, 0xF0, 0xF0, 0xFF };
-static Color_RGBA8 D_88217C24 = { 0x28, 0x28, 0x64, 0xFF };
-static Color_RGBA8 D_88217C28 = { 0x3C, 0x3C, 0x82, 0xFF };
-static Color_RGBA8 D_88217C2C = { 0x78, 0x78, 0x96, 0xFF };
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/lab_pc/lab_pc_1A9780/func_88201488.s")
-#endif
 
 void func_88201DA0(unk_func_88201DA0* arg0, s32 arg1, s32 arg2, WidgetNode* arg3, FragmentEntry arg4,
                    unk_func_88205880_0098* arg5, MemoryPool* arg6) {
