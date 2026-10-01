@@ -1,0 +1,11 @@
+# Diagnostics/indexing only; compile flags live in compile_flags.txt
+# so include paths resolve relative to the repo root.
+CompileFlags:
+  Compiler: cc
+
+Diagnostics:
+  UnusedIncludes: None
+  MissingIncludes: None
+
+Index:
+  Background: Build
