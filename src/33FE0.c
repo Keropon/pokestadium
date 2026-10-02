@@ -821,99 +821,87 @@ void func_80034348(ModelSegment* segment, ModelVertex* vertices) {
     }
 }
 
-#ifdef NON_MATCHING
 void func_80034824(ModelSegment* segment, StadiumTransform* xf, s32 index, ModelVertex* vertices) {
-    f32 sp184;
-    f32 sp180;
-    f32 sp17C;
-    f32 sp178;
-    f32 sp174;
-    f32 sp170;
-    f32 sp16C;
-    f32 sp168;
-    f32 sp164;
-    f32 sp160;
-    f32 sp15C;
-    f32 sp158;
-    f32 sp154;
-    f32 sp150;
-    f32 sp14C;
-    f32 sp13C;
-    f32 sp138;
-    f32 sp134;
-    f32 sp130;
-    f32 sp12C;
-    f32 sp128;
-    s16* spA0;
+    f32 x0, y0, z0;
+    f32 x1, y1, z1;
+    f32 x2, y2, z2;
     MtxF* mtx;
-    f32 temp_fa0;
-    f32 temp_fs0;
-    f32 temp_fs1;
-    f32 temp_fs2;
-    f32 temp_fs3;
-    f32 temp_fs4;
-    f32 temp_fs5;
-    f32 temp_fv0;
-    f32 temp_fv1;
-    s16 temp_s0;
+    s32 pad0[4];
+    f32 sp184, sp180, sp17C;
+    f32 sp178, sp174, sp170;
+    f32 sp16C, sp168, sp164;
+    f32 sp160, sp15C, sp158;
+    f32 sp154, sp150, sp14C;
+    f32 sp148, sp144, sp140;
+    f32 sp13C, sp138, sp134;
+    f32 sp130, sp12C, sp128;
+    f32 w0, w1, w2;
+    f32 bx, by, bz;
+    s32 pad1[27];
+    s16* spA0;
     s16 temp_s6;
     s16* temp_v0;
-    s16* var_s3;
     s32 i;
-    PosBlend* temp_v0_2;
-    ModelBlendWeight* temp_v1;
+    s32 temp_s0;
     ModelVertex* var_s1;
+    PosBlend* temp_v0_2;
 
     temp_s6 = segment->vertexCount;
     spA0 = Memmap_GetSegmentVaddr(segment->remapSegment);
     temp_v0 = Memmap_GetSegmentVaddr(segment->tableSegment);
-    temp_fs0 = xf->x1;
-    temp_fs1 = xf->y1;
-    temp_fs2 = xf->z1;
-    temp_fs3 = xf->x2;
-    temp_fs4 = xf->y2;
-    temp_fs5 = xf->z2;
+    x0 = xf->x0;
+    y0 = xf->y0;
+    z0 = xf->z0;
+    x1 = xf->x1;
+    y1 = xf->y1;
+    z1 = xf->z1;
+    x2 = xf->x2;
+    y2 = xf->y2;
+    z2 = xf->z2;
     sp184 = xf->x3;
     sp180 = xf->y3;
     sp17C = xf->z3;
     mtx = xf->mtx;
-    guMtxXFMF(mtx->mf, xf->x0, xf->y0, xf->z0, &sp178, &sp174, &sp170);
-    guMtxXFMF(mtx->mf, temp_fs0, temp_fs1, temp_fs2, &sp16C, &sp168, &sp164);
-    guMtxXFMF(mtx->mf, temp_fs3, temp_fs4, temp_fs5, &sp160, &sp15C, &sp158);
+
+    guMtxXFMF(mtx->mf, x0, y0, z0, &sp178, &sp174, &sp170);
+    guMtxXFMF(mtx->mf, x1, y1, z1, &sp16C, &sp168, &sp164);
+    guMtxXFMF(mtx->mf, x2, y2, z2, &sp160, &sp15C, &sp158);
     guMtxXFMF(mtx->mf, sp184, sp180, sp17C, &sp154, &sp150, &sp14C);
-    var_s1 = vertices;
-    var_s3 = spA0;
+    sp148 = sp16C - sp178;
+    sp144 = sp168 - sp174;
+    sp140 = sp164 - sp170;
     sp13C = sp160 - sp178;
     sp138 = sp15C - sp174;
     sp134 = sp158 - sp170;
     sp130 = sp154 - sp178;
     sp12C = sp150 - sp174;
     sp128 = sp14C - sp170;
-    for(i = 0; i < temp_s6; i++) {
-        temp_s0 = *var_s3;
-        var_s3++;
+    var_s1 = vertices;
+    for (i = 0; i < temp_s6; i++) {
+        temp_s0 = spA0[i];
         if (Model_GetVertexClass(temp_v0, temp_s0) != 0) {
             temp_v0_2 = &var_s1->position;
             if (temp_s0 == i) {
-                temp_v1 = &var_s1->cmd.weights[index];
                 if (index == temp_v0_2->nextIndex) {
-                    temp_fv0 = temp_v1->w0;
-                    temp_fv1 = temp_v1->w1;
-                    temp_fa0 = temp_v1->w2;
-                    temp_v0_2->disabled = (u16) (temp_v0_2->disabled | (1 << index));
-                    temp_v0_2->offset.x = (f32) (((temp_fv0 * (sp16C - sp178)) + sp178 + (temp_fv1 * sp13C) + (temp_fa0 * sp130)) - var_s1->position.base.x);
-                    temp_v0_2->offset.y = (f32) (((temp_fv0 * (sp168 - sp174)) + sp174 + (temp_fv1 * sp138) + (temp_fa0 * sp12C)) - temp_v0_2->base.y);
-                    temp_v0_2->offset.z = (f32) (((temp_fv0 * (sp164 - sp170)) + sp170 + (temp_fv1 * sp134) + (temp_fa0 * sp128)) - temp_v0_2->base.z);
+                    w0 = var_s1->cmd.weights[index].w0;
+                    w1 = var_s1->cmd.weights[index].w1;
+                    w2 = var_s1->cmd.weights[index].w2;
+                    x1 = (w0 * sp148) + sp178 + (w1 * sp13C) + (w2 * sp130);
+                    y1 = (w0 * sp144) + sp174 + (w1 * sp138) + (w2 * sp12C);
+                    bx = temp_v0_2->base.x;
+                    by = temp_v0_2->base.y;
+                    bz = temp_v0_2->base.z;
+                    z1 = (w0 * sp140) + sp170 + (w1 * sp134) + (w2 * sp128);
+                    temp_v0_2->disabled |= (1 << index);
+                    temp_v0_2->offset.x = x1 - bx;
+                    temp_v0_2->offset.y = y1 - by;
+                    temp_v0_2->offset.z = z1 - bz;
                 }
             }
         }
         var_s1++;
     }
 }
-#else
-void func_80034824(ModelSegment*, StadiumTransform*, s32, ModelVertex*);
-#pragma GLOBAL_ASM("asm/us/nonmatchings/33FE0/func_80034824.s")
-#endif
 
 void Model_ApplyVertexTransforms(StadiumModel* model) {
     ModelSegment* segment;
