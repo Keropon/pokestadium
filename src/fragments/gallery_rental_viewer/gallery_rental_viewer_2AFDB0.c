@@ -698,7 +698,6 @@ void Gallery_RentalViewerDrawMonRow(s32 arg0, s32 arg1, unk_D_838067F0_0168* arg
     Font_EndTexturedTextRendering();
 }
 
-#ifdef NON_MATCHING
 void func_838043F8(s32 arg0) {
     unk_D_838067F0* ptr = &D_838067F0;
     s32 i;
@@ -739,6 +738,7 @@ void func_838043F8(s32 arg0) {
             var_s0 = -0x194;
         }
 
+        i = var_s0 + temp_s2_2;
         Gfx_SetScissorRect(&gDisplayListHead, spC4 + 0x24, spC0 + 4, 0x18C, 0x124);
         Gallery_RentalViewerDrawPageHeader(temp_s2_2 + 0x24, spC0 + 4, ptr->unk_0160->unk_268C);
         Gallery_RentalViewerDrawPageHeader((var_s0 + temp_s2_2) + 0x24, spC0 + 4, ptr->unk_0160);
@@ -767,7 +767,7 @@ void func_838043F8(s32 arg0) {
         Gfx_SetScissorRect(&gDisplayListHead, 0, 0, 0x280, 0x1E0);
     } else if (ptr->unk_0000 == 4) {
         s32 sp80 = spC0 - ((ptr->unk_002C * 0x2C) / 4);
-        s32 pad[2];
+        s32 pad[1];
 
         Gallery_RentalViewerDrawPageHeader(spC4 + 0x24, spC0 + 4, ptr->unk_0160);
         Gfx_SetScissorRect(&gDisplayListHead, spC4 + 0x24, spC0 + 0x20, 0x18C, 0x108);
@@ -821,6 +821,3 @@ void func_838043F8(s32 arg0) {
         TeamSelection_DrawAnimatedGoldCorners(spC4 + var_v0, spC0 + var_v1, 0x84, 0x2C);
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gallery_rental_viewer/gallery_rental_viewer_2AFDB0/func_838043F8.s")
-#endif
