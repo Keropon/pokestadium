@@ -3256,12 +3256,7 @@ void Credits_StepCameraKeyframeBlend(void) {
     }
 }
 
-#ifdef NON_MATCHING
 void func_86A01CF0(s16* arg0, s16* arg1, s16* arg2, unk_D_86002F34_00C* arg3, u16 arg4, s8 arg5, u8 arg6) {
-    unk_D_86A03170* temp_v1;
-
-    if (!arg4) {}
-
     D_86A0625C = arg1;
     D_86A06254 = arg3;
     D_86A06220 = 0;
@@ -3270,63 +3265,59 @@ void func_86A01CF0(s16* arg0, s16* arg1, s16* arg2, unk_D_86002F34_00C* arg3, u1
     if (arg6 < 6) {
         *D_86A0625C = D_86A03170[arg5][arg6].unk_00;
     } else if (arg6 < 9) {
-        *D_86A0625C = D_86A03C98[arg5][arg6].unk_00;
+        *D_86A0625C = D_86A03C98[arg5][(s32)arg6].unk_00;
     }
 
     if (arg6 < 6) {
-        if (1) {}
-        if (D_86A03170[arg5][arg6].unk_04 == 1) {
-            if (D_86A03170[arg5][arg6].unk_00 < D_86A03170[arg5][arg6].unk_02) {
-                D_86A06258 = (D_86A03170[arg5][arg6].unk_02 - D_86A03170[arg5][arg6].unk_00) / arg4;
+        unk_D_86A03170* temp_v1 = &D_86A03170[arg5][arg6];
+
+        if (temp_v1->unk_04 == 1) {
+            if (temp_v1->unk_00 < temp_v1->unk_02) {
+                D_86A06258 = (temp_v1->unk_02 - temp_v1->unk_00) / arg4;
             } else {
-                D_86A06258 = ((D_86A03170[arg5][arg6].unk_02 - D_86A03170[arg5][arg6].unk_00) + 0x10000) / arg4;
+                D_86A06258 = ((temp_v1->unk_02 - temp_v1->unk_00) + 0x10000) / arg4;
             }
-        } else if (D_86A03170[arg5][arg6].unk_00 < D_86A03170[arg5][arg6].unk_02) {
-            D_86A06258 = (s32)((D_86A03170[arg5][arg6].unk_02 - D_86A03170[arg5][arg6].unk_00) + 0xFFFF0000) / arg4;
+        } else if (temp_v1->unk_00 < temp_v1->unk_02) {
+            D_86A06258 = (s32)((temp_v1->unk_02 - temp_v1->unk_00) + 0xFFFF0000) / arg4;
         } else {
-            D_86A06258 = (s32)(D_86A03170[arg5][arg6].unk_02 - D_86A03170[arg5][arg6].unk_00) / arg4;
+            D_86A06258 = (temp_v1->unk_02 - temp_v1->unk_00) / arg4;
         }
 
-        *arg0 = D_86A03170[arg5][arg6].unk_06;
-        *arg2 = D_86A03170[arg5][arg6].unk_08;
+        *arg0 = temp_v1->unk_06;
+        *arg2 = temp_v1->unk_08;
 
         D_86A06254->unk_60.at.x = 0.0f;
-        D_86A06254->unk_60.at.y = D_86A03170[arg5][arg6].unk_10;
+        D_86A06254->unk_60.at.y = temp_v1->unk_10;
         D_86A06254->unk_60.at.z = 0.0f;
 
-        D_86A06254->unk_24.fovy = D_86A03170[arg5][arg6].unk_0C;
-        D_86A06254->unk_24.near = D_86A03170[arg5][arg6].unk_14;
-        D_86A06254->unk_24.far = D_86A03170[arg5][arg6].unk_18;
+        D_86A06254->unk_24.fovy = temp_v1->unk_0C;
+        D_86A06254->unk_24.near = temp_v1->unk_14;
+        D_86A06254->unk_24.far = temp_v1->unk_18;
     } else if (arg6 < 9) {
-        if (D_86A03D40[arg5 - 2][arg6].unk_04 == 1) {
-            if (D_86A03D40[arg5 - 2][arg6].unk_00 < D_86A03D40[arg5 - 2][arg6].unk_02) {
-                D_86A06258 = (s32)(D_86A03D40[arg5 - 2][arg6].unk_02 - D_86A03D40[arg5 - 2][arg6].unk_00) / arg4;
+        if (D_86A03D40[arg5 - 2][(s32)arg6].unk_04 == 1) {
+            if (D_86A03D40[arg5 - 2][(s32)arg6].unk_00 < D_86A03D40[arg5 - 2][(s32)arg6].unk_02) {
+                D_86A06258 = (D_86A03D40[arg5 - 2][(s32)arg6].unk_02 - D_86A03D40[arg5 - 2][(s32)arg6].unk_00) / arg4;
             } else {
-                D_86A06258 =
-                    (s32)((D_86A03D40[arg5 - 2][arg6].unk_02 - D_86A03D40[arg5 - 2][arg6].unk_00) + 0x10000) / arg4;
+                D_86A06258 = ((D_86A03D40[arg5 - 2][(s32)arg6].unk_02 - D_86A03D40[arg5 - 2][(s32)arg6].unk_00) + 0x10000) / arg4;
             }
-        } else if (D_86A03D40[arg5 - 2][arg6].unk_00 < D_86A03D40[arg5 - 2][arg6].unk_02) {
-            D_86A06258 =
-                (s32)(D_86A03D40[arg5 - 2][arg6].unk_00 + D_86A03D40[arg5 - 2][arg6].unk_02 + 0xFFFF0000) / arg4;
+        } else if (D_86A03D40[arg5 - 2][(s32)arg6].unk_00 < D_86A03D40[arg5 - 2][(s32)arg6].unk_02) {
+            D_86A06258 = (s32)((D_86A03D40[arg5 - 2][(s32)arg6].unk_02 + D_86A03D40[arg5 - 2][(s32)arg6].unk_00) + 0xFFFF0000) / arg4;
         } else {
-            D_86A06258 = (s32)(D_86A03D40[arg5 - 2][arg6].unk_02 - D_86A03D40[arg5 - 2][arg6].unk_00) / arg4;
+            D_86A06258 = (D_86A03D40[arg5 - 2][(s32)arg6].unk_02 - D_86A03D40[arg5 - 2][(s32)arg6].unk_00) / arg4;
         }
 
-        *arg0 = D_86A03D40[arg5 - 2][arg6].unk_06;
-        *arg2 = D_86A03D40[arg5 - 2][arg6].unk_08;
+        *arg0 = D_86A03D40[arg5 - 2][(s32)arg6].unk_06;
+        *arg2 = D_86A03D40[arg5 - 2][(s32)arg6].unk_08;
 
         D_86A06248.x = 0.0f;
-        D_86A06248.y = D_86A03D40[arg5 - 2][arg6].unk_10;
+        D_86A06248.y = D_86A03D40[arg5 - 2][(s32)arg6].unk_10;
         D_86A06248.z = 0.0f;
 
-        D_86A06254->unk_24.fovy = D_86A03D40[arg5 - 2][arg6].unk_0C;
-        D_86A06254->unk_24.near = D_86A03D40[arg5 - 2][arg6].unk_14;
-        D_86A06254->unk_24.far = D_86A03D40[arg5 - 2][arg6].unk_18;
+        D_86A06254->unk_24.fovy = D_86A03D40[arg5 - 2][(s32)arg6].unk_0C;
+        D_86A06254->unk_24.near = D_86A03D40[arg5 - 2][(s32)arg6].unk_14;
+        D_86A06254->unk_24.far = D_86A03D40[arg5 - 2][(s32)arg6].unk_18;
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/credits/credits_15A2B0/func_86A01CF0.s")
-#endif
 
 void Credits_StepCameraYawBlend(void) {
     if (D_86A06220 < D_86A06222) {
