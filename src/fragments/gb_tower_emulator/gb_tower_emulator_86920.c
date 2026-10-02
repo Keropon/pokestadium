@@ -39,9 +39,6 @@ typedef struct unk_D_81234690 {
 extern s32 D_812286EC;
 extern s32 D_812286F0;
 
-// .rodata
-extern f32 D_8122AF70;
-
 // .bss
 extern u64 D_81231450[0x640];
 extern u64 D_81234650[0x6];
@@ -99,7 +96,6 @@ void GbApu_InitAllocator(unk_func_81206FA0* arg0, s32 arg1, s32 arg2) {
   arg0->unk_0C = 0;
 }
 
-#ifdef NON_MATCHING
 void func_812070A0(void) {
     u64* var_v0_2;
     s16* var_v1_2;
@@ -118,11 +114,12 @@ void func_812070A0(void) {
         do {
             var_v1--;
             *var_v0_2 = 0;
-            var_v0_2++;
+            ++var_v0_2;
         } while ((s32) var_v1 >= 0);
     }
-    D_812346D8 = D_8122AF70;
+    D_812346D8 = 16.713f;
     D_812346DC = 0x3C;
+    do {} while (0);
     D_81234690.unk_02 = 0xBB80;
     D_81234690.unk_04 = osAiSetFrequency(D_81234690.unk_02);
     D_81234690.unk_06 = (s16) (((D_81234690.unk_02 / D_812346DC) + 0xF) & ~0xF);
@@ -145,6 +142,3 @@ void func_812070A0(void) {
         }
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gb_tower_emulator/gb_tower_emulator_86920/func_812070A0.s")
-#endif
