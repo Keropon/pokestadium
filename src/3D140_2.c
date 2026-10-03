@@ -121,7 +121,7 @@ extern u32 dmaBufferLen;
 extern OSPiHandle* D_800FCB08[4];
 // s32 D_800FCB0C[3];
 extern BattleMonRuntime* D_800FCB18[4];
-extern s32 D_800FCB28[2];
+extern u32 D_800FCB28[2];
 extern u8 D_800FCB30[2];
 extern u8 D_800FCB38[2][8];
 extern unk_D_800FCB48 D_800FCB48[2];
@@ -713,7 +713,6 @@ void Audio_SelectModeMusic(u32 arg0, u32 arg1) {
     }
 }
 
-#ifdef NON_MATCHING
 void func_8003DB84(s32 arg0) {
     s8 var_t0;
     s8 var_t2;
@@ -1024,15 +1023,14 @@ block_53:
             var_v0 = D_800FCB18[1]->unk_0C - D_800FCB18[0]->unk_0C;
         }
 
-        if ((D_800FCB18[var_t0]->unk_28 * 0.7) < var_v0) {
-            if (((((u32)D_800FCB18[var_t5]->unk_0C * 100) / D_800FCB18[var_t5]->unk_28) >= 0x47) &&
-                (D_800FCB18[0]->unk_0C != D_800FCB18[0]->unk_28) &&
-                (D_800FCB18[1]->unk_0C != D_800FCB18[1]->unk_28)) {
-                if ((D_800FCB18[var_t5]->unk_28 * 0.6) < D_800FCB18[var_t5]->unk_0C) {
-                    if (D_800FCB18[var_t0]->unk_0C < (D_800FCB18[var_t0]->unk_28 * 0.4)) {
-                        Audio_QueueSoundAvoidingRecent(D_80077E20);
-                        return;
-                    }
+        if (((D_800FCB18[var_t0]->unk_28 * 0.7) < var_v0) &&
+            ((((u32)D_800FCB18[var_t5]->unk_0C * 100) / D_800FCB18[var_t5]->unk_28) >= 0x47) &&
+            (D_800FCB18[0]->unk_0C != D_800FCB18[0]->unk_28) &&
+            (D_800FCB18[1]->unk_0C != D_800FCB18[1]->unk_28)) {
+            if ((D_800FCB18[var_t5]->unk_28 * 0.6) < D_800FCB18[var_t5]->unk_0C) {
+                if (D_800FCB18[var_t0]->unk_0C < (D_800FCB18[var_t0]->unk_28 * 0.4)) {
+                    Audio_QueueSoundAvoidingRecent(D_80077E20);
+                    return;
                 }
             }
         }
@@ -1113,9 +1111,6 @@ block_53:
         }
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/3D140_2/func_8003DB84.s")
-#endif
 
 void func_8003EB40(s32 arg0, BattleMonRuntime* arg1) {
     u8 pad;
