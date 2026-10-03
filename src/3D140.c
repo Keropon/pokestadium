@@ -130,7 +130,7 @@ u32 dmaBufferLen;
 OSPiHandle* D_800FCB08[4];
 // s32 D_800FCB0C[3];
 BattleMonRuntime* D_800FCB18[4];
-s32 D_800FCB28[2];
+u32 D_800FCB28[2];
 u8 D_800FCB30[2];
 u8 D_800FCB38[2][8];
 unk_D_800FCB48 D_800FCB48[2];
