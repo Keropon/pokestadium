@@ -282,6 +282,8 @@ Gfx* func_8436C6A4(Gfx* arg0, DoubleTextureTrail* arg1, s16 arg2, s16 arg3) {
 
     sp44 = arg1->unk_018;
     for (i = 0; i < 9; i++) {
+        if (1) {}
+        if (1) {}
         gSPVertex(arg0++, sp44, 18, 0);
         TRIANGLES(arg0);
         sp44 += 9;

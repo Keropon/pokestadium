@@ -484,7 +484,7 @@ void func_83501718(u16* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, f32 arg5) 
     gDPSetRenderMode(gDisplayListHead++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
 
     for (i = 0; i < sp100; i += tmp) {
-        var_t0 = CLAMP_MAX(tmp, sp100 - i);
+        var_t0 = (sp100 - i) < 0xC ? (sp100 - i) : 0xC;
         a = 1024.0f / arg5;
 
         temp_fv0_3 = ROUND_MAX((var_t0 * arg5) + 0.4f);

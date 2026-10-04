@@ -1511,13 +1511,13 @@ void TradeCable_UpdateSequenceClose(unk_D_82F21140* arg0) {
 
 #ifdef NON_MATCHING
 void func_82F10BB4(s16 arg0, s16 arg1, f32 arg2) {
-    s16 sp58;
-    s16 temp_ft1;
     s16 temp_ft2;
-    s32 temp_ft0;
     s32 i;
-    s32 var_s2;
+    s32 sp58;
     u8* var_s6 = D_3000008;
+    s16 temp_ft1;
+    s32 var_s2;
+    s32 temp_ft0;
 
     temp_ft2 = ROUND_MAX(228.0f * arg2);
     temp_ft1 = ROUND_MAX(19.0f * arg2);

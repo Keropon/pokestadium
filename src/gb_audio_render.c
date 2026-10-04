@@ -591,7 +591,7 @@ skip:
 s16 func_8004A474(void) {
     s32 i;
     s32 changed;
-    u8 nr24;
+    s32 nr24;
     u8 phase;
     s16 out;
 
@@ -605,7 +605,7 @@ s16 func_8004A474(void) {
 
     if (changed) {
         nr24 = GB_REG(9);
-        D_800FCF90.unk_1C = ((0x800 - (GB_REG(8) | ((nr24 & 7) << 8))) * D_800FD004) >> 11;
+        D_800FCF90.unk_1C = ((0x800 - ((GB_REG(8) & 0xFF) | ((nr24 & 7) << 8))) * D_800FD004) >> 11;
         switch ((GB_REG(6) & 0xC0) >> 6) {
             case 0:
                 D_800FCF90.unk_10[1] = D_800FCF90.unk_1C >> 3;
@@ -662,7 +662,7 @@ s16 func_8004A474(void) {
             D_800FCF90.unk_16 = phase;
             D_800FCF90.unk_14 = 0;
             D_800FCF90.unk_18 = 0;
-            D_800FCF90.unk_04 = (GB_REG(7) & 0xF0) << 7;
+            D_800FCF90.unk_04 = ((GB_REG(7) & 0xF0) << 3) << 4;
             if (GB_REG(7) & 7) {
                 if (GB_REG(7) & 8) {
                     D_800FCF90.unk_06 = 0x800;

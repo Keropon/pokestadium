@@ -361,8 +361,6 @@ void func_84302658(Battler* arg0, s32 arg1) {
     s32 pad[8];
     BattleMon* ptr;
     SpeciesModelTransform* ptr2;
-    u32 tmp;
-    s32 var_a2;
 
     sp68 = BattleScene_GetParticipantSideIndex(arg0);
     sp66 = arg0->unk_000.unk_01A - 1;
@@ -386,7 +384,7 @@ void func_84302658(Battler* arg0, s32 arg1) {
         if (ptr2->unk_10 != 0xFF) {
             sp6E = ptr2->unk_10;
 
-            var_a1 = ((u32)_70D3A0_ROM_START) + (((u32)(D_6E910 + ((ptr2->unk_10 - (tmp = 2)) * 0x20))) & 0xFFFFFF);
+            var_a1 = (((u32)(D_6E910 + ((ptr2->unk_10 - 2) * 0x20))) & 0xFFFFFF) + (u32)_70D3A0_ROM_START;
             Dma_WriteChunks(ptr2, var_a1, var_a1 + 0x20, 0);
 
             D_84384578[sp68]->unk_10 = sp6E;
