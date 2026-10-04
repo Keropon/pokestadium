@@ -146,19 +146,22 @@ extern u16 D_8120EA86;
 extern u32 D_8120EA80;
 
 // .bss
-extern s16 D_8122C790;
-extern s16 D_8122C792;
-extern u8* D_8122C794;
-extern GbApuChannelState gGbApuSquare1;
-extern GbApuChannelState gGbApuSquare2;
-extern GbApuChannelState gGbApuWave;
-extern GbApuChannelState gGbApuNoise;
-extern u8 D_8122EE58[40];
-extern s32 D_8122EE98;
-extern unk_D_8122EEA8 D_8122EEA8;
-extern OSMesgQueue D_8122EEB0;
-extern GbApuWrite D_8122C8D8[];
-extern OSMesg D_8122EEC8;
+s16 D_8122C790;
+s16 D_8122C792;
+u8* D_8122C794;
+GbApuChannelState gGbApuSquare1;
+GbApuChannelState gGbApuSquare2;
+GbApuChannelState gGbApuWave;
+GbApuChannelState gGbApuNoise;
+GbApuWrite D_8122C8D8[0x960];
+u8 D_8122EE58[0x40];
+s32 D_8122EE98;
+s32 D_8122EE9C;
+s32 D_8122EEA0;
+s32 D_8122EEA4;
+unk_D_8122EEA8 D_8122EEA8;
+OSMesgQueue D_8122EEB0;
+OSMesg D_8122EEC8[0x961];
 typedef struct unk_D_81234690 {
     /* 0x00 */ u8 pad0[2];
     /* 0x02 */ u16 unk_02;
@@ -7630,7 +7633,7 @@ void GbApu_ResetChannels(void) {
   OSMesg sp20;
 
   osCreateMesgQueue(&sp24, &sp20, 1);
-  osCreateMesgQueue(&D_8122EEB0, &D_8122EEC8, 0x960);
+  osCreateMesgQueue(&D_8122EEB0, D_8122EEC8, 0x960);
   for (i = 0x50; i > 0xF; i--) {
       func_8120806C(i, 0);
   }
