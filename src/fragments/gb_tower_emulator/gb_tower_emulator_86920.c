@@ -40,19 +40,26 @@ extern s32 D_812286EC;
 extern s32 D_812286F0;
 
 // .bss
-extern u64 D_81231450[0x640];
-extern u64 D_81234650[0x6];
-extern unk_func_81206FA0 D_81234680;
-extern unk_D_81234690 D_81234690;
-extern volatile s32 D_812346C8;
-extern s32 D_812346D4;
-extern f32 D_812346D8;
-extern s32 D_812346DC;
-extern s16* D_812346E0[3];
-extern s16 D_812346EC[3];
-extern s32 D_812346F2;
-extern s32 D_81234700;
-extern volatile s32 D_812346FC;
+u64 D_81231450[0x640];
+u64 D_81234650[0x6];
+unk_func_81206FA0 D_81234680;
+unk_D_81234690 D_81234690;
+volatile s32 D_812346C8;
+s32 D_812346CC;
+s32 D_812346D0;
+s32 D_812346D4;
+f32 D_812346D8;
+s32 D_812346DC;
+s16* D_812346E0[3];
+s16 D_812346EC[3];
+s16 D_812346F2;
+u32 D_812346F4;
+s32 D_812346F8;
+volatile s32 D_812346FC;
+s32 D_81234700;
+s32 D_81234704;
+s32 D_81234708;
+s32 D_8123470C;
 
 u32 GbApu_AllocZeroed(unk_func_81206FA0* arg0, s32 arg1) {
   s32 temp_v0;
