@@ -1,0 +1,18 @@
+// JP addresses for the GLOBAL_ASM stubs
+func_80033D44 = 0x80030E54; // size:0x510
+func_80034BD4 = 0x80031CE4; // size:0x394
+func_80049DF0 = 0x80046CB0; // size:0x684
+func_8004A474 = 0x80047334; // size:0x428
+func_8004A89C = 0x8004775C; // size:0x400
+func_81209374 = 0x8121E9F8; // size:0x314
+func_82F04604 = 0x82F1A00C; // size:0x9D0
+func_82F10BB4 = 0x82F26014; // size:0x31C
+func_8430506C = 0x843045C4; // size:0x254
+func_84367660 = 0x84366DA0; // size:0x650
+func_8436C6A4 = 0x8436BDE4; // size:0x4BC
+func_8437FD74 = 0x8437F62C; // size:0x3F0
+func_87803EAC = 0x87825C84; // size:0x474
+func_88500A74 = 0x88517F84; // size:0x3C0
+func_885065E0 = 0x8851D5C4; // size:0x61C
+func_8850B2D4 = 0x885222D8; // size:0x9C0
+func_88805AEC = 0x8881B70C; // size:0xEC4

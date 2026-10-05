@@ -133,8 +133,11 @@ BUILD_DEFINES ?=
 
 ifeq ($(VERSION),us)
   BUILD_DEFINES   += -DVERSION_US=1
+else ifeq ($(VERSION),jp)
+  BUILD_DEFINES   += -DVERSION_JP=1
+  ULTRALIB_VERSION := J
 else
-$(error Invalid VERSION variable detected. Please use 'us')
+$(error Invalid VERSION variable detected. Please use 'us' or 'jp')
 endif
 
 
@@ -394,7 +397,7 @@ extract:
 	$(V)$(RM) -r asm/$(VERSION) assets/$(VERSION)
 	$(V)$(CAT) yamls/$(VERSION)/header.yaml yamls/$(VERSION)/rom.yaml > $(SPLAT_YAML)
 	$(V)$(SPLAT) $(SPLAT_FLAGS) $(SPLAT_YAML)
-	$(V)PYTHON="$(PYTHON)" $(EXTRACT_ASSETS)
+	$(V)PYTHON="$(PYTHON)" VERSION="$(VERSION)" $(EXTRACT_ASSETS)
 
 lib: $(ULTRALIB_LIB)
 
