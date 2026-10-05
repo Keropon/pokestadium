@@ -3150,7 +3150,7 @@ u8 BattleAI_SelectBestHeuristicCandidate(BattleAiMonState* arg0, BattleAiTeamSta
 s32 BattleAI_IsPriorityTableMove(u8 arg0, u8 arg1);
 u8 BattleAI_ScoreCategorySetLowPP(BattleAiMonState* arg0, BattleAiMonState* arg1);
 u8 BattleAI_ScoreCategorySetReady(BattleAiMonState* arg0, BattleAiMonState* arg1);
-s32 BattleAI_HasExactlyOneUsableCandidate(BattleAiTeamState* arg0);
+u8 BattleAI_HasExactlyOneUsableCandidate(BattleAiTeamState* arg0);
 void BattleAI_InitializeOrderCandidates(TeamRoster* arg0, TeamRoster* arg1, TeamRoster* arg2, unk_D_843C5568* arg3, s32 arg4);
 void BattleAI_UpdateRememberedMoveCandidate(BattleAiMonState* arg0, u8 arg1);
 u16 BattleAI_ScoreMove(BattleMonRuntime* arg0, BattleMonRuntime* arg1, u8 arg2);
