@@ -7,6 +7,7 @@ func_8004A89C = 0x8004775C; // size:0x400
 func_81209374 = 0x8121E9F8; // size:0x314
 func_82F04604 = 0x82F1A00C; // size:0x9D0
 func_82F10BB4 = 0x82F26014; // size:0x31C
+func_84302658 = 0x84301BF0; // size:0x378 // STRUCTURAL, not byte-verified
 func_8430506C = 0x843045C4; // size:0x254
 func_84367660 = 0x84366DA0; // size:0x650
 func_8436C6A4 = 0x8436BDE4; // size:0x4BC

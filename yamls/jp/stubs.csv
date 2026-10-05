@@ -1,7 +1,7 @@
 name,seg,us_vram,us_rom,size,jp_vram,jp_rom,delta,cands,masked_match,verified
 func_80033D44,33FE0,0x80033D44,0x34944,0x510,0x80030E54,0x31A54,-0x2ef0,324,prefix 324/324 tot 324,yes
 func_80034BD4,33FE0,0x80034BD4,0x357D4,0x394,0x80031CE4,0x328E4,-0x2ef0,229,prefix 229/229 tot 229,yes
-func_84302658,fragments/battle_engine/battle_engine_2EC3C0,0x84302658,0x2ECF18,0x378,0x84301BF0,0x2EC4B0,-0xa68,222,prefix 10/222 tot 15,NO
+func_84302658,fragments/battle_engine/battle_engine_2EC3C0,0x84302658,0x2ECF18,0x378,0x84301BF0,0x2EC4B0,-0xa68,222,structural 0.977 (217/222),structural
 func_8430506C,fragments/battle_engine/battle_engine_2EC3C0,0x8430506C,0x2EF92C,0x254,0x843045C4,0x2EEE84,-0xaa8,149,prefix 149/149 tot 149,yes
 func_84367660,fragments/battle_engine/battle_engine_351F20,0x84367660,0x351F20,0x650,0x84366DA0,0x351660,-0x8c0,404,prefix 404/404 tot 404,yes
 func_8436C6A4,fragments/battle_engine/battle_engine_356730,0x8436C6A4,0x356F64,0x4BC,0x8436BDE4,0x3566A4,-0x8c0,303,prefix 303/303 tot 303,yes
