@@ -398,6 +398,10 @@ extract:
 	$(V)$(CAT) yamls/$(VERSION)/header.yaml yamls/$(VERSION)/rom.yaml > $(SPLAT_YAML)
 	$(V)$(SPLAT) $(SPLAT_FLAGS) $(SPLAT_YAML)
 	$(V)PYTHON="$(PYTHON)" VERSION="$(VERSION)" $(EXTRACT_ASSETS)
+ifeq ($(VERSION),jp)
+	$(V)$(RM) -r asm/us && ln -s jp asm/us
+	$(V)$(PYTHON) tools/jp_place_stubs.py
+endif
 
 lib: $(ULTRALIB_LIB)
 

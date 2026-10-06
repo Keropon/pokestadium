@@ -77,7 +77,7 @@
     - [0x2D17C, c, text_system] # stack cleaner
     - [0x2D400, c, gb_save] # pkm lab pokedex code
     - [0x2E1EC, c, minigame_dispatch] # minigames code
-    - [0x2E5F8, c, gallery] # gallery code
+    - [0x2E5F8, bin, gallery] # gallery code
     - [0x2F650, c, vector_math] # vector/matrix math
     - [0x2FE40, c, battle_hud]
     - [0x305F0, c, model_renderer_callbacks]
@@ -358,7 +358,7 @@
     - [0x7A0F4, .data, table_view]
     - [0x7A2F0, .data, gb_save]
     - [0x7A854, .data, minigame_dispatch]
-    - [0x7A988, .data, gallery]
+    - [0x7A988, bin, gallery]
     - [0x7AC58, .data, model_renderer_callbacks]
     - [0x7ACD4, .data, 33E30]
     - [0x7AD8C, .data, 33FE0]
@@ -439,7 +439,7 @@
     - [0x83854, .rodata, text_system]
     - [0x83874, .rodata, gb_save]
     - [0x83910, .rodata, minigame_dispatch]
-    - [0x839D0, .rodata, gallery]
+    - [0x839D0, bin, gallery]
     - [0x83A10, .rodata, vector_math]
     - [0x83AEC, .rodata, 33E30]
     - [0x83B4C, .rodata, 33FE0]
@@ -974,14 +974,14 @@
     start: 0x16C3CC
     vram: 0x86900000
     subsegments:
-    - [0x16C3CC, textbin,   fragments/gallery_camera/gallery_camera_header]
-    - [0x16C3D4, c,      fragments/gallery_camera/gallery_camera_14CA70]
-    - [0x16CE18, c,      fragments/gallery_camera/gallery_camera_14EC80]
-    - [0x16D730, c,      fragments/gallery_camera/gallery_camera_150AC0]
-    - [0x16ED7C, .data,   fragments/gallery_camera/gallery_camera_14CA70]
-    - [0x16F544, .rodata, fragments/gallery_camera/gallery_camera_14CA70]
-    - [0x16F560, .rodata, fragments/gallery_camera/gallery_camera_14EC80]
-    - [0x16F580, .rodata, fragments/gallery_camera/gallery_camera_150AC0]
+    - [0x16C3CC, bin,   fragments/gallery_camera/gallery_camera_header]
+    - [0x16C3D4, bin,      fragments/gallery_camera/gallery_camera_14CA70]
+    - [0x16CE18, bin,      fragments/gallery_camera/gallery_camera_14EC80]
+    - [0x16D730, bin,      fragments/gallery_camera/gallery_camera_150AC0]
+    - [0x16ED7C, bin,   fragments/gallery_camera/gallery_camera_14CA70]
+    - [0x16F544, bin, fragments/gallery_camera/gallery_camera_14CA70]
+    - [0x16F560, bin, fragments/gallery_camera/gallery_camera_14EC80]
+    - [0x16F580, bin, fragments/gallery_camera/gallery_camera_150AC0]
 
     - {vram: 0x869031FC, type:  .bss, name: fragments/gallery_camera/gallery_camera_14CA70}
     - {vram: 0x869036C8, type:  .bss, name: fragments/gallery_camera/gallery_camera_14EC80}
@@ -1705,10 +1705,10 @@
     start: 0x2BB9E4
     vram: 0x83300000
     subsegments:
-    - [0x2BB9E4, textbin,   fragments/gallery_snap/gallery_snap_header]
-    - [0x2BBA20, c,      fragments/gallery_snap/gallery_snap]
-    - [0x2C1718, .data,   fragments/gallery_snap/gallery_snap]
-    - [0x2C1954, .rodata, fragments/gallery_snap/gallery_snap]
+    - [0x2BB9E4, bin,   fragments/gallery_snap/gallery_snap_header]
+    - [0x2BBA20, bin,      fragments/gallery_snap/gallery_snap]
+    - [0x2C1718, bin,   fragments/gallery_snap/gallery_snap]
+    - [0x2C1954, bin, fragments/gallery_snap/gallery_snap]
 
     - {vram: 0x83305FC8, type:  .bss, name: fragments/gallery_snap/gallery_snap}
 
@@ -1727,13 +1727,13 @@
     start: 0x2C2EA0
     vram: 0x83400000
     subsegments:
-    - [0x2C2EA0, textbin,   fragments/gallery_backgrounds/gallery_backgrounds_header]
-    - [0x2C2EDC, c,      fragments/gallery_backgrounds/gallery_backgrounds_2A1B50]
-    - [0x2C70FC, c,      fragments/gallery_backgrounds/gallery_backgrounds_2A3E70]
-    - [0x2C72C0, c,      fragments/gallery_backgrounds/gallery_backgrounds_2A3F60]
-    - [0x2C8578, .data,   fragments/gallery_backgrounds/gallery_backgrounds_2A1B50]
-    - [0x2C85B4, .data,   fragments/gallery_backgrounds/gallery_backgrounds_2A3F60]
-    - [0x2C86A4, .rodata, fragments/gallery_backgrounds/gallery_backgrounds_2A3F60]
+    - [0x2C2EA0, bin,   fragments/gallery_backgrounds/gallery_backgrounds_header]
+    - [0x2C2EDC, bin,      fragments/gallery_backgrounds/gallery_backgrounds_2A1B50]
+    - [0x2C70FC, bin,      fragments/gallery_backgrounds/gallery_backgrounds_2A3E70]
+    - [0x2C72C0, bin,      fragments/gallery_backgrounds/gallery_backgrounds_2A3F60]
+    - [0x2C8578, bin,   fragments/gallery_backgrounds/gallery_backgrounds_2A1B50]
+    - [0x2C85B4, bin,   fragments/gallery_backgrounds/gallery_backgrounds_2A3F60]
+    - [0x2C86A4, bin, fragments/gallery_backgrounds/gallery_backgrounds_2A3F60]
 
     - {vram: 0x83405840, type:  .bss, name: fragments/gallery_backgrounds/gallery_backgrounds_2A1B50}
     - {vram: 0x8340E958, type:  .bss, name: fragments/gallery_backgrounds/gallery_backgrounds_2A3E70}
@@ -1754,10 +1754,10 @@
     start: 0x2C8E2C
     vram: 0x83500000
     subsegments:
-    - [0x2C8E2C, textbin,   fragments/gallery_album/gallery_album_header]
-    - [0x2C8E68, c,      fragments/gallery_album/gallery_album]
-    - [0x2D03BC, .data, fragments/gallery_album/gallery_album]
-    - [0x2D059C, .rodata, fragments/gallery_album/gallery_album]
+    - [0x2C8E2C, bin,   fragments/gallery_album/gallery_album_header]
+    - [0x2C8E68, bin,      fragments/gallery_album/gallery_album]
+    - [0x2D03BC, bin, fragments/gallery_album/gallery_album]
+    - [0x2D059C, bin, fragments/gallery_album/gallery_album]
 
     - {vram: 0x83507804, type:  .bss, name: fragments/gallery_album/gallery_album}
 
@@ -1776,10 +1776,10 @@
     start: 0x2D18CC
     vram: 0x83600000
     subsegments:
-    - [0x2D18CC, textbin,   fragments/gallery_film_select/gallery_film_select_header]
-    - [0x2D1908, c,      fragments/gallery_film_select/gallery_film_select]
-    - [0x2D77E0, .data,   fragments/gallery_film_select/gallery_film_select]
-    - [0x2D7894, .rodata, fragments/gallery_film_select/gallery_film_select]
+    - [0x2D18CC, bin,   fragments/gallery_film_select/gallery_film_select_header]
+    - [0x2D1908, bin,      fragments/gallery_film_select/gallery_film_select]
+    - [0x2D77E0, bin,   fragments/gallery_film_select/gallery_film_select]
+    - [0x2D7894, bin, fragments/gallery_film_select/gallery_film_select]
 
     - {vram: 0x83605FE4, type:  .bss, name: fragments/gallery_film_select/gallery_film_select}
 
@@ -1798,9 +1798,9 @@
     start: 0x2D87A4
     vram: 0x83700000
     subsegments:
-    - [0x2D87A4, textbin,   fragments/gallery_enlarge/gallery_enlarge_header]
-    - [0x2D87E0, c,      fragments/gallery_enlarge/gallery_enlarge]
-    - [0x2D9078, .data,   fragments/gallery_enlarge/gallery_enlarge]
+    - [0x2D87A4, bin,   fragments/gallery_enlarge/gallery_enlarge_header]
+    - [0x2D87E0, bin,      fragments/gallery_enlarge/gallery_enlarge]
+    - [0x2D9078, bin,   fragments/gallery_enlarge/gallery_enlarge]
 
     - {vram: 0x837008F0, type:  .bss, name: fragments/gallery_enlarge/gallery_enlarge}
 
@@ -1819,18 +1819,18 @@
     start: 0x2D93E0
     vram: 0x83800000
     subsegments:
-    - [0x2D93E0, textbin,   fragments/gallery_rental_viewer/gallery_rental_viewer_header]
-    - [0x2D941C, c,      fragments/gallery_rental_viewer/gallery_rental_viewer_2AD910]
-    - [0x2DA4D4, c,      fragments/gallery_rental_viewer/gallery_rental_viewer_2AE1F0]
-    - [0x2DD914, c,      fragments/gallery_rental_viewer/gallery_rental_viewer_2AFDB0]
+    - [0x2D93E0, bin,   fragments/gallery_rental_viewer/gallery_rental_viewer_header]
+    - [0x2D941C, bin,      fragments/gallery_rental_viewer/gallery_rental_viewer_2AD910]
+    - [0x2DA4D4, bin,      fragments/gallery_rental_viewer/gallery_rental_viewer_2AE1F0]
+    - [0x2DD914, bin,      fragments/gallery_rental_viewer/gallery_rental_viewer_2AFDB0]
 
-    - [0x2DD9E8, .data,   fragments/gallery_rental_viewer/gallery_rental_viewer_2AD910]
-    - [0x2DD9E8, .data,   fragments/gallery_rental_viewer/gallery_rental_viewer_2AE1F0]
-    - [0x2DDA14, .data,   fragments/gallery_rental_viewer/gallery_rental_viewer_2AFDB0]
+    - [0x2DD9E8, bin,   fragments/gallery_rental_viewer/gallery_rental_viewer_2AD910]
+    - [0x2DD9E8, bin,   fragments/gallery_rental_viewer/gallery_rental_viewer_2AE1F0]
+    - [0x2DDA14, bin,   fragments/gallery_rental_viewer/gallery_rental_viewer_2AFDB0]
 
-    - [0x2DDA14, .rodata, fragments/gallery_rental_viewer/gallery_rental_viewer_2AD910]
-    - [0x2DDA14, .rodata, fragments/gallery_rental_viewer/gallery_rental_viewer_2AE1F0]
-    - [0x2DDA18, .rodata, fragments/gallery_rental_viewer/gallery_rental_viewer_2AFDB0]
+    - [0x2DDA14, bin, fragments/gallery_rental_viewer/gallery_rental_viewer_2AD910]
+    - [0x2DDA14, bin, fragments/gallery_rental_viewer/gallery_rental_viewer_2AE1F0]
+    - [0x2DDA18, bin, fragments/gallery_rental_viewer/gallery_rental_viewer_2AFDB0]
 
     - {vram: 0x8380463C, type:  .bss, name: fragments/gallery_rental_viewer/gallery_rental_viewer_2AD910}
     - {vram: 0x83804640, type:  .bss, name: fragments/gallery_rental_viewer/gallery_rental_viewer_2AE1F0}
@@ -1851,10 +1851,10 @@
     start: 0x2DDA70
     vram: 0x83900000 # apparently not used either, but VRAM is an estimate based on the patterns around this fragment.
     subsegments:
-    - [0x2DDA70, textbin,   fragments/gallery_debugger/gallery_debugger_header]
-    - [0x2DDA70, c,      fragments/gallery_debugger/gallery_debugger]
-    - [0x2DDA90, .data,   fragments/gallery_debugger/gallery_debugger]
-    - [0x2DDA90, .rodata, fragments/gallery_debugger/gallery_debugger]
+    - [0x2DDA70, bin,   fragments/gallery_debugger/gallery_debugger_header]
+    - [0x2DDA70, bin,      fragments/gallery_debugger/gallery_debugger]
+    - [0x2DDA90, bin,   fragments/gallery_debugger/gallery_debugger]
+    - [0x2DDA90, bin, fragments/gallery_debugger/gallery_debugger]
 
     - {vram: 0x83900024, type:  .bss, name: fragments/gallery_debugger/gallery_debugger}
 
@@ -1872,9 +1872,9 @@
     start: 0x2DDA98
     vram: 0x83A00000
     subsegments:
-    - [0x2DDA98, textbin,   fragments/snap_print_club_background_select/snap_print_club_background_select_header]
-    - [0x2DDA98, c,      fragments/snap_print_club_background_select/snap_print_club_background_select]
-    - [0x2DDAD4, .data,   fragments/snap_print_club_background_select/snap_print_club_background_select]
+    - [0x2DDA98, bin,   fragments/snap_print_club_background_select/snap_print_club_background_select_header]
+    - [0x2DDA98, bin,      fragments/snap_print_club_background_select/snap_print_club_background_select]
+    - [0x2DDAD4, bin,   fragments/snap_print_club_background_select/snap_print_club_background_select]
 
     - {vram: 0x83A00040, type:  .bss, name: fragments/snap_print_club_background_select/snap_print_club_background_select}
 
@@ -2435,9 +2435,9 @@
     start: 0x3B6B94
     vram: 0x83200000
     subsegments:
-    - [0x3B6B94, textbin,   fragments/pikachu_reward/pikachu_reward_header]
-    - [0x3B6BB4, c,      fragments/pikachu_reward/pikachu_reward]
-    - [0x3B8A8C, .data,   fragments/pikachu_reward/pikachu_reward]
+    - [0x3B6B94, bin,   fragments/pikachu_reward/pikachu_reward_header]
+    - [0x3B6BB4, bin,      fragments/pikachu_reward/pikachu_reward]
+    - [0x3B8A8C, bin,   fragments/pikachu_reward/pikachu_reward]
 
     - {vram: 0x83201FB4, type:  .bss, name: fragments/pikachu_reward/pikachu_reward}
 
@@ -2592,9 +2592,9 @@
     start: 0x3B9354
     vram: 0x8FA00000
     subsegments:
-    - [0x3B9354, textbin, fragments/snap_print_club_print_seals/snap_print_club_print_seals_header]
-    - [0x3B9374, c,    fragments/snap_print_club_print_seals/snap_print_club_print_seals]
-    - [0x3B9D28, .data, fragments/snap_print_club_print_seals/snap_print_club_print_seals]
+    - [0x3B9354, bin, fragments/snap_print_club_print_seals/snap_print_club_print_seals_header]
+    - [0x3B9374, bin,    fragments/snap_print_club_print_seals/snap_print_club_print_seals]
+    - [0x3B9D28, bin, fragments/snap_print_club_print_seals/snap_print_club_print_seals]
 
     - {vram: 0x8FA00A00, type:  .bss, name: fragments/snap_print_club_print_seals/snap_print_club_print_seals}
 

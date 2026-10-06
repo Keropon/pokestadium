@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Declare splat auto-names (D_<addr>, func_<addr>) that the link reports as
-undefined. The name is a JP rom offset, so the vram comes from the JP yaml.
+undefined. A name inside a JP yaml span is a rom offset and gets that span's
+vram; any other name is its own address.
 
 usage: tools/jp_declare_autonames.py [repo_root] build_log
 """
@@ -35,14 +36,15 @@ spans.sort()
 
 lines = []
 for n in names:
-    if not re.fullmatch(r"[A-Za-z]+_[0-9A-Fa-f]{5,8}", n):
+    if not re.fullmatch(r"[A-Za-z]+_[0-9A-Fa-f]{4,8}", n):
         continue
     val = int(n.rsplit("_", 1)[1], 16)
     hit = next(((s, e, v) for (s, e, v) in spans if s <= val < e), None)
-    if hit is None:
-        continue
-    s, e, v = hit
-    lines.append(f"{n} = 0x{v + (val - s):08X}; // auto-name, from JP rom 0x{val:X}")
+    if hit is not None:
+        s, e, v = hit
+        lines.append(f"{n} = 0x{v + (val - s):08X}; // auto-name, from JP rom 0x{val:X}")
+    else:
+        lines.append(f"{n} = 0x{val:08X}; // auto-name, address taken from the name")
 
 und = ROOT / "linker_scripts/jp/undefined_syms.ld"
 base = und.read_text()
