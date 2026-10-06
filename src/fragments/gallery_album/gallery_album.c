@@ -440,7 +440,6 @@ void Gallery_AlbumComputeEnlargeMotion(s32 arg0, s32* arg1, s32* arg2, f32* arg3
     *arg3 = var_ft4;
 }
 
-#ifdef NON_MATCHING
 void func_83501718(u16* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, f32 arg5) {
     s32 i;
     s32 tmp;
@@ -454,7 +453,6 @@ void func_83501718(u16* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, f32 arg5) 
     s32 spE8;
     s32 temp_fv1_3;
     s32 temp_fv0_3;
-    s32 pad;
     s32 var_t0;
     s32 tmp2;
 
@@ -468,14 +466,13 @@ void func_83501718(u16* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, f32 arg5) 
     temp_ft3 = ROUND_MAX((arg4 * arg5) + 0.4f);
 
     spE8 = (temp_ft7 - temp_ft3) / 2;
+    tmp2 = (temp_ft8 - spF4) / 2;
 
     if (arg5 <= 0.0f) {
         return;
     }
 
     gSPDisplayList(gDisplayListHead++, D_8006F498);
-
-    tmp2 = (temp_ft8 - spF4) / 2;
 
     Gfx_FillRectRgba((arg1 + tmp2) + 0xA, arg2 + spE8 + 0xA, spF4 + 4, temp_ft3 + 4, 0, 0, 0, 0x80);
     Gallery_DrawWhiteBorder(arg1 + tmp2, arg2 + spE8, spF4, temp_ft3, 2);
@@ -484,7 +481,7 @@ void func_83501718(u16* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, f32 arg5) 
     gDPSetRenderMode(gDisplayListHead++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
 
     for (i = 0; i < sp100; i += tmp) {
-        var_t0 = CLAMP_MAX(tmp, sp100 - i);
+        var_t0 = CLAMP_MIN(sp100 - i, tmp);
         a = 1024.0f / arg5;
 
         temp_fv0_3 = ROUND_MAX((var_t0 * arg5) + 0.4f);
@@ -497,9 +494,6 @@ void func_83501718(u16* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, f32 arg5) 
         Gfx_DrawTexturedRectClipped(arg1 + tmp2, arg2 + spE8 + temp_fv1_3, spF4, temp_fv0_3, 0, 0, a, a, 0);
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/gallery_album/gallery_album/func_83501718.s")
-#endif
 
 void Gallery_AlbumDrawThumbnails(s32 arg0, s32 arg1, unk_D_83407B38* arg2) {
     UNUSED s32 pad;
