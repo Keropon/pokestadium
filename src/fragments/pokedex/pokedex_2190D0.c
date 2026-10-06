@@ -3546,26 +3546,18 @@ Gfx* Pokedex_DrawMapPinIcon(Gfx* arg0, s16 arg1, s16 arg2) {
     return arg0;
 }
 
-#ifdef NON_MATCHING
 Gfx* func_88805AEC(Gfx* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6) {
-    u32 temp_v0;
-    s32 rightEdge;
+    u32 temp_v0 = strlen(D_88825BFC[D_88826A4E]) * 8;
     s32 tmp;
-    volatile s32 rightEdge2; // FAKE
-    s32 tmp2;
     s32 y;
-    y = arg2;
-    tmp = arg1 + arg3;
-    tmp2 = y + arg4;
-    rightEdge = ((arg1 + arg3) - 8) << 2;
-    temp_v0 = strlen(D_88825BFC[D_88826A4E]);
     gDPLoadTextureBlock(arg0++, D_88823618, G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 8, 0, G_TX_MIRROR | G_TX_CLAMP,
                         G_TX_MIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+    y = arg2;
+    tmp = arg1 + arg3;
     gSPTextureRectangle(arg0++, (tmp - 8) << 2, y << 2, tmp << 2, (y + 8) << 2, G_TX_RENDERTILE, 0, 0, 0x0400, 0x0400);
-    rightEdge2 = ((arg1 + arg3) - 8) << 2;
     switch (arg5) {
         case 0:
-            gSPTextureRectangle(arg0++, ((tmp - arg3) + 0x3E) << 2, y << 2, rightEdge, (y + 8) << 2, G_TX_RENDERTILE, 0,
+            gSPTextureRectangle(arg0++, ((tmp - arg3) + 0x3E) << 2, y << 2, (tmp - 8) << 2, (y + 8) << 2, G_TX_RENDERTILE, 0,
                                 0, -0x0400, 0x0400);
             break;
 
@@ -3578,40 +3570,59 @@ Gfx* func_88805AEC(Gfx* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, 
             gSPTextureRectangle(arg0++, ((tmp - arg3) + 8) << 2, y << 2, (tmp - 8) << 2, (y + 8) << 2, G_TX_RENDERTILE,
                                 0, 0, -0x0400, 0x0400);
             break;
+
+        default:
+            break;
     }
 
     gDPLoadTextureBlock(arg0++, D_888236A0, G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 8, 0, G_TX_MIRROR | G_TX_CLAMP,
                         G_TX_MIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-    gSPTextureRectangle(arg0++, rightEdge2, (tmp2 - 8) << 2, tmp << 2, tmp2 << 2, G_TX_RENDERTILE, 0, 0, 0x0400,
+    y = arg2 + arg4;
+    gSPTextureRectangle(arg0++, (tmp - 8) << 2, (y - 8) << 2, tmp << 2, y << 2, G_TX_RENDERTILE, 0, 0, 0x0400,
                         0x0400);
-    gSPTextureRectangle(arg0++, ((tmp - arg3) + 8) << 2, (tmp2 - 8) << 2, (tmp - 8) << 2, tmp2 << 2, G_TX_RENDERTILE, 0,
+    gSPTextureRectangle(arg0++, ((tmp - arg3) + 8) << 2, (y - 8) << 2, (tmp - 8) << 2, y << 2, G_TX_RENDERTILE, 0,
                         0, -0x0400, 0x0400);
-    gSPTextureRectangle(arg0++, (tmp - 8) << 2, ((tmp2 - arg4) + 8) << 2, tmp << 2, (tmp2 - 8) << 2, G_TX_RENDERTILE, 0,
+    gSPTextureRectangle(arg0++, (tmp - 8) << 2, ((y - arg4) + 8) << 2, tmp << 2, (y - 8) << 2, G_TX_RENDERTILE, 0,
                         0, 0x0400, -0x0400);
     gDPLoadTextureBlock(arg0++, D_88823728, G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 8, 0, G_TX_MIRROR | G_TX_CLAMP,
                         G_TX_MIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-    gSPTextureRectangle(arg0++, arg1 << 2, (tmp2 - 8) << 2, (arg1 + 8) << 2, tmp2 << 2, G_TX_RENDERTILE, 0, 0, 0x0400,
+    // idk
+    tmp = arg1;
+    gSPTextureRectangle(arg0++, tmp << 2, (y - 8) << 2, (tmp + 8) << 2, y << 2, G_TX_RENDERTILE, 0, 0, 0x0400,
                         0x0400);
-    if ((arg5 != 0) && (arg5 != 1)) {
-        if (arg5 == 2) {
-            gSPTextureRectangle(arg0++, arg1 << 2, ((tmp2 - arg4) + 8) << 2, (arg1 + 8) << 2, (tmp2 - 8) << 2,
+    switch (arg5) {
+        case 2:
+            gSPTextureRectangle(arg0++, arg1 << 2, ((y - arg4) + 8) << 2, (arg1 + 8) << 2, (y - 8) << 2,
                                 G_TX_RENDERTILE, 0, 0, 0x0400, -0x0400);
-        }
-    } else {
-        gSPTextureRectangle(arg0++, arg1 << 2, (tmp2 - arg4) << 2, (arg1 + 8) << 2, (tmp2 - 8) << 2, G_TX_RENDERTILE, 0,
-                            0, 0x0400, -0x0400);
+            break;
+
+        case 0:
+        case 1:
+            gSPTextureRectangle(arg0++, arg1 << 2, (y - arg4) << 2, (arg1 + 8) << 2, (y - 8) << 2,
+                                G_TX_RENDERTILE, 0, 0, 0x0400, -0x0400);
+
+            break;
+
+        default:
+            break;
     }
-    if (arg5 == 2) {
-        gDPLoadTextureBlock(arg0++, D_888237B0, G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 8, 0, G_TX_MIRROR | G_TX_CLAMP,
-                            G_TX_MIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-        gSPTextureRectangle(arg0++, arg1 << 2, y << 2, (arg1 + 8) << 2, (y + 8) << 2, G_TX_RENDERTILE, 0, 0, 0x0400,
-                            0x0400);
+    switch (arg5) {
+        case 2:
+            gDPLoadTextureBlock(arg0++, D_888237B0, G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 8, 0,
+                                G_TX_MIRROR | G_TX_CLAMP, G_TX_MIRROR | G_TX_CLAMP,
+                                G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+            // dumb
+            y = arg2;
+            gSPTextureRectangle(arg0++, arg1 << 2, y << 2, (arg1 + 8) << 2, (y + 8) << 2,
+                                G_TX_RENDERTILE, 0, 0, 0x0400, 0x0400);
+            break;
+        default:
+            break;
     }
     if (arg6 == 1) {
         switch (D_88826A56) {
             case 0:
                 gDPSetPrimColor(arg0++, 0xFF, 0xFF, 106, 40, 20, 200);
-                if (1) {} // FAKE
                 break;
 
             case 1:
@@ -3625,48 +3636,54 @@ Gfx* func_88805AEC(Gfx* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, 
             case 3:
                 gDPSetPrimColor(arg0++, 0xFF, 0xFF, 160, 160, 0, 200);
                 break;
+
+            default:
+                break;
         }
 
         gDPLoadTextureBlock(arg0++, D_888251A8, G_IM_FMT_IA, G_IM_SIZ_16b, 4, 4, 0, G_TX_MIRROR | G_TX_CLAMP,
                             G_TX_MIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-        // FAKE: triple 0xFFFF mask
-        gSPTextureRectangle(arg0++, (arg1 + 2) << 2, (y + 2) << 2, ((((tmp - 2) & 0xFFFFu) & 0xFFFFu) & 0xFFFFu) << 2,
-                            (tmp2 - 2) << 2, G_TX_RENDERTILE, 0, 0, 0x0400, 0x0400);
+        gSPTextureRectangle(arg0++, (tmp + 2) << 2, (arg2 + 2) << 2, ((tmp + arg3) - 2) << 2,
+                            ((arg2 + arg4) - 2) << 2, G_TX_RENDERTILE, 0, 0, 0x0400, 0x0400);
         gDPSetPrimColor(arg0++, 0xFF, 0xFF, 255, 255, 255, 200);
     }
+    y = arg2;
     switch (arg5) {
         case 2:
+        default:
             break;
 
         case 1:
             gDPLoadTextureBlock(arg0++, D_88823248, G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 15, 0, G_TX_MIRROR | G_TX_CLAMP,
                                 G_TX_MIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-            gSPTextureRectangle(arg0++, arg1 << 2, (y - 0xC) << 2, ((arg1 + (temp_v0 * 8)) - 0x10) << 2, (y + 3) << 2,
+            // almost worse than the old fake
+            tmp = arg1;
+            arg3 = (tmp + temp_v0) - 0x10;
+            arg4 = arg2 - 0xC;
+            gSPTextureRectangle(arg0++, tmp << 2, arg4 << 2, arg3 << 2, (arg4 + 15) << 2,
                                 G_TX_RENDERTILE, 0, 0, 0x0400, 0x0400);
             gDPLoadTextureBlock(arg0++, D_88823340, G_IM_FMT_RGBA, G_IM_SIZ_16b, 24, 15, 0, G_TX_MIRROR | G_TX_CLAMP,
                                 G_TX_MIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-            gSPTextureRectangle(arg0++, ((arg1 + (temp_v0 * 8)) - 0x10) << 2, (y - 0xC) << 2,
-                                (((arg1 + (temp_v0 * 8)) - 0x10) + 0x18) << 2, (y + 3) << 2, G_TX_RENDERTILE, 0, 0,
+            gSPTextureRectangle(arg0++, arg3 << 2, (y - 0xC) << 2,
+                                (arg3 + 0x18) << 2, (arg2 + 3) << 2, G_TX_RENDERTILE, 0, 0,
                                 0x0400, 0x0400);
             break;
 
         case 0:
             gDPLoadTextureBlock(arg0++, D_88823838, G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 8, 0, G_TX_MIRROR | G_TX_CLAMP,
                                 G_TX_MIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-            gSPTextureRectangle(arg0++, arg1 << 2, (y - 5) << 2, (arg1 + 0x2E) << 2, (y + 3) << 2, G_TX_RENDERTILE, 0,
+            arg4 = arg2 - 5;
+            gSPTextureRectangle(arg0++, tmp << 2, arg4 << 2, (arg1 + 0x2E) << 2, (arg4 + 8) << 2, G_TX_RENDERTILE, 0,
                                 0, 0x0400, 0x0400);
             gDPLoadTextureBlock(arg0++, D_888238C0, G_IM_FMT_RGBA, G_IM_SIZ_16b, 16, 8, 0, G_TX_MIRROR | G_TX_CLAMP,
                                 G_TX_MIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-            gSPTextureRectangle(arg0++, (arg1 + 0x2E) << 2, (y - 5) << 2, (arg1 + 0x3E) << 2, (y + 3) << 2,
+            gSPTextureRectangle(arg0++, (arg1 + 0x2E) << 2, (arg2 - 5) << 2, (arg1 + 0x3E) << 2, (arg2 + 3) << 2,
                                 G_TX_RENDERTILE, 0, 0, 0x0400, 0x0400);
             break;
     }
 
     return arg0;
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/pokedex/pokedex_2190D0/func_88805AEC.s")
-#endif
 
 void Pokedex_BuildMapLabelsDisplayList(void) {
     s16 sp46;
@@ -4081,7 +4098,6 @@ s32 Pokedex_CheckAreaMapExit(void) {
     return 0;
 }
 
-#ifdef NON_MATCHING
 void func_88807D04(s32 arg0, MainPoolState* arg1, UNUSED s32 arg2, s32 arg3, s32 arg4, char* arg5, char** arg6) {
     s32 i;
     unk_D_86002F34_00C* ptr;
@@ -4120,7 +4136,6 @@ void func_88807D04(s32 arg0, MainPoolState* arg1, UNUSED s32 arg2, s32 arg3, s32
 
     for (i = 0; i < 59; i++) {
         if (D_88826564[i] >= 0) {
-          do {
             unk_D_88826CF0* temp_s0 = &D_88826CF0[D_8882651C[D_88826564[i]] - 1];
 
             D_88826A56 = GbSave_GameToCategoryIndex(GbSave_GetPortGame(GbSave_GetActivePort()));
@@ -4139,6 +4154,9 @@ void func_88807D04(s32 arg0, MainPoolState* arg1, UNUSED s32 arg2, s32 arg3, s32
                     break;
 
                 case 3:
+                    var_v1_2 = D_888230CC[i];
+                    break;
+
                 default:
                     var_v1_2 = D_888230CC[i];
                     break;
@@ -4158,7 +4176,6 @@ void func_88807D04(s32 arg0, MainPoolState* arg1, UNUSED s32 arg2, s32 arg3, s32
                 }
                 var_v1_2++;
             }
-          } while (0);
         }
     }
 
@@ -4172,9 +4189,6 @@ void func_88807D04(s32 arg0, MainPoolState* arg1, UNUSED s32 arg2, s32 arg3, s32
     ptr->unk_60.at = D_8882627C;
     ptr->unk_60.eye = D_88826288;
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/pokedex/pokedex_2190D0/func_88807D04.s")
-#endif
 
 void Pokedex_ExitAreaMapPool(void) {
     main_pool_pop_state('MAPV');
