@@ -3,6 +3,7 @@
 
 - define fragmentNN_TEXT_START inside every fragment section
 - place .data for every libultra member
+- ALIGN(__romPos, <segment offset>) -> MAX(__romPos, <segment offset>)
 
 usage: tools/jp_fix_ld.py pokestadium.ld libultra.a
 """
@@ -36,5 +37,11 @@ if last_libultra is not None:
     for m in members:
         if m.endswith(".o") and m not in existing:
             out.insert(last_libultra + 1, f"{indent}build/lib/libultra.a:{m}(.data);")
+
+# ALIGN rounds up to a multiple, which only works for round segment offsets.
+for i, line in enumerate(out):
+    m = re.match(r"^(\s*__romPos = )ALIGN\(__romPos, (0x[0-9A-Fa-f]+)\);$", line)
+    if m and int(m.group(2), 16) >= 0x10000:
+        out[i] = f"{m.group(1)}MAX(__romPos, {m.group(2)});"
 
 print("\n".join(out))
