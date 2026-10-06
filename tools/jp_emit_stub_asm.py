@@ -68,7 +68,8 @@ for r in rows:
             if m and int(m.group(1), 16) >= 0x80000000:
                 targets.add(int(m.group(1), 16))
 
-    lines = [".set noat", ".set noreorder", ".set nomacro", f"glabel {name}"]
+    # no .set directives, asm-processor rejects them
+    lines = [f"glabel {name}"]
     for a, word, ins in body:
         ins = RE_REG.sub(r"$\1", ins)
         ins = ins.replace("c1_fcsr", "$31")
@@ -83,7 +84,6 @@ for r in rows:
         if a in targets:
             lines.append(f".L{a:X}:")
         lines.append(f"    /* {off + (a - vram):X} {a:08X} {word.upper()} */  {ins}")
-    lines.append(".set at")
 
     target = OUT / seg / f"{name}.s"
     target.parent.mkdir(parents=True, exist_ok=True)

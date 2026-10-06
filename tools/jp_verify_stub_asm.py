@@ -25,6 +25,7 @@ for r in csv.DictReader((ROOT / "yamls/jp/stubs.csv").open()):
         skipped += 1
         continue
     src = re.sub(r"^glabel \S+\n", "", p.read_text(), flags=re.M)
+    src = ".set noat\n.set noreorder\n.set nomacro\n" + src
     TMP_S.write_text(src)
     a = subprocess.run([f"{CROSS}as", "-mips32r2", "-EB", "-o", str(TMP_O), str(TMP_S)],
                        capture_output=True)
