@@ -677,7 +677,8 @@ void func_80033D44(StadiumModel* model, s16 maxDist, f32 radius, f32 ax, f32 ay,
             z = mvtx->position.base.z;
             dist = func_80033568(x, y, z, tax, tay, taz, tbx, tby, tbz, &nx, &ny, &nz);
             if (dist > 0.0f) {
-                x = (((x - nx) * radius) / dist) + nx;
+                x = x - nx;
+                x = ((x * radius) / dist) + nx;
                 y = (((y - ny) * radius) / dist) + ny;
                 z = (((z - nz) * radius) / dist) + nz;
             }

@@ -1784,7 +1784,7 @@ void func_87804320(u8 arg0, s8 arg1, s8 arg2, s8 arg3, s8 arg4) {
 
                 if (var_s4 != 3) {
                     spA4[var_s4 + 1] = spA4[var_s4] + 0x36;
-                    var_s4++;
+                    var_s4 = var_s4 + 1;
                 }
             }
         }

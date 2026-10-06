@@ -669,7 +669,7 @@ void func_82F0BEF8(unk_D_82F210E0* arg0) {
             // Text_SetNumberToken(1, (((((((((tmp) & 0xFFFFFFFFFFFFFFFF) & 0xFFFFFFFFFFFFFFFF) & 0xFFFFFFFFFFFFFFFF) &
             // 0xFFFFFFFFFFFFFFFF) & 0xFFFFFFFFFFFFFFFF) & 0xFFFFFFFFFFFFFFFF) & 0xFFFFFFFFFFFFFFFF) &
             // 0xFFFFFFFFFFFFFFFF) & 0xFFFFFFFFFFFFFFFF);
-            Text_SetNumberToken(1, sp20.unk_02 + 1);
+            Text_SetNumberToken(1, (u64)(sp20.unk_02 + 1));
             Font_Printf(0xB0, 0x90, Text_GetString(sp38, sizeof(sp38), gTradeStrings, 0x20));
             Font_DisableTwoCycleTexturing();
             break;

@@ -1300,56 +1300,55 @@ void func_88304850(s32 arg0, s32 arg1, unk_func_88304850_arg2* arg2, s32 arg3, s
         },
     };
 
-    s32 i;
     Color_RGBA8 spBC;
     s32 spA8;
     s32 sp58;
-    s32 sp50;
+    s32 var_s3;
     s32 var_s1;
     s32 temp_a0;
     s32 temp_a0_2;
     s32 temp_a3;
     s32 temp_s7;
     s32 var_s6;
+    s32 var_s7;
     unk_func_8830867C_02C* temp_s5;
-
     temp_s5 = arg5->unk_70;
-    if (temp_s5->unk_0AC->unk_2C->unk_30 & 2) {
-        var_s1 = temp_s5->unk_0AC->unk_00.unk_10.unk_00 - temp_s5->unk_000.unk_10.unk_00;
-    } else {
-        var_s1 = arg5->unk_00.unk_00.unk_14.unk_00;
-    }
+
+    var_s1 = (temp_s5->unk_0AC->unk_2C->unk_30 & 2)
+                 ? temp_s5->unk_0AC->unk_00.unk_10.unk_00 - temp_s5->unk_000.unk_10.unk_00
+                 : arg5->unk_00.unk_00.unk_14.unk_00;
 
     gDPPipeSync(gDisplayListHead++);
 
     gDPSetCycleType(gDisplayListHead++, G_CYC_FILL);
     gDPSetRenderMode(gDisplayListHead++, G_RM_NOOP, G_RM_NOOP2);
 
-    temp_a3 = ((D_883171D0[arg3 & 1].r << 8) & 0xF800) | ((D_883171D0[arg3 & 1].g << 3) & 0x7C0) |
-              ((D_883171D0[arg3 & 1].b >> 2) & 0x3E) | 1;
-    gDPPipeSync(gDisplayListHead++);
+    temp_s7 = arg3 & 1;
+    // clang-format off
+    temp_a3 = ((((Color_RGBA8(*)[2])D_883171D0)[temp_s7][0].r << 8) & 0xF800) | ((((Color_RGBA8(*)[2])D_883171D0)[temp_s7][0].g << 3) & 0x7C0) | ((((Color_RGBA8(*)[2])D_883171D0)[temp_s7][0].b >> 2) & 0x3E) | 1; gDPPipeSync(gDisplayListHead++);
+    // clang-format on
+
+    var_s7 = var_s1 + arg0;
     gDPSetFillColor(gDisplayListHead++, (temp_a3 << 0x10) | temp_a3);
     gDPFillRectangle(gDisplayListHead++, arg0, arg1, arg0 + 0x25, arg1 + 0x13);
 
-    temp_a0 = ((D_883171D0[(arg3 & 1) + 1].r << 8) & 0xF800) | ((D_883171D0[(arg3 & 1) + 1].g << 3) & 0x7C0) |
-              ((D_883171D0[(arg3 & 1) + 1].b >> 2) & 0x3E) | 1;
-    gDPPipeSync(gDisplayListHead++);
+    // clang-format off
+    temp_a0 = ((((Color_RGBA8(*)[2])D_883171D0)[temp_s7][1].r << 8) & 0xF800) | ((((Color_RGBA8(*)[2])D_883171D0)[temp_s7][1].g << 3) & 0x7C0) | ((((Color_RGBA8(*)[2])D_883171D0)[temp_s7][1].b >> 2) & 0x3E) | 1; gDPPipeSync(gDisplayListHead++);
+    // clang-format on
+
     gDPSetFillColor(gDisplayListHead++, (temp_a0 << 0x10) | temp_a0);
     gDPFillRectangle(gDisplayListHead++, arg0 + 0x26, arg1, arg0 + 0x81, arg1 + 0x13);
 
-    sp50 = arg0 + 0x84;
     var_s6 = temp_s5->unk_CD4[temp_s5->unk_CD0];
 
-    for (i = arg0 + 0x84; i < var_s1 + arg0; i++) {
-        temp_a0_2 = ((D_883172CC[arg3 & 1][var_s6 & 1].r << 8) & 0xF800) |
-                    ((D_883172CC[arg3 & 1][var_s6 & 1].g << 3) & 0x7C0) |
-                    ((D_883172CC[arg3 & 1][var_s6 & 1].b >> 2) & 0x3E) | 1;
+    for (var_s3 = arg0 + 0x84; var_s3 < var_s7; var_s3 += ((s32*)temp_s5->unk_0DC)[var_s6], var_s6++) {
+        temp_a0_2 = ((D_883172CC[temp_s7][var_s6 & 1].r << 8) & 0xF800) |
+                    ((D_883172CC[temp_s7][var_s6 & 1].g << 3) & 0x7C0) |
+                    ((D_883172CC[temp_s7][var_s6 & 1].b >> 2) & 0x3E) | 1;
         gDPPipeSync(gDisplayListHead++);
         gDPSetFillColor(gDisplayListHead++, (temp_a0_2 << 0x10) | temp_a0_2);
-        gDPFillRectangle(gDisplayListHead++, sp50, arg1, (temp_s5->unk_0DC->unk_00[i] + sp50) - 1, arg1 + 0x13);
-
-        sp50 += temp_s5->unk_0DC->unk_00[i];
-        var_s6++;
+        gDPFillRectangle(gDisplayListHead++, var_s3, arg1,
+                         (((s32*)temp_s5->unk_0DC)[var_s6] + var_s3) - 1, arg1 + 0x13);
     }
 
     if (arg2 != NULL) {
@@ -1375,76 +1374,73 @@ void func_88304850(s32 arg0, s32 arg1, unk_func_88304850_arg2* arg2, s32 arg3, s
 
         var_s6 = temp_s5->unk_CD4[temp_s5->unk_CD0];
 
-        for (i = sp50; i < var_s1 + arg0; i++) {
+        for (var_s3 = arg0 + 0x84; var_s3 < var_s7; var_s3 += ((s32*)temp_s5->unk_0DC)[var_s6], var_s6++) {
             switch (var_s6) {
                 case 0:
-                    LabPCList_DrawPlainText(sp50 + spA8, arg1 + 2, arg2->unk_40, 0);
+                    LabPCList_DrawPlainText(var_s3 + spA8, arg1 + 2, arg2->unk_40, 0);
                     break;
 
                 case 1:
-                    Gfx_DrawNumberDigits(sp50 + 4, arg1 + 4, arg2->unk_16, 5);
+                    Gfx_DrawNumberDigits(var_s3 + 4, arg1 + 4, arg2->unk_16, 5);
                     break;
 
                 case 2:
-                    LabPCList_DrawPlainText(sp50 + ((temp_s5->unk_0DC->unk_00[i] - Font_MeasureTextExtent(0, 0, "WWWWWWW")) / 2), arg1 + 2,
+                    LabPCList_DrawPlainText(var_s3 + ((((s32*)temp_s5->unk_0DC)[var_s6] - Font_MeasureTextExtent(0, 0, "WWWWWWW")) / 2), arg1 + 2,
                                   arg2->unk_43, 0);
                     break;
 
                 case 3:
-                    LabPCList_DrawAreaCell(sp50, arg1, temp_s5->unk_0DC->unk_00[i], arg2);
+                    LabPCList_DrawAreaCell(var_s3, arg1, ((s32*)temp_s5->unk_0DC)[var_s6], arg2);
                     break;
 
                 case 4:
                 case 5:
-                    LabPCList_DrawTypeName(sp50, arg1 + 2, temp_s5->unk_0DC->unk_00[i], &arg2->unk_08, var_s6 - 4);
+                    LabPCList_DrawTypeName(var_s3, arg1 + 2, ((s32*)temp_s5->unk_0DC)[var_s6], &arg2->unk_08, var_s6 - 4);
                     break;
 
                 case 6:
                 case 7:
                 case 8:
                 case 9:
-                    LabPCList_DrawMoveNameCell(sp50, arg1 + 2, temp_s5->unk_0DC->unk_00[i], &arg2->unk_08, var_s6 - 6);
+                    LabPCList_DrawMoveNameCell(var_s3, arg1 + 2, ((s32*)temp_s5->unk_0DC)[var_s6], &arg2->unk_08, var_s6 - 6);
                     break;
 
                 case 10:
-                    LabPCList_DrawStatNumber(sp50 + (temp_s5->unk_0DC->unk_00[i] -
-                                          ((temp_s5->unk_0DC->unk_00[i] - Font_MeasureTextExtent(0, 0, "000")) / 2)),
+                    LabPCList_DrawStatNumber(var_s3 + (((s32*)temp_s5->unk_0DC)[var_s6] -
+                                          ((((s32*)temp_s5->unk_0DC)[var_s6] - Font_MeasureTextExtent(0, 0, "000")) / 2)),
                                   arg1 + 2, "%3d", arg2->unk_2C, &arg2->unk_08);
                     break;
 
                 case 11:
-                    LabPCList_DrawStatNumber(sp50 + (temp_s5->unk_0DC->unk_00[i] -
-                                          ((temp_s5->unk_0DC->unk_00[i] - Font_MeasureTextExtent(0, 0, "000")) / 2)),
-                                  arg1 + 2, "%3d", arg2->unk_36, &arg2->unk_08);
+                    LabPCList_DrawStatNumber(var_s3 + (((s32*)temp_s5->unk_0DC)[var_s6] -
+                                          ((((s32*)temp_s5->unk_0DC)[var_s6] - Font_MeasureTextExtent(0, 0, "000")) / 2)),
+                                  arg1 + 2, "%3d", arg2->unk_2E, &arg2->unk_08);
                     break;
 
                 case 12:
-                    LabPCList_DrawStatNumber(sp50 + (temp_s5->unk_0DC->unk_00[i] -
-                                          ((temp_s5->unk_0DC->unk_00[i] - Font_MeasureTextExtent(0, 0, "000")) / 2)),
+                    LabPCList_DrawStatNumber(var_s3 + (((s32*)temp_s5->unk_0DC)[var_s6] -
+                                          ((((s32*)temp_s5->unk_0DC)[var_s6] - Font_MeasureTextExtent(0, 0, "000")) / 2)),
                                   arg1 + 2, "%3d", arg2->unk_30, &arg2->unk_08);
                     break;
 
                 case 13:
-                    LabPCList_DrawStatNumber(sp50 + (temp_s5->unk_0DC->unk_00[i] -
-                                          ((temp_s5->unk_0DC->unk_00[i] - Font_MeasureTextExtent(0, 0, "000")) / 2)),
+                    LabPCList_DrawStatNumber(var_s3 + (((s32*)temp_s5->unk_0DC)[var_s6] -
+                                          ((((s32*)temp_s5->unk_0DC)[var_s6] - Font_MeasureTextExtent(0, 0, "000")) / 2)),
                                   arg1 + 2, "%3d", arg2->unk_32, &arg2->unk_08);
                     break;
 
                 case 14:
-                    LabPCList_DrawStatNumber(sp50 + (temp_s5->unk_0DC->unk_00[i] -
-                                          ((temp_s5->unk_0DC->unk_00[i] - Font_MeasureTextExtent(0, 0, "000")) / 2)),
+                    LabPCList_DrawStatNumber(var_s3 + (((s32*)temp_s5->unk_0DC)[var_s6] -
+                                          ((((s32*)temp_s5->unk_0DC)[var_s6] - Font_MeasureTextExtent(0, 0, "000")) / 2)),
                                   arg1 + 2, "%3d", arg2->unk_34, &arg2->unk_08);
                     break;
 
                 case 15:
-                    LabPCList_DrawStatNumber(sp50 + (temp_s5->unk_0DC->unk_00[i] -
-                                          ((temp_s5->unk_0DC->unk_00[i] - Font_MeasureTextExtent(0, 0, "000")) / 2)),
+                    LabPCList_DrawStatNumber(var_s3 + (((s32*)temp_s5->unk_0DC)[var_s6] -
+                                          ((((s32*)temp_s5->unk_0DC)[var_s6] - Font_MeasureTextExtent(0, 0, "000")) / 2)),
                                   arg1 + 2, "%3d", arg2->unk_36, &arg2->unk_08);
                     break;
             }
-
-            var_s6++;
-            sp50 += temp_s5->unk_0DC->unk_00[i];
         }
     }
 }

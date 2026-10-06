@@ -7788,10 +7788,10 @@ void func_81209374(s32 numSamples, s16* out) {
     s32 i;
     s8* mainData;
     s8* altData;
-    s32 mainEnd;
-    s32 altEnd;
     u32 vol;
     s32 a;
+    s32 mainEnd;
+    s32 altEnd;
     s32 b;
 
     mainData = NULL;
@@ -7803,16 +7803,17 @@ void func_81209374(s32 numSamples, s16* out) {
         D_8120EB7C.id = 0;
         D_8122869C = 0x400;
     }
+    vol = D_8122869C;
     if (D_8120EB84.id != 0) {
         mainData = GB_AUDIO_STREAM_DATA[D_8120EB84.id];
         mainEnd = GB_AUDIO_STREAM_SIZE[D_8120EB84.id];
     }
-    if (D_8120EB8C.id != 0) {
-        altData = GB_AUDIO_STREAM_DATA[D_8120EB8C.id];
-        altEnd = GB_AUDIO_STREAM_SIZE[D_8120EB8C.id];
+    i = D_8120EB8C.id;
+    if (i != 0) {
+        altData = GB_AUDIO_STREAM_DATA[i];
+        altEnd = GB_AUDIO_STREAM_SIZE[i];
     }
 
-    vol = D_8122869C;
     for (i = 0; i < numSamples; i++) {
         if (mainData != NULL) {
             if (mainEnd == D_8120EB84.pos) {
@@ -7831,7 +7832,8 @@ void func_81209374(s32 numSamples, s16* out) {
                 altData = NULL;
                 b = 0;
             } else {
-                b = (s32)(altData[D_8120EB8C.pos++] * vol) / 1024;
+                b = altData[D_8120EB8C.pos++];
+                b = (s32)(b * vol) / 1024;
             }
         } else {
             b = 0;

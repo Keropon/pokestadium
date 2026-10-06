@@ -4084,7 +4084,7 @@ s32 func_8437FD74(BattleAiTeamState* arg0, u8* arg1, s32* arg2, u8 arg3) {
     u8 var_s2;
     u8 temp_v0_2;
     u8 var_a0_3;
-    u8 var_a1;
+    s32 var_a1;
     u8 temp_l;
     s32 sp94[8];
     u8 sp90[3];

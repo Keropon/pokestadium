@@ -230,8 +230,10 @@ void WidgetTree_SelectPage(unk_func_88500994* arg0, s32 arg1) {
 
 #ifdef NON_MATCHING
 void func_88500A74(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
-    s32 sp88;
+    s32 var_x;
+    s32 var_y;
     s32 sp34;
+    s32 sp88;
 
     gDPPipeSync(gDisplayListHead++);
 
@@ -248,19 +250,16 @@ void func_88500A74(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     sp88 = arg1 + arg3;
     sp34 = arg0 + arg2;
 
-    while (arg1 < sp88) {
-        while (arg0 < sp34) {
+    for (var_y = arg1; var_y < sp88; var_y += 0x20) {
+        for (var_x = arg0; var_x < sp34; var_x += 0x20) {
             gDPLoadTextureBlock(gDisplayListHead++, arg4, G_IM_FMT_RGBA, G_IM_SIZ_16b, 16, 16, 0,
                                 G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
                                 G_TX_NOLOD, G_TX_NOLOD);
-            gSPTextureRectangle(gDisplayListHead++, arg0 << 2, arg1 << 2, (arg0 + 0x20) << 2, (arg1 + 0x20) << 2,
+            gSPTextureRectangle(gDisplayListHead++, var_x << 2, var_y << 2, (var_x + 0x20) << 2, (var_y + 0x20) << 2,
                                 G_TX_RENDERTILE, 0, 0, 0x0200, 0x0200);
 
-            arg0 += 0x20;
             arg4 += 0x200;
         }
-
-        arg1 += 0x20;
     }
 
     gDPPipeSync(gDisplayListHead++);
@@ -1456,209 +1455,260 @@ s32 WidgetTree_DrawPagedGrid(unk_func_88200FA0_030_030* arg0, s32 arg1, s32 arg2
 }
 
 #ifdef NON_MATCHING
-s32 func_885065E0(unk_func_88200FA0_030_030* arg0, Controller* arg1) {
-    s32 i;
-    s32 j;
-    s32 sp5C;
-    s32 sp58;
-    s32 sp54;
-    s32 sp50;
-    s32 sp4C;
-    s32 sp48;
-    s32 sp24;
-    s32 var_a3;
-    s32 var_t1_2;
-    s32 var_v0_2;
-    s32 temp_v0_3;
-    s32 temp_v1;
-    s32 var_t1;
-    s32 var_t4;
-    s32 var_v0;
-
-    var_t4 = 0;
-    sp5C = 0;
-    if ((arg0->unk_2C == NULL) || (arg0->unk_2C->unk_08 == 0)) {
-        return 0;
-    }
-    sp48 = ((arg0->unk_2C->unk_08 + arg0->unk_48) - 1) / arg0->unk_48;
-    sp58 = arg0->unk_38 % arg0->unk_48;
-    sp54 = arg0->unk_38 / arg0->unk_48;
-    sp24 = Input_GetRepeatedDPad() & 0xFFFF;
-
-    // if (0) {}
-
-    if (sp24 == 0x800) {
-        var_t1 = sp54;
-
-        for (i = 0; i < sp48 - 1; i++) {
-            var_a3 = arg0->unk_4C;
-
-            if (var_t1 == 0) {
-                var_v0 = sp48;
-            } else {
-                var_v0 = var_t1;
-            }
-
-            var_t1 = var_v0 - 1;
-            for (j = 0; j < arg0->unk_48; j++) {
-                temp_v0_3 = (arg0->unk_48 * var_t1) + var_a3;
-                if ((temp_v0_3 < arg0->unk_2C->unk_08) && !(arg0->unk_34[temp_v0_3] & 4)) {
-                    var_t4 = 1;
-                    break;
-                }
-
-                if (var_a3 == 0) {
-                    var_v0_2 = arg0->unk_48;
-                } else {
-                    var_v0_2 = var_a3;
-                }
-                var_a3 = var_v0_2 - 1;
-            }
-
-            if (var_t4 != 0) {
-                break;
-            }
+s32 func_885065E0(unk_func_88200FA0_030_030 *arg0, Controller *arg1)
+{
+  s32 sp5C;
+  s32 sp58;
+  s32 sp54;
+  s32 sp50;
+  s32 sp48;
+  s32 sp24;
+  s32 var_a3;
+  s32 var_t1_2;
+  s32 var_v0_2;
+  s32 temp_v1;
+  int var_t1;
+  s32 var_t4;
+  s32 var_v0;
+  s32 i;
+  s32 j;
+  var_t4 = 0;
+  sp5C = 0;
+  if ((arg0->unk_2C == 0) || (arg0->unk_2C->unk_08 == 0))
+  {
+    return 0;
+  }
+  sp48 = ((arg0->unk_2C->unk_08 + arg0->unk_48) - 1) / arg0->unk_48;
+  sp58 = arg0->unk_38 % arg0->unk_48;
+  sp54 = arg0->unk_38 / arg0->unk_48;
+  sp24 = Input_GetRepeatedDPad() & 0xFFFF;
+  if (sp24 == 0x800)
+  {
+    for (i = 0, var_t1 = sp54; i < (sp48 - 1); i++)
+    {
+      j = 0;
+      if (i && i)
+      {
+      }
+      if (var_t1 == 0)
+      {
+        var_v0 = sp48;
+      }
+      else
+      {
+        var_v0 = var_t1;
+      }
+      var_t1 = var_v0 - 1;
+      var_a3 = arg0->unk_4C;
+      while (j < arg0->unk_48)
+      {
+        var_v0 = (arg0->unk_48 * var_t1) + var_a3;
+        if ((var_v0 < arg0->unk_2C->unk_08) && (!(arg0->unk_34[var_v0] & 4)))
+        {
+          var_t4 = 1;
+          break;
         }
-
-        if ((arg0->unk_00.unk_28 & 0x200) && ((var_t4 == 0) || (sp54 < var_t1))) {
-            sp5C = 8;
-            var_t4 = 0;
+        j++;
+        if (var_a3 == 0)
+        {
+          var_v0_2 = arg0->unk_48;
         }
-        sp4C = var_t1;
-        sp50 = var_a3;
-    } else if (sp24 == 0x400) {
-        var_t1 = sp54;
-
-        for (i = 0; i < sp48 - 1; i++) {
-            var_a3 = arg0->unk_4C;
-
-            if (var_t1 == sp48 - 1) {
-                var_t1 = 0;
-            } else {
-                var_t1++;
-            }
-
-            for (j = 0; j < arg0->unk_48; j++) {
-                temp_v0_3 = (arg0->unk_48 * var_t1) + var_a3;
-                if ((temp_v0_3 < arg0->unk_2C->unk_08) && !(arg0->unk_34[temp_v0_3] & 4)) {
-                    var_t4 = 1;
-                    break;
-                }
-
-                if (var_a3 == 0) {
-                    var_v0_2 = arg0->unk_48;
-                } else {
-                    var_v0_2 = var_a3;
-                }
-                var_a3 = var_v0_2 - 1;
-            }
-
-            if (var_t4 != 0) {
-                break;
-            }
+        else
+        {
+          var_v0_2 = var_a3;
         }
+        var_a3 = var_v0_2 - 1;
+      }
 
-        if ((arg0->unk_00.unk_28 & 0x200) && ((var_t4 == 0) || (var_t1 < sp54))) {
-            sp5C = 8;
-            var_t4 = 0;
-        }
-        sp4C = var_t1;
-        sp50 = var_a3;
-    } else if (sp24 == 0x100) {
-        var_t1 = sp54;
-        var_a3 = sp58;
-
-        for (i = 0; i < arg0->unk_48 - 1; i++) {
-            var_t1_2 = arg0->unk_4E;
-
-            if (var_a3 == arg0->unk_48 - 1) {
-                var_a3 = 0;
-            } else {
-                var_a3++;
-            }
-
-            for (j = 0; j < sp48; j++) {
-                temp_v0_3 = (arg0->unk_48 * var_t1_2) + var_a3;
-                if ((temp_v0_3 < arg0->unk_2C->unk_08) && !(arg0->unk_34[temp_v0_3] & 4)) {
-                    var_t4 = 1;
-                    break;
-                }
-
-                if (var_t1_2 == 0) {
-                    var_v0_2 = sp48;
-                } else {
-                    var_v0_2 = var_t1_2;
-                }
-                var_t1_2 = var_v0_2 - 1;
-            }
-
-            if (var_t4 != 0) {
-                break;
-            }
-        }
-
-        if ((arg0->unk_00.unk_28 & 0x100) && ((var_t4 == 0) || (var_a3 < sp58))) {
-            sp5C = 8;
-            var_t4 = 0;
-        }
-
-        sp50 = var_a3;
-        sp4C = var_t1_2;
-    } else if (sp24 == 0x200) {
-        var_t1 = sp54;
-        var_a3 = sp58;
-
-        for (i = 0; i < arg0->unk_48 - 1; i++) {
-            var_t1_2 = arg0->unk_4E;
-
-            if (var_a3 == 0) {
-                var_v0 = arg0->unk_48;
-            } else {
-                var_v0 = var_a3;
-            }
-
-            var_a3 = var_v0 - 1;
-            for (j = 0; j < sp48; j++) {
-                temp_v0_3 = (arg0->unk_48 * var_t1_2) + var_a3;
-                if ((temp_v0_3 < arg0->unk_2C->unk_08) && !(arg0->unk_34[temp_v0_3] & 4)) {
-                    var_t4 = 1;
-                    break;
-                }
-
-                if (var_t1_2 == 0) {
-                    var_v0_2 = sp48;
-                } else {
-                    var_v0_2 = var_t1_2;
-                }
-                var_t1_2 = var_v0_2 - 1;
-            }
-
-            if (var_t4 != 0) {
-                break;
-            }
-        }
-
-        if ((arg0->unk_00.unk_28 & 0x100) && ((var_t4 == 0) || (sp58 < var_a3))) {
-            sp5C = 8;
-            var_t4 = 0;
-        }
-
-        sp4C = var_t1_2;
-        sp50 = var_a3;
+      if (var_t4 != 0)
+      {
+        break;
+      }
     }
 
-    if (var_t4 != 0) {
-        arg0->unk_38 = (arg0->unk_48 * sp4C) + sp50;
-        arg0->unk_44->unk_00.unk_10.unk_00 = ((arg0->unk_38 % arg0->unk_48) * arg0->unk_3C) + arg0->unk_50;
-        arg0->unk_44->unk_00.unk_10.unk_02 = ((arg0->unk_38 / arg0->unk_48) * arg0->unk_3E) + arg0->unk_52;
-        if ((sp24 == 0x800) || (sp24 == 0x400)) {
-            arg0->unk_4E = sp4C;
-        } else {
-            arg0->unk_4C = sp50;
-        }
-        sp5C = 0x80000009;
+    if ((arg0->unk_00.unk_28 & 0x200) && ((var_t4 == 0) || (sp54 < var_t1)))
+    {
+      sp5C = 8;
+      var_t4 = 0;
     }
-    return sp5C;
+    sp50 = var_a3;
+  }
+  else
+    if (sp24 == 0x400)
+  {
+    for (i = 0, var_t1 = sp54; i < (sp48 - 1); i++)
+    {
+      j = 0;
+      if (i && i)
+      {
+      }
+      if (var_t1 == (sp48 - 1))
+      {
+        var_t1 = 0;
+      }
+      else
+      {
+        var_t1++;
+      }
+      var_a3 = arg0->unk_4C;
+      while (j < arg0->unk_48)
+      {
+        var_v0 = (arg0->unk_48 * var_t1) + var_a3;
+        if ((var_v0 < arg0->unk_2C->unk_08) && (!(arg0->unk_34[var_v0] & 4)))
+        {
+          var_t4 = 1;
+          break;
+        }
+        j++;
+        if (var_a3 == 0)
+        {
+          var_v0_2 = arg0->unk_48;
+        }
+        else
+        {
+          var_v0_2 = var_a3;
+        }
+        var_a3 = var_v0_2 - 1;
+      }
+
+      if (var_t4 != 0)
+      {
+        break;
+      }
+    }
+
+    if ((arg0->unk_00.unk_28 & 0x200) && ((var_t4 == 0) || (var_t1 < sp54)))
+    {
+      sp5C = 8;
+      var_t4 = 0;
+    }
+    sp50 = var_a3;
+  }
+  else
+    if (sp24 == 0x100)
+  {
+    var_t1 = sp54;
+    var_a3 = sp58;
+    for (i = 0; i < (arg0->unk_48 - 1); i++)
+    {
+      j = 0;
+      if (i && i)
+      {
+      }
+      if (var_a3 == (arg0->unk_48 - 1))
+      {
+        var_a3 = 0;
+      }
+      else
+      {
+        var_a3++;
+      }
+      var_t1_2 = arg0->unk_4E;
+      while (j < sp48)
+      {
+        var_v0 = (arg0->unk_48 * var_t1_2) + var_a3;
+        if ((var_v0 < arg0->unk_2C->unk_08) && (!(arg0->unk_34[var_v0] & 4)))
+        {
+          var_t4 = 1;
+          break;
+        }
+        j++;
+        if (var_t1_2 == 0)
+        {
+          var_v0_2 = sp48;
+        }
+        else
+        {
+          var_v0_2 = var_t1_2;
+        }
+        var_t1_2 = var_v0_2 - 1;
+      }
+
+      if (var_t4 != 0)
+      {
+        break;
+      }
+    }
+
+    if ((arg0->unk_00.unk_28 & 0x100) && ((var_t4 == 0) || (var_a3 < sp58)))
+    {
+      sp5C = 8;
+      var_t4 = 0;
+    }
+    sp50 = var_a3;
+    var_t1 = var_t1_2;
+  }
+  else
+    if (sp24 == 0x200)
+  {
+    var_t1 = sp54;
+    var_a3 = sp58;
+    for (i = 0; i < (arg0->unk_48 - 1); i++)
+    {
+      j = 0;
+      if (i && i)
+      {
+      }
+      if (var_a3 == 0)
+      {
+        var_v0 = arg0->unk_48;
+      }
+      else
+      {
+        var_v0 = var_a3;
+      }
+      var_a3 = var_v0 - 1;
+      var_t1_2 = arg0->unk_4E;
+      while (j < sp48)
+      {
+        var_v0 = (arg0->unk_48 * var_t1_2) + var_a3;
+        if ((var_v0 < arg0->unk_2C->unk_08) && (!(arg0->unk_34[var_v0] & 4)))
+        {
+          var_t4 = 1;
+          break;
+        }
+        j++;
+        if (var_t1_2 == 0)
+        {
+          var_v0_2 = sp48;
+        }
+        else
+        {
+          var_v0_2 = var_t1_2;
+        }
+        var_t1_2 = var_v0_2 - 1;
+      }
+
+      if (var_t4 != 0)
+      {
+        break;
+      }
+    }
+
+    if ((arg0->unk_00.unk_28 & 0x100) && ((var_t4 == 0) || (sp58 < var_a3)))
+    {
+      sp5C = 8;
+      var_t4 = 0;
+    }
+    var_t1 = var_t1_2;
+    sp50 = var_a3;
+  }
+  if (var_t4 != 0)
+  {
+    arg0->unk_38 = (arg0->unk_48 * var_t1) + sp50;
+    arg0->unk_44->unk_00.unk_10.unk_00 = ((arg0->unk_38 % arg0->unk_48) * arg0->unk_3C) + arg0->unk_50;
+    arg0->unk_44->unk_00.unk_10.unk_02 = ((arg0->unk_38 / arg0->unk_48) * arg0->unk_3E) + arg0->unk_52;
+    if ((sp24 == 0x800) || (sp24 == 0x400))
+    {
+      arg0->unk_4E = var_t1;
+    }
+    else
+    {
+      arg0->unk_4C = sp50;
+    }
+    sp5C = 0x80000009;
+  }
+  return sp5C;
 }
 #else
 #pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/widget_tree/widget_tree/func_885065E0.s")
