@@ -405,7 +405,7 @@ extract:
 	$(V)PYTHON="$(PYTHON)" VERSION="$(VERSION)" $(EXTRACT_ASSETS)
 ifeq ($(VERSION),jp)
 	$(V)$(RM) -r asm/us && ln -s jp asm/us
-	$(V)$(PYTHON) tools/jp_place_stubs.py
+	$(V)CROSS=$(MIPS_BINUTILS_PREFIX) $(PYTHON) tools/jp_emit_stub_asm.py
 	$(V)find assets/jp -type f -empty -exec sh -c 'printf "\0\0\0\0" > "$$1"' _ {} \;
 endif
 
