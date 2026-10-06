@@ -29,10 +29,10 @@ def disassemble(blob, vram):
     with tempfile.TemporaryDirectory() as tmp:
         path = pathlib.Path(tmp) / "slice.bin"
         path.write_bytes(blob)
-        # no-aliases keeps encodings that round-trip
+        # -z keeps zero words, no-aliases keeps encodings that round-trip
         out = subprocess.run(
             [f"{CROSS}objdump", "-D", "-b", "binary", "-m", "mips:isa32r2", "-EB",
-             "-M", "no-aliases", f"--adjust-vma={vram:#x}", str(path)],
+             "-M", "no-aliases", "-z", f"--adjust-vma={vram:#x}", str(path)],
             capture_output=True).stdout.decode("utf-8", "replace")
     rows = []
     for line in out.splitlines():
