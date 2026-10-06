@@ -7921,3 +7921,13 @@ viEventQueue = 0x80104B00; // PLACEHOLDER: no JP subsegment
 viEventBuf = 0x80104B18; // PLACEHOLDER: no JP subsegment
 viRetraceMsg = 0x80104B30; // PLACEHOLDER: no JP subsegment
 viCounterMsg = 0x80104B48; // PLACEHOLDER: no JP subsegment
+
+// splat auto-names defined by nothing
+D_102BA0 = 0x8181F350; // auto-name, from JP rom 0x102BA0
+D_124570 = 0x81840D20; // auto-name, from JP rom 0x124570
+D_70290 = 0x8006F690; // auto-name, from JP rom 0x70290
+D_F4130 = 0x818108E0; // auto-name, from JP rom 0xF4130
+D_F4920 = 0x818110D0; // auto-name, from JP rom 0xF4920
+D_F5450 = 0x81811C00; // auto-name, from JP rom 0xF5450
+D_FDE40 = 0x8181A5F0; // auto-name, from JP rom 0xFDE40
+

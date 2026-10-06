@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Snap the JP yaml's rom offsets down to word boundaries, then
+"""Snap the JP yaml's rom offsets and vram bases down to word boundaries, then
 bump .bss vrams that fall below their group's data so splat keeps them ordered.
 
 usage: tools/jp_align_yaml.py [repo_root]
@@ -14,6 +14,7 @@ ROOT = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else ".")
 
 off_re = re.compile(r"(\[\s*0x)([0-9A-Fa-f]+)")
 start_re = re.compile(r"(\bstart:\s*0x)([0-9A-Fa-f]+)")
+vram_re = re.compile(r"(\bvram:\s*0x)([0-9A-Fa-f]+)")
 
 
 def snap(m):
@@ -26,6 +27,7 @@ for name in ("rom.yaml", "header.yaml"):
     for line in p.read_text().splitlines(True):
         new = off_re.sub(snap, line)
         new = start_re.sub(snap, new)
+        new = vram_re.sub(snap, new)
         if new != line:
             n_changed += 1
         out_lines.append(new)
