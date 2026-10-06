@@ -8196,3 +8196,7 @@ Gallery_Dispatch = 0x8002FA40; // declared from the US build (library/DSP)
 aspMainDataStart = 0x8007EA70; // declared from the US build (library/DSP)
 njpgdspMainDataStart = 0x8007ED20; // declared from the US build (library/DSP)
 njpgdspMainTextStart = 0x80068080; // declared from the US build (library/DSP)
+
+__osCartRomInit = 0x800536B8; // JP symbol file value
+osEPiRawStartDma = 0x80053410; // JP symbol file value (was commented out as a duplicate of _Litob)
+.L8006575C = 0x8006575C; // asm-local label; value taken from the name

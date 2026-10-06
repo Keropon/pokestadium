@@ -150,6 +150,11 @@ MAKE = make
 CPPFLAGS += -fno-dollars-in-identifiers -P
 LDFLAGS  := --no-check-sections --accept-unknown-input-arch --emit-relocs --whole-archive
 
+ifeq ($(VERSION),jp)
+  # func_82800000 is emitted by two JP fragment headers
+  LDFLAGS += --allow-multiple-definition
+endif
+
 ifeq ($(DETECTED_OS), macos)
   CPPFLAGS += -xc++
 endif
@@ -401,6 +406,7 @@ extract:
 ifeq ($(VERSION),jp)
 	$(V)$(RM) -r asm/us && ln -s jp asm/us
 	$(V)$(PYTHON) tools/jp_place_stubs.py
+	$(V)find assets/jp -type f -empty -exec sh -c 'printf "\0\0\0\0" > "$$1"' _ {} \;
 endif
 
 lib: $(ULTRALIB_LIB)
@@ -446,9 +452,15 @@ $(ELF): $(O_FILES) $(LIBULTRA_LIB) $(LDSCRIPT) $(BUILD_DIR)/linker_scripts/$(VER
 		-T $(BUILD_DIR)/linker_scripts/$(VERSION)/auto/undefined_syms_auto.ld -T $(BUILD_DIR)/linker_scripts/$(VERSION)/auto/undefined_funcs_auto.ld \
 		-Map $(MAP) $(LIBULTRA_LIB) -o $@
 
+ifeq ($(VERSION),jp)
+$(LDSCRIPT): linker_scripts/$(VERSION)/$(TARGET).ld $(LIBULTRA_LIB)
+	$(call print,Fixing up linker script:,$<,$@)
+	$(V)$(PYTHON) tools/jp_fix_ld.py $< $(LIBULTRA_LIB) | sed 's#\\#/#g' > $@
+else
 $(LDSCRIPT): linker_scripts/$(VERSION)/$(TARGET).ld
 	$(call print,Copying linker script to build dir:,$<,$@)
 	$(V)sed 's#\\#/#g' $< > $@
+endif
 
 $(BUILD_DIR)/%.ld: %.ld
 	$(call print,Preprocessing linker script:,$<,$@)
