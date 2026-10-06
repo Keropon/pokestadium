@@ -2659,7 +2659,6 @@ void WidgetTree_InitDashedBorderFrame(unk_func_8850B254* arg0, s32 arg1, s32 arg
     arg0->unk_30 = arg6;
 }
 
-#ifdef NON_MATCHING
 s32 func_8850B2D4(unk_func_8850B254* arg0, s32 arg1, s32 arg2) {
     s32 h = 8;
     s32 w = 8;
@@ -2676,8 +2675,8 @@ s32 func_8850B2D4(unk_func_8850B254* arg0, s32 arg1, s32 arg2) {
     gDPLoadTextureBlock(gDisplayListHead++, D_4007AD0, G_IM_FMT_IA, G_IM_SIZ_8b, w, h, 0, G_TX_NOMIRROR | G_TX_CLAMP,
                         G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
     gSPTextureRectangle(gDisplayListHead++, (arg1 - 7) << 2, (arg2 - 7) << 2,
-                        ((arg1 - 1) + arg0->unk_00.unk_14.unk_00) << 2, (arg2 + 1) << 2, G_TX_RENDERTILE, 0, 0, 0x0400,
-                        0x0400);
+                        ((arg1 - 1) + arg0->unk_00.unk_14.unk_00) << 2, ((arg2 - 7) + h) << 2, G_TX_RENDERTILE, 0, 0,
+                        0x0400, 0x0400);
 
     gDPLoadTextureBlock(gDisplayListHead++, D_4007B18, G_IM_FMT_IA, G_IM_SIZ_8b, w, h, 0, G_TX_NOMIRROR | G_TX_CLAMP,
                         G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
@@ -2693,7 +2692,7 @@ s32 func_8850B2D4(unk_func_8850B254* arg0, s32 arg1, s32 arg2) {
 
     gDPLoadTextureBlock(gDisplayListHead++, D_4007BA8, G_IM_FMT_IA, G_IM_SIZ_8b, w, h, 0, G_TX_NOMIRROR | G_TX_CLAMP,
                         G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-    gSPTextureRectangle(gDisplayListHead++, (arg1 - 7) << 2, (arg2 + 1) << 2, (arg1 + 1) << 2,
+    gSPTextureRectangle(gDisplayListHead++, (arg1 - 7) << 2, ((arg2 - 7) + h) << 2, (arg1 + 1) << 2,
                         ((arg2 + 7) + arg0->unk_00.unk_14.unk_02) << 2, G_TX_RENDERTILE, 0,
                         (arg0->unk_00.unk_14.unk_02 * -0x20) + 0x40, 0x0400, 0x0400);
 
@@ -2713,9 +2712,6 @@ s32 func_8850B2D4(unk_func_8850B254* arg0, s32 arg1, s32 arg2) {
 
     return 0;
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/widget_tree/widget_tree/func_8850B2D4.s")
-#endif
 
 void Ui_PlayInputActionSound(s32 arg0) {
     u32 var_a1 = 0;
