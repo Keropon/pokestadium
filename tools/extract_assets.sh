@@ -115,7 +115,10 @@ fi
 "$PYTHON" tools/unpack_asset.py assets/${VERSION:-us}/rom_part_51.bin assets/${VERSION:-us}/rom_parts/51.bin
 "$PYTHON" tools/unpack_asset.py assets/${VERSION:-us}/rom_part_52.bin assets/${VERSION:-us}/rom_parts/52.bin
 "$PYTHON" tools/unpack_asset.py assets/${VERSION:-us}/pokemon_icons.bin
-"$PYTHON" tools/unpack_asset.py assets/${VERSION:-us}/898000.bin
+# 898000 does not parse as an archive for jp yet
+if [ "${VERSION:-us}" = "us" ]; then
+    "$PYTHON" tools/unpack_asset.py assets/${VERSION:-us}/898000.bin
+fi
 "$PYTHON" tools/unpack_asset.py assets/${VERSION:-us}/8CC000.bin
 "$PYTHON" tools/unpack_asset.py assets/${VERSION:-us}/pokemon_models.bin
 
