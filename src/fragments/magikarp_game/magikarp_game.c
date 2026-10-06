@@ -306,8 +306,7 @@ void MagikarpGame_UpdateCameraLookAt(void) {
     Camera_ComputeEyeFromAngles(&D_86002F38->unk_60.at, &D_86002F38->unk_60.eye, D_86002F40, D_86002F3C, D_86002F3E);
 }
 
-#ifdef NON_MATCHING
-void func_860005B8(s32 arg0) {
+void MagikarpGame_DrawOverlay(s32 arg0) {
     s32 i;
     UNUSED u8 sp68[] = {
         0,
@@ -320,21 +319,26 @@ void func_860005B8(s32 arg0) {
         150,
     };
 
-    if (arg0 != 0) {
-        gSPDisplayList(gDisplayListHead++, D_8006F518);
-        gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, D_86002F4C);
+    switch (arg0) {
+        case 0:
+            break;
 
-        for (i = 0; i < 4; i++) {
-            unk_D_86002A98* tmp = &D_86002A98[i];
+        default:
+            gSPDisplayList(gDisplayListHead++, D_8006F518);
+            gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, D_86002F4C);
 
-            if (D_86002F58[i].unk_000 == 0) {
-                Widget_DrawPlayerIcon(i, tmp->unk_00, tmp->unk_02, 0.75f);
-            } else {
-                Widget_DrawPlayerIcon(-1 - i, tmp->unk_00, tmp->unk_02, 0.75f);
+            for (i = 0; i < 4; i++) {
+                unk_D_86002A98* tmp = &D_86002A98[i];
+
+                if (D_86002F58[i].unk_000 == 0) {
+                    Widget_DrawPlayerIcon(i, tmp->unk_00, tmp->unk_02, 0.75f);
+                } else {
+                    Widget_DrawPlayerIcon(-1 - i, tmp->unk_00, tmp->unk_02, 0.75f);
+                }
             }
-        }
 
-        gSPDisplayList(gDisplayListHead++, D_8006F630);
+            gSPDisplayList(gDisplayListHead++, D_8006F630);
+            break;
     }
 
     if (arg0 == 0) {
@@ -360,8 +364,8 @@ void func_860005B8(s32 arg0) {
             Font_SetLineHeight(0xC);
             Gfx_SetEnvColor(0xFF, 0xFF, 0xFF, 0xFF);
             Gfx_SetPrimColor(0xF9, 0xF4, 0, 0xFF);
-            Font_Printf(0xA0 - (Text_MeasureStringWidth(D_86003B7C, Text_GetString(NULL, 0, D_87806330, 0x15)) / 2), 0x20,
-                          Text_GetString(NULL, 0, D_87806330, 0x15));
+            Font_Printf(0xA0 - (Text_MeasureStringWidth(D_86003B7C, Text_GetString(NULL, 0, D_87806330, 0x15)) / 2),
+                        0x20, Text_GetString(NULL, 0, D_87806330, 0x15));
             Gfx_SetEnvColor(0xFF, 0xFF, 0xFF, 0xFF);
             Gfx_SetPrimColor(0xFF, 0xFF, 0xFF, 0xFF);
             Font_Printf(0x28, 0x34, Text_GetString(NULL, 0, D_87806330, 0x16));
@@ -405,8 +409,8 @@ void func_860005B8(s32 arg0) {
             Font_SetActive(0x20, -2);
             Gfx_SetEnvColor(0xFF, 0xFF, 0xFF, 0xFF);
             Gfx_SetPrimColor(0x1E, 0x1E, 0xFF, 0xFF);
-            Font_Printf(0xA0 - (Text_MeasureStringWidth(D_86003B7C, Text_GetString(NULL, 0, D_87806330, 0x5A)) / 2), 0x64,
-                          Text_GetString(NULL, 0, D_87806330, 0x5A));
+            Font_Printf(0xA0 - (Text_MeasureStringWidth(D_86003B7C, Text_GetString(NULL, 0, D_87806330, 0x5A)) / 2),
+                        0x64, Text_GetString(NULL, 0, D_87806330, 0x5A));
             Font_DisableTwoCycleTexturing();
             break;
     }
@@ -420,20 +424,6 @@ void func_860005B8(s32 arg0) {
         Widget_DrawSplitBanner(2, 0x19, 0xA6);
     }
 }
-#else
-static u8 D_86002B84[] = {
-    0,
-    0,
-    30,
-};
-static u8 D_86002B88[] = {
-    0,
-    0,
-    150,
-};
-void func_860005B8(s32 arg0);
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/magikarp_game/magikarp_game/func_860005B8.s")
-#endif
 
 static Gfx D_86002B90[] = {
     gsSPEndDisplayList(),
@@ -526,7 +516,7 @@ void MagikarpGame_DrawFrame(s32 arg0) {
     MagikarpGame_DrawScoreMarkers();
 
     if (D_8780FC98 == 0) {
-        func_860005B8(arg0);
+        MagikarpGame_DrawOverlay(arg0);
     }
 
     Widget_PauseMenuUpdate();

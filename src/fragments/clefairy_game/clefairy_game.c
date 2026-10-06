@@ -545,28 +545,31 @@ void ClefairyGame_InitCamera(void) {
 void func_86100C28(void) {
 }
 
-#ifdef NON_MATCHING
-void func_86100C30(s32 arg0) {
+void ClefairyGame_DrawOverlay(s32 arg0) {
     s32 i;
-    UNUSED unk_D_86104B5C sp60 = D_86104B60;
     UNUSED unk_D_86104B5C sp5C = D_86104B5C;
+    UNUSED unk_D_86104B5C sp60 = D_86104B60;
 
-    if (arg0 != 0) {
+    switch (arg0) {
+        case 0:
+            break;
 
-        gSPDisplayList(gDisplayListHead++, D_8006F518);
-        gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, D_861054A8);
+        default:
+            gSPDisplayList(gDisplayListHead++, D_8006F518);
+            gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, D_861054A8);
 
-        for (i = 0; i < 4; i++) {
-            unk_D_86104984* ptr = &D_86104984[i];
+            for (i = 0; i < 4; i++) {
+                unk_D_86104984* ptr = &D_86104984[i];
 
-            if (D_861054C0[i].unk_000 == 0) {
-                Widget_DrawPlayerIcon(i, ptr->unk_00, ptr->unk_02, 0.75f);
-            } else {
-                Widget_DrawPlayerIcon(-1 - i, ptr->unk_00, ptr->unk_02, 0.75f);
+                if (D_861054C0[i].unk_000 == 0) {
+                    Widget_DrawPlayerIcon(i, ptr->unk_00, ptr->unk_02, 0.75f);
+                } else {
+                    Widget_DrawPlayerIcon(-1 - i, ptr->unk_00, ptr->unk_02, 0.75f);
+                }
             }
-        }
 
-        gSPDisplayList(gDisplayListHead++, D_8006F630);
+            gSPDisplayList(gDisplayListHead++, D_8006F630);
+            break;
     }
 
     if (arg0 == 0) {
@@ -589,8 +592,8 @@ void func_86100C30(s32 arg0) {
             Font_SetLineHeight(0xC);
             Gfx_SetEnvColor(0xFF, 0xFF, 0xFF, 0xFF);
             Gfx_SetPrimColor(0xF9, 0xF4, 0, 0xFF);
-            Font_Printf(0xA0 - (Text_MeasureStringWidth(D_861054B4, Text_GetString(NULL, 0, D_87806330, 0x1A)) / 2), 0x20,
-                          Text_GetString(NULL, 0, D_87806330, 0x1A));
+            Font_Printf(0xA0 - (Text_MeasureStringWidth(D_861054B4, Text_GetString(NULL, 0, D_87806330, 0x1A)) / 2),
+                        0x20, Text_GetString(NULL, 0, D_87806330, 0x1A));
             Gfx_SetEnvColor(0xFF, 0xFF, 0xFF, 0xFF);
             Gfx_SetPrimColor(0xFF, 0xFF, 0xFF, 0xFF);
             Font_Printf(0x28, 0x34, Text_GetString(NULL, 0, D_87806330, 0x1B));
@@ -598,7 +601,7 @@ void func_86100C30(s32 arg0) {
             Gfx_SetEnvColor(0xE6, 0xD2, 0xFF, 0xFF);
             Gfx_SetPrimColor(0x82, 0x50, 0xD2, 0xFF);
             Widget_MeasureLabelBox(&sp48, &sp44, Text_GetString(NULL, 0, D_87806330, 0x1B),
-                          Text_GetString(NULL, 0, D_87806330, 0x61), 0xC);
+                                   Text_GetString(NULL, 0, D_87806330, 0x61), 0xC);
 
             if (sp48 >= 0) {
                 Font_Printf(sp48 + 0x28, sp44 + 0x34, Text_GetString(NULL, 0, D_87806330, 0x61));
@@ -620,23 +623,23 @@ void func_86100C30(s32 arg0) {
         case 3:
             Font_SetActive(4, 0);
             Gfx_SetEnvColor(0xFF, 0xFF, 0xFF, 0xFF);
-            Font_Printf(0xA4 - (Text_MeasureStringWidth(D_861054B4, Text_GetString(NULL, 0, D_87806330, 0x1E)) / 2), 0x40,
-                          Text_GetString(NULL, 0, D_87806330, 0x1E));
+            Font_Printf(0xA4 - (Text_MeasureStringWidth(D_861054B4, Text_GetString(NULL, 0, D_87806330, 0x1E)) / 2),
+                        0x40, Text_GetString(NULL, 0, D_87806330, 0x1E));
             break;
 
         case 5:
             Font_SetActive(4, 0);
             Gfx_SetEnvColor(0xFF, 0xFF, 0xFF, 0xFF);
-            Font_Printf(0xA4 - (Text_MeasureStringWidth(D_861054B4, Text_GetString(NULL, 0, D_87806330, 0x1F)) / 2), 0x40,
-                          Text_GetString(NULL, 0, D_87806330, 0x1F));
+            Font_Printf(0xA4 - (Text_MeasureStringWidth(D_861054B4, Text_GetString(NULL, 0, D_87806330, 0x1F)) / 2),
+                        0x40, Text_GetString(NULL, 0, D_87806330, 0x1F));
             break;
 
         case 8:
             if (D_8610549C < 0x3C) {
                 Font_SetActive(4, 0);
                 Gfx_SetEnvColor(0xFF, 0xFF, 0xFF, 0xFF);
-                Font_Printf(0xA4 - (Text_MeasureStringWidth(D_861054B4, Text_GetString(NULL, 0, D_87806330, 0x20)) / 2), 0x40,
-                              Text_GetString(NULL, 0, D_87806330, 0x20));
+                Font_Printf(0xA4 - (Text_MeasureStringWidth(D_861054B4, Text_GetString(NULL, 0, D_87806330, 0x20)) / 2),
+                            0x40, Text_GetString(NULL, 0, D_87806330, 0x20));
             }
             break;
 
@@ -645,8 +648,8 @@ void func_86100C30(s32 arg0) {
             if (D_8610549C < 0x3C) {
                 Font_SetActive(4, 0);
                 Gfx_SetEnvColor(0xFF, 0xFF, 0xFF, 0xFF);
-                Font_Printf(0xA4 - (Text_MeasureStringWidth(D_861054B4, Text_GetString(NULL, 0, D_87806330, 0x21)) / 2), 0x40,
-                              Text_GetString(NULL, 0, D_87806330, 0x21));
+                Font_Printf(0xA4 - (Text_MeasureStringWidth(D_861054B4, Text_GetString(NULL, 0, D_87806330, 0x21)) / 2),
+                            0x40, Text_GetString(NULL, 0, D_87806330, 0x21));
             }
             break;
 
@@ -654,8 +657,8 @@ void func_86100C30(s32 arg0) {
             if ((D_8610549C >= 0x10) && (D_8610549C < 0x3C)) {
                 Font_SetActive(4, 0);
                 Gfx_SetEnvColor(0xFF, 0xFF, 0xFF, 0xFF);
-                Font_Printf(0xA4 - (Text_MeasureStringWidth(D_861054B4, Text_GetString(NULL, 0, D_87806330, 0x22)) / 2), 0x40,
-                              Text_GetString(NULL, 0, D_87806330, 0x22));
+                Font_Printf(0xA4 - (Text_MeasureStringWidth(D_861054B4, Text_GetString(NULL, 0, D_87806330, 0x22)) / 2),
+                            0x40, Text_GetString(NULL, 0, D_87806330, 0x22));
             }
             break;
     }
@@ -670,9 +673,6 @@ void func_86100C30(s32 arg0) {
         Widget_DrawSplitBanner(2, 0x19, 0xA6);
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/clefairy_game/clefairy_game/func_86100C30.s")
-#endif
 
 void ClefairyGame_DrawPenaltyDots(void) {
     s32 i;
@@ -778,7 +778,7 @@ void ClefairyGame_DrawFrame(s32 arg0) {
                 break;
         }
 
-        func_86100C30(arg0);
+        ClefairyGame_DrawOverlay(arg0);
     }
 
     Widget_PauseMenuUpdate();
