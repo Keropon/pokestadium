@@ -352,7 +352,6 @@ void Battle_DmaLoadAnimRecordPair(s32 arg0, SpeciesLearnsetBuffer* arg1, Species
     Dma_WriteChunks(arg2, temp_a1, temp_a1 + 0x20, 0);
 }
 
-#ifdef NON_MATCHING
 void func_84302658(Battler* arg0, s32 arg1) {
     s16 sp6E;
     s32 sp68;
@@ -362,7 +361,6 @@ void func_84302658(Battler* arg0, s32 arg1) {
     BattleMon* ptr;
     SpeciesModelTransform* ptr2;
     u32 tmp;
-    s32 var_a2;
 
     sp68 = BattleScene_GetParticipantSideIndex(arg0);
     sp66 = arg0->unk_000.unk_01A - 1;
@@ -373,10 +371,11 @@ void func_84302658(Battler* arg0, s32 arg1) {
     if ((arg0->unk_000.unk_01A == 0x19) && (ptr->unk_52 & 0x80)) {
         var_a1 = (u32)_70D3A0_ROM_START + ((u32)D_80075BD0[152] & 0xFFFFFF);
     }
+    tmp = ((u32)_70D3A0_ROM_START + ((u32)(D_6E910 + (sp66 << 5)) & 0xFFFFFF)) + 0x20;
     Dma_WriteChunks(D_84384570[sp68], var_a1, var_a1 + 0xBC0, 0);
 
     var_a1 = (u32)_70D3A0_ROM_START + ((u32)(D_6E910 + (sp66 << 5)) & 0xFFFFFF);
-    Dma_WriteChunks(D_84384580[sp68], var_a1, var_a1 + 0x20, 0);
+    Dma_WriteChunks(D_84384580[sp68], var_a1, tmp, 0);
 
     if (sp68 == 1) {
         var_a1 = (u32)_70D3A0_ROM_START + ((u32)(D_6E910 + (sp66 << 5)) & 0xFFFFFF);
@@ -429,9 +428,6 @@ void func_84302658(Battler* arg0, s32 arg1) {
         Battle_InitializeMoveUsabilityMask(arg0);
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/battle_engine/battle_engine_2EC3C0/func_84302658.s")
-#endif
 
 void BattleScene_TickRow10CleanupAndEnterState18(Battler* arg0) {
     if (arg0->unk_4C4 == 0x14) {
