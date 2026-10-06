@@ -396,10 +396,11 @@ void GbAudio_ApplyQueuedWrites(u16 arg0) {
 s16 func_80049DF0(void) {
     s32 i;
     s32 changed;
-    u8 nr14;
+    s32 nr14;
     u8 phase;
     s32 freq;
     s16 out;
+    u32 tmp;
 
     changed = 0;
     for (i = 0; i < 5; i++) {
@@ -476,13 +477,14 @@ s16 func_80049DF0(void) {
                 } else {
                     D_800FCF60.unk_0E = -0x800;
                 }
-                D_800FCF60.unk_10 = D_800FCF60.unk_14 = (GB_REG(2) & 7) * D_800FD004;
+                D_800FCF60.unk_14 = D_800FCF60.unk_10 = (GB_REG(2) & 7) * D_800FD004;
             } else {
                 D_800FCF60.unk_0E = 0;
-                D_800FCF60.unk_10 = D_800FCF60.unk_14 = -1;
+                D_800FCF60.unk_14 = D_800FCF60.unk_10 = -1;
             }
-            D_800FCF60.unk_08 = (((GB_REG(0) & 0x70) >> 4) * D_800FD004) >> 1;
-            if (D_800FCF60.unk_08 == 0) {
+            tmp = (((GB_REG(0) & 0x70) >> 4) * D_800FD004) >> 1;
+            D_800FCF60.unk_08 = tmp;
+            if (tmp == 0) {
                 D_800FCF60.unk_08 = -1;
             }
             if (nr14 & 0x40) {
@@ -517,7 +519,7 @@ s16 func_80049DF0(void) {
         } else {
             freq = (u16)(D_800FCF60.unk_04 - (D_800FCF60.unk_04 >> (GB_REG(0) & 7)));
             if ((freq >= 0x800) || (freq < 0)) {
-                goto sweep_done;
+                goto skip;
             }
             D_800FCF60.unk_04 = freq;
         }

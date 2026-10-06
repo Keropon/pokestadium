@@ -1524,7 +1524,7 @@ void func_88209B54(unk_func_8820BE14_02C* arg0, s32 arg1, s32 arg2, unk_func_882
     WidgetNode* spF0;
     unk_func_8850143C* spEC;
     unk_func_8850143C* spE8;
-    u32 spE4;
+    s32 spE4;
     UNUSED s32 padA0;
     UNUSED s32 padA1;
     UNUSED s32 padA2;
@@ -1544,9 +1544,9 @@ void func_88209B54(unk_func_8820BE14_02C* arg0, s32 arg1, s32 arg2, unk_func_882
     s32 temp_s0_5;
     char* temp_s1_2;
     char* temp_v0_10;
-    u32 temp_v0_17;
     unk_func_882149A0* temp_v0_7;
     unk_func_8850878C* temp_s0;
+    u32 temp_v0_17;
 
     arg0->unk_8C = arg4;
     arg0->unk_80 = arg8;
@@ -1644,7 +1644,7 @@ void func_88209B54(unk_func_8820BE14_02C* arg0, s32 arg1, s32 arg2, unk_func_882
 
     temp_v0_17 = 1 << ((arg3 != NULL) ? 1 : 0);
 
-    for (spE4 = 0; spE4 < 8; spE4++) {
+    for (spE4 = 0; (u32)spE4 < 8; spE4++) {
         unk_D_88217EA4* ptr = &D_88217EA4[spE4];
         if (!(ptr->unk_18 & temp_v0_17)) {
             continue;
@@ -1665,9 +1665,9 @@ void func_88209B54(unk_func_8820BE14_02C* arg0, s32 arg1, s32 arg2, unk_func_882
     ((func8850C284)Memmap_GetFragmentVaddr(WidgetTree_InitGridMenu))(arg0->unk_74->unk_28, 4, 2, argA);
     ((func8850BF80)Memmap_GetFragmentVaddr(WidgetTree_AppendVerticalMenuItem))(arg0->unk_74, arg0->unk_74->unk_28);
 
-    for (j = 0; j != 8; j++) {
-        if (D_88217EA4[j].unk_18 & temp_v0_17) {
-            arg0->unk_74->unk_28->unk_18[(j / 2) * arg0->unk_74->unk_28->unk_2C + (j % 2)] = arg0->unk_44[j];
+    for (spE4 = 0; spE4 != 8; spE4++) {
+        if (D_88217EA4[spE4].unk_18 & temp_v0_17) {
+            arg0->unk_74->unk_28->unk_18[(spE4 / 2) * arg0->unk_74->unk_28->unk_2C + (spE4 % 2)] = arg0->unk_44[spE4];
         }
     }
 
@@ -1690,16 +1690,16 @@ void func_88209B54(unk_func_8820BE14_02C* arg0, s32 arg1, s32 arg2, unk_func_882
     ((func88500994)Memmap_GetFragmentVaddr(WidgetTree_InitPagedContainer))(arg0->unk_68, 0, 0);
     ((func88500A3C)Memmap_GetFragmentVaddr(WidgetTree_AddPage))(arg0->unk_64, arg0->unk_68);
 
-    for (j = 0; j != 8; j++) {
-        temp_s1_2 = Text_GetString(NULL, 0, D_88224FB4, j + 1);
-        spB4[j] = mem_pool_alloc(argA, sizeof(unk_func_8850878C));
-        ((func8850878C)Memmap_GetFragmentVaddr(WidgetTree_InitTextLabel))(spB4[j], (0x228 - Font_MeasureTextExtent(0x10, 0, temp_s1_2)) / 2,
+    for (spE4 = 0; spE4 != 8; spE4++) {
+        temp_s1_2 = Text_GetString(NULL, 0, D_88224FB4, spE4 + 1);
+        spB4[spE4] = mem_pool_alloc(argA, sizeof(unk_func_8850878C));
+        ((func8850878C)Memmap_GetFragmentVaddr(WidgetTree_InitTextLabel))(spB4[spE4], (0x228 - Font_MeasureTextExtent(0x10, 0, temp_s1_2)) / 2,
                                                                0x2A, temp_s1_2, 0x10);
-        spB4[j]->unk_30 = D_88217F90[j][0];
-        spB4[j]->unk_44 = spB4[j]->unk_44;
-        spB4[j]->unk_34 = D_88217F90[j][1];
-        spB4[j]->unk_44 = 1;
-        ((func88500A3C)Memmap_GetFragmentVaddr(WidgetTree_AddPage))(arg0->unk_68, spB4[j]);
+        spB4[spE4]->unk_30 = D_88217F90[spE4][0];
+        spB4[spE4]->unk_44 = spB4[spE4]->unk_44;
+        spB4[spE4]->unk_34 = D_88217F90[spE4][1];
+        spB4[spE4]->unk_44 = 1;
+        ((func88500A3C)Memmap_GetFragmentVaddr(WidgetTree_AddPage))(arg0->unk_68, spB4[spE4]);
     }
 
     if (arg3 != NULL) {

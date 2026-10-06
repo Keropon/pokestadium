@@ -7808,9 +7808,10 @@ void func_81209374(s32 numSamples, s16* out) {
         mainData = GB_AUDIO_STREAM_DATA[D_8120EB84.id];
         mainEnd = GB_AUDIO_STREAM_SIZE[D_8120EB84.id];
     }
-    if (D_8120EB8C.id != 0) {
-        altData = GB_AUDIO_STREAM_DATA[D_8120EB8C.id];
-        altEnd = GB_AUDIO_STREAM_SIZE[D_8120EB8C.id];
+    i = D_8120EB8C.id;
+    if (i != 0) {
+        altData = GB_AUDIO_STREAM_DATA[i];
+        altEnd = GB_AUDIO_STREAM_SIZE[i];
     }
 
     for (i = 0; i < numSamples; i++) {
