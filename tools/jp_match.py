@@ -32,6 +32,9 @@ ROOT = Path.cwd()
 CROSS = os.environ.get("CROSS", "mips-linux-gnu-")
 YAML = {v: ROOT / f"yamls/{v}/rom.yaml" for v in ("us", "jp")}
 C_LD = ROOT / "linker_scripts/jp/c_files.ld"
+RESTORE = ROOT / "build/jp_match_restore"
+TRACKED = (ROOT / "yamls/jp/rom.yaml", ROOT / "linker_scripts/jp/c_files.ld",
+           ROOT / "linker_scripts/jp/undefined_syms.ld")
 SECTIONS = (".text", ".data", ".rodata")
 R_32, R_26, R_HI16, R_LO16 = 2, 4, 5, 6
 MASK = {R_32: 0xFFFFFFFF, R_26: 0x03FFFFFF, R_HI16: 0xFFFF, R_LO16: 0xFFFF}
@@ -361,31 +364,57 @@ def text_report(sec, objsecs, secs, rels, rom, groups, hint, syms, show=24):
         if o in ok:
             print(f"  OK    {name} at rom 0x{ok[o]:X}")
             continue
-        # estimate from the nearest matched function, then snap to a word
-        # matching this function's first instruction
-        nxt = [k for k in ok if k > o]
-        prv = [k for k in ok if k < o]
-        if nxt:
-            est = ok[min(nxt)] - (min(nxt) - o)
-        elif prv:
-            est = ok[max(prv)] + (o - max(prv))
+        # the JP version sits in the gap between the matched neighbours
+        nxt = min((k for k in ok if k > o), default=None)
+        prv = max((k for k in ok if k < o), default=None)
+        size_of = {f2["value"]: f2["size"] for f2 in funcs}
+        if prv is not None:
+            start = ok[prv] + size_of[prv]
+        elif nxt is not None:
+            start = max(0, ok[nxt] - (nxt - o) * 3 // 2)
         else:
-            est = hint + o
-        first = masked_word(struct.unpack_from(">I", data, o)[0])
-        cand = [p for p in range(max(0, est - 0x200), est + 0x200, 4)
-                if masked_word(struct.unpack_from(">I", rom, p)[0]) == first]
-        start = min(cand, key=lambda p: abs(p - est)) if cand else est
+            start = hint + o
+        if nxt is not None:
+            end = ok[nxt]
+        else:
+            end = start + (len(data) - o) * 3 // 2
+        exact = prv is not None and nxt is not None
+        if prv is None:
+            for p in range(start + 8, end, 4):
+                pad = p
+                while pad < end and pad % 16 and struct.unpack_from(">I", rom, pad)[0] == 0:
+                    pad += 4
+                if (struct.unpack_from(">I", rom, p - 8)[0] == 0x03E00008 and pad % 16 == 0
+                        and pad > p and pad < end):
+                    start = pad
+                    break
         cw = [masked_word(w) for w in struct.unpack_from(f">{n // 4}I", data, o)]
-        win = rom[start:start + n + n // 2 + 64]
+        win = rom[start:end]
         rw = [masked_word(w) for w in struct.unpack_from(f">{len(win) // 4}I", win)]
         sm = __import__("difflib").SequenceMatcher(None, cw, rw, autojunk=False)
         same = sum(b.size for b in sm.get_matching_blocks())
-        print(f"  DIFF  {name}: {same}/{len(cw)} instructions line up, ROM candidate at 0x{start:X}")
+        where = "between the matched neighbours" if exact else "(estimated, a neighbour is unmatched)"
+        print(f"  DIFF  {name} (C 0x{n:X} bytes): JP rom 0x{start:X}-0x{end:X} {where}, "
+              f"{same}/{len(cw)} instructions line up")
         g = group_of(groups, start)
         vram = g[2] + (start - g[0]) if g else 0
+        if same * 2 < len(cw):
+            # too different to diff usefully: show the JP code itself
+            print("    JP code in that range (a new function starts after `jr $ra` and its delay slot;"
+                  " files start on 16-byte boundaries after zero padding):")
+            words = struct.unpack_from(f">{len(win) // 4}I", win)
+            for j, w in enumerate(words[:96]):
+                print(f"      0x{start + j * 4:X} {vram + j * 4:08X}: {dis(w, vram + j * 4)}")
+                if j and words[j - 1] == 0x03E00008:
+                    print("      ----")
+            print(f"    compiled C for {name}:")
+            for i in range(n // 4):
+                rel = f"  [{reloc_at[o + i * 4]}]" if o + i * 4 in reloc_at else ""
+                print(f"      C+0x{i * 4:03X}: {dis(struct.unpack_from('>I', data, o + i * 4)[0], vram + i * 4)}{rel}")
+            continue
         shown = 0
         for tag, i1, i2, j1, j2 in sm.get_opcodes():
-            if tag == "equal" or shown >= show or (tag == "insert" and i1 == len(cw)):
+            if tag == "equal" or shown >= show or (tag == "insert" and i1 == len(cw) and not exact):
                 continue
             for k in range(max(i2 - i1, j2 - j1)):
                 i, j = i1 + k, j1 + k
@@ -493,6 +522,8 @@ def ld_block(res):
 
 
 def build_jp():
+    for n in re.findall(r"- \[0x[0-9A-Fa-f]+,\s*c,\s*([^\]\s,]+)", YAML["jp"].read_text()):
+        (ROOT / f"build/src/{n}.o").unlink(missing_ok=True)
     r = run("make", "VERSION=jp", "extract")
     if r.returncode:
         raise Fail("extract failed:\n" + r.stderr[-2000:])
@@ -510,13 +541,26 @@ def build_jp():
         raise Fail("JP ROM does not match after apply:\n" + log[-2500:])
 
 
+def restore():
+    """Undo an apply that failed or was killed."""
+    if RESTORE.exists():
+        for p in TRACKED:
+            if (RESTORE / p.name).exists():
+                shutil.copy(RESTORE / p.name, p)
+        shutil.rmtree(RESTORE)
+        return True
+    return False
+
+
 def apply(src, keep=False):
     name = stem(src)
     print("check us")
     check(src, "us", quiet=True)
     print("check jp")
     res = check(src, "jp")
-    saved = {p: p.read_bytes() for p in (YAML["jp"], C_LD, ROOT / "linker_scripts/jp/undefined_syms.ld")}
+    RESTORE.mkdir(parents=True, exist_ok=True)
+    for p in TRACKED:
+        shutil.copy(p, RESTORE / p.name)
     try:
         lines = YAML["jp"].read_text().split("\n")
         types = {".text": "c", ".data": ".data", ".rodata": ".rodata"}
@@ -535,9 +579,9 @@ def apply(src, keep=False):
         build_jp()
     except BaseException:
         if not keep:
-            for p, b in saved.items():
-                p.write_bytes(b)
+            restore()
         raise
+    shutil.rmtree(RESTORE)
     print(f"applied {src}: JP ROM matches")
 
 
@@ -576,6 +620,8 @@ def main():
         return 2
     with open(Path(tempfile.gettempdir()) / "jp_match.lock", "w") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
+        if restore():
+            print("note: an earlier apply was interrupted; its yaml and linker script changes were undone")
         try:
             if sys.argv[1] == "list":
                 listing()
