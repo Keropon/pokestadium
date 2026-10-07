@@ -236,12 +236,11 @@ s32 DoubleTextureTrail_UpdateAll(void) {
                               (j * 4) + (k + 10), (j * 4) + (k + 1), 0);                                      \
     }
 
-#ifdef NON_MATCHING
 Gfx* func_8436C6A4(Gfx* arg0, DoubleTextureTrail* arg1, s16 arg2, s16 arg3) {
     s32 i;
     s32 j;
     Vtx* sp44;
-    s32 k;
+    UNUSED s32 k;
     unk_D_84389CE0* temp_v0;
     unk_D_84389CE0* temp_v1;
     u8 a1;
@@ -282,18 +281,15 @@ Gfx* func_8436C6A4(Gfx* arg0, DoubleTextureTrail* arg1, s16 arg2, s16 arg3) {
 
     sp44 = arg1->unk_018;
     for (i = 0; i < 9; i++) {
-        if (1) {}
-        if (1) {}
         gSPVertex(arg0++, sp44, 18, 0);
-        TRIANGLES(arg0);
+        for (j = 0; j < 8; j++) {
+            gSP2Triangles(arg0++, j, j + 9, j + 1, 0, j + 9, j + 10, j + 1, 0);
+        }
         sp44 += 9;
     }
 
     return arg0;
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/battle_engine/battle_engine_356730/func_8436C6A4.s")
-#endif
 
 Gfx* DoubleTextureTrail_LoadTextures(Gfx* arg0, DoubleTextureTrail* arg1) {
     unk_D_843C2C00_064* ptr;
