@@ -85,7 +85,6 @@ static char** D_88224FB4;
 static char** D_88224FB8;
 static char** D_88224FBC;
 
-#ifdef NON_MATCHING
 void func_88206110(BattleMon* arg0) {
     static unk_D_88217D10 D_88217D10[2][9] = {
         {
@@ -116,19 +115,29 @@ void func_88206110(BattleMon* arg0) {
     s32 var_a2;
     unk_D_88217D10* var_v0;
     unk_D_88217D10* temp_a1;
+    s32 temp_a2;
 
     bzero(arg0, sizeof(BattleMon));
 
-    arg0->unk_00.unk_00 = Save_GetSelectedPokemonId();
-    if (GbSave_GetPortGame(GbSave_GetActivePort()) == 7) {
+    arg0->unk_00.unk_00 = (u16)Save_GetSelectedPokemonId();
+    var_a2 = GbSave_GetPortGame(GbSave_GetActivePort());
+    i = 0;
+    if (var_a2 == 7) {
+        // FAKE
+        if (1) {}
+        if (1) {}
+        if (1) {}
+        if (1) {}
+        if (1) {}
         var_a2 = 1;
     } else {
         var_a2 = 0;
     }
 
     temp_a1 = D_88217D10[var_a2];
+    temp_a2 = var_a2;
 
-    for (i = 0, var_v0 = temp_a1; i < 9; i++, var_v0++) {
+    for (var_v0 = temp_a1; i < 9; i++, var_v0++) {
         if (var_v0->unk_00 == arg0->unk_00.unk_00) {
             break;
         }
@@ -136,7 +145,7 @@ void func_88206110(BattleMon* arg0) {
 
     if (i == 9) {
         i = 0;
-        var_v0 = D_88217D10[var_a2];
+        var_v0 = D_88217D10[temp_a2];
     }
 
     arg0->unk_10 = var_v0->unk_04;
@@ -152,7 +161,7 @@ void func_88206110(BattleMon* arg0) {
     arg0->unk_1A = 0;
     arg0->unk_1C = 0;
 
-    arg0->unk_1E = guRandom();
+    arg0->unk_1E = (s16)(u16)guRandom();
 
     arg0->unk_06 = D_80070FA0[arg0->unk_00.unk_00 - 1].unk_06;
     arg0->unk_07 = D_80070FA0[arg0->unk_00.unk_00 - 1].unk_07;
@@ -176,33 +185,6 @@ void func_88206110(BattleMon* arg0) {
     arg0->unk_53 = 0;
     arg0->unk_25 = 0;
 }
-#else
-static unk_D_88217D10 D_88217D10[2][9] = {
-    {
-        { 1, 0x87, 0x21, 0x2D, 0, 0 },
-        { 4, 0x87, 0xA, 0x2D, 0, 0 },
-        { 7, 0x87, 0x21, 0x27, 0, 0 },
-        { 0x6A, 0x1F40, 0x18, 0x60, 0, 0 },
-        { 0x6B, 0x1F40, 4, 0x61, 0, 0 },
-        { 0x85, 0x3D09, 0x21, 0x1C, 0, 0 },
-        { 0x8A, 0x1F40, 0x37, 0x6E, 0, 0 },
-        { 0x8C, 0x1F40, 0xA, 0x6A, 0, 0 },
-        { 0x36, 0xD2F, 0xA, 0x85, 0, 0 },
-    },
-    {
-        { 1, 0x87, 0x21, 0x2D, 0, 0 },
-        { 4, 0x87, 0xA, 0x2D, 0, 0 },
-        { 7, 0x87, 0x21, 0x27, 0, 0 },
-        { 0x6A, 0x1F40, 0x18, 0x60, 0, 0 },
-        { 0x6B, 0x1F40, 4, 0x61, 0, 0 },
-        { 0x85, 0x3D09, 0x21, 0x27, 0, 0 },
-        { 0x8A, 0x1F40, 0x37, 0x6E, 0, 0 },
-        { 0x8C, 0x1F40, 0xA, 0x6A, 0, 0 },
-        { 0x36, 0xD2F, 0xA, 0x85, 0, 0 },
-    },
-};
-#pragma GLOBAL_ASM("asm/us/nonmatchings/fragments/lab_pc/lab_pc_1AE680/func_88206110.s")
-#endif
 
 s32 LabPC_ReadDeckEntries(unk_func_882062E4* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     s32 sp1C = 0;
