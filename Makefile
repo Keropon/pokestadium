@@ -286,12 +286,11 @@ LIB_DIRS      := $(foreach f, $(LIBULTRA_DIR), $f)
 # Build the branch's versioned source tree, excluding local/generated analysis
 # copies that may coexist in a developer checkout after extraction.
 C_FILES       := $(shell git ls-files -- src | sed -n '/\.c$$/p')
-# JP is built from its own disassembly
+# JP is built from its own disassembly, plus the C files tools/jp_match.py applied
 ifeq ($(VERSION),jp)
-  C_FILES     :=
-  SRC_DIRS    :=
+  C_FILES     := $(shell sed -nE 's/.*- \[0x[0-9A-Fa-f]+, *c, *([^],[:space:]]+).*/src\/\1.c/p' yamls/jp/rom.yaml)
 endif
-S_FILES       := $(foreach dir,$(ASM_DIRS) $(SRC_DIRS),$(wildcard $(dir)/*.s))
+S_FILES       := $(foreach dir,$(ASM_DIRS) $(if $(filter jp,$(VERSION)),,$(SRC_DIRS)),$(wildcard $(dir)/*.s))
 BIN_FILES     := $(foreach dir,$(ASSET_DIRS),$(wildcard $(dir)/*.bin))
 O_FILES       := $(foreach f,$(C_FILES:.c=.o),$(BUILD_DIR)/$f) \
                  $(foreach f,$(S_FILES:.s=.o),$(BUILD_DIR)/$f) \
@@ -456,9 +455,9 @@ endif
 # TODO: update rom header checksum
 
 # TODO: avoid using auto/undefined
-$(ELF): $(O_FILES) $(LIBULTRA_LINK) $(LDSCRIPT) $(BUILD_DIR)/linker_scripts/$(VERSION)/hardware_regs.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/undefined_syms.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/unused_syms.ld $(BUILD_DIR)/linker_scripts/common_undef_syms.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/auto/undefined_syms_auto.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/auto/undefined_funcs_auto.ld
+$(ELF): $(O_FILES) $(LIBULTRA_LINK) $(if $(filter jp,$(VERSION)),linker_scripts/jp/c_files.ld) $(LDSCRIPT) $(BUILD_DIR)/linker_scripts/$(VERSION)/hardware_regs.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/undefined_syms.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/unused_syms.ld $(BUILD_DIR)/linker_scripts/common_undef_syms.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/auto/undefined_syms_auto.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/auto/undefined_funcs_auto.ld
 	@$(PRINT) "$(GREEN)Linking ELF file:  $(BLUE)$@ $(NO_COL)\n"
-	$(V)$(LD) $(LDFLAGS) -T $(LDSCRIPT) \
+	$(V)$(LD) $(LDFLAGS) $(if $(filter jp,$(VERSION)),-T linker_scripts/jp/c_files.ld) -T $(LDSCRIPT) \
 		-T $(BUILD_DIR)/linker_scripts/$(VERSION)/hardware_regs.ld -T $(BUILD_DIR)/linker_scripts/$(VERSION)/undefined_syms.ld \
 		-T $(BUILD_DIR)/linker_scripts/$(VERSION)/unused_syms.ld -T $(BUILD_DIR)/linker_scripts/common_undef_syms.ld \
 		-T $(BUILD_DIR)/linker_scripts/$(VERSION)/auto/undefined_syms_auto.ld -T $(BUILD_DIR)/linker_scripts/$(VERSION)/auto/undefined_funcs_auto.ld \
@@ -496,6 +495,9 @@ $(BUILD_DIR)/%.o: %.c
 	$(V)$(PREPROCESS) $(CC) -c $(CFLAGS) $(BUILD_DEFINES) $(IINC) $(WARNINGS) $(MIPS_VERSION) $(ENDIAN) $(COMMON_DEFINES) $(RELEASE_DEFINES) $(GBI_DEFINES) $(LIBULTRA_DEFINES) $(C_DEFINES) $(OPTFLAGS) -o $@ $<
 	$(V)$(OBJDUMP_CMD)
 	$(V)$(RM_MDEBUG)
+ifeq ($(VERSION),jp)
+	$(V)$(OBJCOPY) -R .gptab.bss -R .gptab.data --prefix-symbols=jpc_$(subst /,_,$*)__ --rename-section .bss=.jpcbss $@
+endif
 
 # Add these as a dependency for .o files
 asset_files: $(ASSET_INC_C)
