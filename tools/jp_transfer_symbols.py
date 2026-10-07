@@ -3,13 +3,12 @@
 subsegment: jp_vram = jp_subseg_vram + (us_vram - us_subseg_vram).
 
 Overlay (fragments/*) interiors are reordered between versions, so those and
-symbols with no JP subsegment are commented out in symbol_addrs and assigned
-US placeholder values in undefined_syms.ld instead, which splat does not read.
+symbols with no JP subsegment are left commented out. Auto-names that would
+move are dropped, since splat generates the same names for other JP addresses.
 
 usage: tools/jp_transfer_symbols.py [repo_root]
-writes: linker_scripts/jp/symbol_addrs{,_code,_ultralib}.txt, undefined_syms.ld
+writes: linker_scripts/jp/symbol_addrs{,_code,_ultralib}.txt
 """
-import csv
 import pathlib
 import re
 import sys
@@ -32,7 +31,7 @@ def norm(s):
 
 
 def collect(segments):
-    """name -> [(rom, vram, size, type)] for every subsegment."""
+    """name -> [(rom, vram, size)] for every subsegment."""
     subs = {}
 
     def walk(entries, g_vram, g_off):
@@ -43,13 +42,13 @@ def collect(segments):
                 continue
             if off is None:
                 if name and own_vram is not None:
-                    subs.setdefault(name, []).append((None, own_vram, 0, typ))
+                    subs.setdefault(name, []).append((None, own_vram, 0))
                 continue
             nxt = next((o for o, *_ in entries[i + 1:] if o is not None), None)
             if name and nxt is not None and nxt > off:
                 vram = own_vram if own_vram is not None else (
                     g_vram + (off - g_off) if g_vram is not None else None)
-                subs.setdefault(name, []).append((off, vram, nxt - off, typ))
+                subs.setdefault(name, []).append((off, vram, nxt - off))
 
     for g in segments:
         if isinstance(g, dict):
@@ -61,80 +60,43 @@ us_subs = collect(load_yaml("us"))
 jp_subs = collect(load_yaml("jp"))
 
 sym_re = re.compile(r"^(\w+)\s*=\s*0x([0-9A-Fa-f]+);(.*)$")
-FILES = ("symbol_addrs_code.txt", "symbol_addrs.txt", "symbol_addrs_ultralib.txt")
+auto_re = re.compile(r"(?:func|D|jtbl|B|L|sub|code|data)_([0-9A-Fa-f]{6,8})")
 
-verified = {}
-for r in csv.DictReader((ROOT / "yamls/jp/stubs.csv").open()):
-    if r["verified"] in ("yes", "aligned", "structural") and r["jp_vram"]:
-        verified[r["name"]] = int(r["jp_vram"], 16)
-
-out, gate, untransferred = {}, [], []
 seen_vram = {}
-for fname in FILES:
+for fname in ("symbol_addrs_code.txt", "symbol_addrs.txt", "symbol_addrs_ultralib.txt"):
     src = ROOT / "linker_scripts/us" / fname
-    if not src.exists():
-        continue
-    lines, n_ok, n_skip, n_dup = [], 0, 0, 0
+    lines, n_ok = [], 0
     for line in src.read_text().splitlines():
         m = sym_re.match(line.strip())
         if not m:
-            lines.append(line)
+            if not line.strip() or line.lstrip().startswith("//"):
+                lines.append(line)
             continue
         name, us_vram, rest = m.group(1), int(m.group(2), 16), m.group(3)
-        hit = None
-        for nm, cands in us_subs.items():
-            for (rom, vram, size, typ) in cands:
-                if vram is not None and size and vram <= us_vram < vram + size:
-                    hit = (nm, rom, vram, size, typ)
-                    break
-            if hit:
-                break
+        hit = next(((nm, rom, vram) for nm, cands in us_subs.items()
+                    for rom, vram, size in cands
+                    if vram is not None and size and vram <= us_vram < vram + size), None)
         if hit is None or hit[1] is None:
-            n_skip += 1
-            untransferred.append((name, us_vram, "no JP subsegment"))
             lines.append(f"// {name} = 0x{us_vram:08X};{rest} // UNTRANSFERRED (no JP subsegment)")
             continue
-        nm, us_rom, us_svram, size, typ = hit
-        cands = jp_subs.get(nm)
-        if not cands:
-            n_skip += 1
-            untransferred.append((name, us_vram, f"{nm} not in JP yaml"))
+        nm, _, us_svram = hit
+        if nm not in jp_subs:
             lines.append(f"// {name} = 0x{us_vram:08X};{rest} // UNTRANSFERRED ({nm} not in JP yaml)")
             continue
-        jp_rom, jp_svram, jp_size, jp_typ = cands[0]
-        jp_vram = jp_svram + (us_vram - us_svram)
-        if name in verified and verified[name] != jp_vram:
-            gate.append((name, verified[name], jp_vram))
+        jp_vram = jp_subs[nm][0][1] + (us_vram - us_svram)
         if nm.startswith("fragments/"):
-            n_skip += 1
-            untransferred.append((name, jp_vram, f"overlay {nm}, offset not preserved"))
             lines.append(f"// {name} = 0x{jp_vram:08X};{rest} "
                          f"// OVERLAY, offset not preserved - needs per-function location")
             continue
+        a = auto_re.fullmatch(name)
+        if a and int(a.group(1), 16) != jp_vram:
+            continue
         # splat rejects duplicate vrams
         if jp_vram in seen_vram:
-            n_dup += 1
-            lines.append(f"// {name} = 0x{jp_vram:08X};{rest} "
-                         f"// duplicate of {seen_vram[jp_vram]}")
+            lines.append(f"// {name} = 0x{jp_vram:08X};{rest} // duplicate of {seen_vram[jp_vram]}")
             continue
         seen_vram[jp_vram] = name
         lines.append(f"{name} = 0x{jp_vram:08X};{rest}")
         n_ok += 1
-    (ROOT / "linker_scripts/jp" / fname).write_text("\n".join(lines) + "\n")
-    out[fname] = (n_ok, n_skip, n_dup)
-
-for f, (ok, skip, dup) in out.items():
-    print(f"  {f:28s} {ok:5d} transferred, {skip:4d} untransferred, {dup:4d} deduped")
-print(f"verified stubs: {len(verified) - len(gate)} agree, {len(gate)} disagree")
-for n, v, got in gate:
-    print(f"  {n:18s} verified 0x{v:08X}  computed 0x{got:08X}")
-
-und = ROOT / "linker_scripts/jp/undefined_syms.ld"
-base = und.read_text()
-have = set(re.findall(r"^(\w+)\s*=", base, re.M))
-add = [f"{n} = 0x{v:08X}; // PLACEHOLDER: {why}"
-       for n, v, why in untransferred if n not in have and n not in seen_vram]
-if add:
-    und.write_text(base.rstrip() + "\n\n// Placeholders: no reliable JP address, US values\n"
-                   + "\n".join(add) + "\n")
-print(f"assigned {len(add)} placeholder symbols")
+    (ROOT / "linker_scripts/jp" / fname).write_bytes(("\n".join(lines) + "\n").encode())
+    print(f"{fname}: {n_ok} transferred")

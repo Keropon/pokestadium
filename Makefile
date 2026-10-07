@@ -151,7 +151,7 @@ CPPFLAGS += -fno-dollars-in-identifiers -P
 LDFLAGS  := --no-check-sections --accept-unknown-input-arch --emit-relocs --whole-archive
 
 ifeq ($(VERSION),jp)
-  # func_82800000 is emitted by two JP fragment headers
+  # overlays sharing a vram get the same auto-named symbols, at the same address
   LDFLAGS += --allow-multiple-definition
 endif
 
@@ -231,6 +231,9 @@ CFLAGS          += -G 0 -non_shared -Xcpluscomm -nostdinc -Wab,-r4300_mul
 
 WARNINGS         := -fullwarn -verbose -woff 624,649,838,712,516,513,596,564,594
 ASFLAGS          := -march=vr4300 -32 -G0
+ifeq ($(VERSION),jp)
+  ASFLAGS        += --no-pad-sections
+endif
 COMMON_DEFINES   := -D_MIPS_SZLONG=32
 GBI_DEFINES      := -DF3DEX_GBI_2
 RELEASE_DEFINES  := -DNDEBUG -D_FINALROM -DN_MICRO
@@ -273,6 +276,7 @@ ULTRALIB_DIR  := lib/ultralib
 ULTRALIB_LIB  := $(ULTRALIB_DIR)/build/$(ULTRALIB_VERSION)/$(ULTRALIB_TARGET)/$(ULTRALIB_TARGET).a
 LIBULTRA_DIR  := lib/libultra
 LIBULTRA_LIB  := $(BUILD_DIR)/$(LIBULTRA_DIR).a
+LIBULTRA_LINK := $(if $(filter jp,$(VERSION)),,$(LIBULTRA_LIB))
 
 SRC_DIRS      := $(shell find src -type d)
 ASM_DIRS      := $(shell find asm/$(VERSION) -type d -not -path "asm/$(VERSION)/nonmatchings/*" -not -path "asm/$(VERSION)/lib/*")
@@ -282,6 +286,11 @@ LIB_DIRS      := $(foreach f, $(LIBULTRA_DIR), $f)
 # Build the branch's versioned source tree, excluding local/generated analysis
 # copies that may coexist in a developer checkout after extraction.
 C_FILES       := $(shell git ls-files -- src | sed -n '/\.c$$/p')
+# JP is built from its own disassembly
+ifeq ($(VERSION),jp)
+  C_FILES     :=
+  SRC_DIRS    :=
+endif
 S_FILES       := $(foreach dir,$(ASM_DIRS) $(SRC_DIRS),$(wildcard $(dir)/*.s))
 BIN_FILES     := $(foreach dir,$(ASSET_DIRS),$(wildcard $(dir)/*.bin))
 O_FILES       := $(foreach f,$(C_FILES:.c=.o),$(BUILD_DIR)/$f) \
@@ -356,7 +365,9 @@ endif
 # This is unsanitary to do, -but-, because this file is encrypted we cant have splat decrypt it
 # on split. This requires us to include this manually, but it needs to be in the dependency
 # list. So we add it.
+ifneq ($(VERSION),jp)
 O_FILES += build/src/libleo/bootstrap.s.o
+endif
 
 #### Main Targets ###
 
@@ -402,11 +413,10 @@ extract:
 	$(V)$(RM) -r asm/$(VERSION) assets/$(VERSION)
 	$(V)$(CAT) yamls/$(VERSION)/header.yaml yamls/$(VERSION)/rom.yaml > $(SPLAT_YAML)
 	$(V)$(SPLAT) $(SPLAT_FLAGS) $(SPLAT_YAML)
-	$(V)PYTHON="$(PYTHON)" VERSION="$(VERSION)" $(EXTRACT_ASSETS)
 ifeq ($(VERSION),jp)
-	$(V)$(RM) -r asm/us && ln -s jp asm/us
-	$(V)CROSS=$(MIPS_BINUTILS_PREFIX) $(PYTHON) tools/jp_emit_stub_asm.py
-	$(V)find assets/jp -type f -empty -exec sh -c 'printf "\0\0\0\0" > "$$1"' _ {} \;
+	$(V)$(PYTHON) tools/jp_fix_asm.py
+else
+	$(V)PYTHON="$(PYTHON)" VERSION="$(VERSION)" $(EXTRACT_ASSETS)
 endif
 
 lib: $(ULTRALIB_LIB)
@@ -439,28 +449,24 @@ endif
 $(ROM): $(ELF)
 	$(call print,Building ROM:,$<,$@)
 	$(V)$(OBJCOPY) -O binary --gap-fill=0xFF $< $@
+ifneq ($(VERSION),jp)
 	$(V)$(ENCRYPT_LIBLEO) $@ $(MAP)
+endif
 
 # TODO: update rom header checksum
 
 # TODO: avoid using auto/undefined
-$(ELF): $(O_FILES) $(LIBULTRA_LIB) $(LDSCRIPT) $(BUILD_DIR)/linker_scripts/$(VERSION)/hardware_regs.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/undefined_syms.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/unused_syms.ld $(BUILD_DIR)/linker_scripts/common_undef_syms.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/auto/undefined_syms_auto.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/auto/undefined_funcs_auto.ld
+$(ELF): $(O_FILES) $(LIBULTRA_LINK) $(LDSCRIPT) $(BUILD_DIR)/linker_scripts/$(VERSION)/hardware_regs.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/undefined_syms.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/unused_syms.ld $(BUILD_DIR)/linker_scripts/common_undef_syms.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/auto/undefined_syms_auto.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/auto/undefined_funcs_auto.ld
 	@$(PRINT) "$(GREEN)Linking ELF file:  $(BLUE)$@ $(NO_COL)\n"
 	$(V)$(LD) $(LDFLAGS) -T $(LDSCRIPT) \
 		-T $(BUILD_DIR)/linker_scripts/$(VERSION)/hardware_regs.ld -T $(BUILD_DIR)/linker_scripts/$(VERSION)/undefined_syms.ld \
 		-T $(BUILD_DIR)/linker_scripts/$(VERSION)/unused_syms.ld -T $(BUILD_DIR)/linker_scripts/common_undef_syms.ld \
 		-T $(BUILD_DIR)/linker_scripts/$(VERSION)/auto/undefined_syms_auto.ld -T $(BUILD_DIR)/linker_scripts/$(VERSION)/auto/undefined_funcs_auto.ld \
-		-Map $(MAP) $(LIBULTRA_LIB) -o $@
+		-Map $(MAP) $(LIBULTRA_LINK) -o $@
 
-ifeq ($(VERSION),jp)
-$(LDSCRIPT): linker_scripts/$(VERSION)/$(TARGET).ld $(LIBULTRA_LIB)
-	$(call print,Fixing up linker script:,$<,$@)
-	$(V)$(PYTHON) tools/jp_fix_ld.py $< $(LIBULTRA_LIB) | sed 's#\\#/#g' > $@
-else
 $(LDSCRIPT): linker_scripts/$(VERSION)/$(TARGET).ld
 	$(call print,Copying linker script to build dir:,$<,$@)
 	$(V)sed 's#\\#/#g' $< > $@
-endif
 
 $(BUILD_DIR)/%.ld: %.ld
 	$(call print,Preprocessing linker script:,$<,$@)

@@ -320,7 +320,6 @@ __osCurrentHandle = 0x80053430; // defined:true
 // __osTimerList = 0x80053410; // defined:true // duplicate of _Litob
 // __osBaseTimer = 0x80103890; // defined:true // UNTRANSFERRED (no JP subsegment)
 // __osCurrentTime = 0x801038B0; // defined:true // UNTRANSFERRED (no JP subsegment)
-__osCurrentTime+4 = 0x801038B4; // defined:true
 // __osBaseCounter = 0x801038B8; // defined:true // UNTRANSFERRED (no JP subsegment)
 // __osViIntrCount = 0x801038BC; // defined:true // UNTRANSFERRED (no JP subsegment)
 // __osTimerCounter = 0x801038C0; // defined:true // UNTRANSFERRED (no JP subsegment)
