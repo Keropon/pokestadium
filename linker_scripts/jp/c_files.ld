@@ -43,3 +43,9 @@ jpc_src_fragments_lab_pc_lab_pc_1A8590__fragment29_relocs_ROM_END = 0x00252AE0;
 jpc_src_fragments_lab_pc_lab_pc_1A8590__main_pool_pop_state = 0x800027A8;
 jpc_src_fragments_lab_pc_lab_pc_1A8590__main_pool_push_state = 0x800026F4;
 /* end fragments/lab_pc/lab_pc_1A8590 */
+/* audio_category_fade */
+jpc_src_audio_category_fade__AudioStream_Stop = 0x80041D88;
+jpc_src_audio_category_fade__D_8007840C = 0x8007C05C;
+jpc_src_audio_category_fade__func_8003627C = 0x8003627C;
+jpc_src_audio_category_fade__func_8003DB84 = 0x8003AC94;
+/* end audio_category_fade */
