@@ -416,7 +416,7 @@ extract:
 ifeq ($(VERSION),jp)
 	$(V)$(PYTHON) tools/jp_fix_asm.py
 else
-	$(V)PYTHON="$(PYTHON)" VERSION="$(VERSION)" $(EXTRACT_ASSETS)
+	$(V)PYTHON="$(PYTHON)" $(EXTRACT_ASSETS)
 endif
 
 lib: $(ULTRALIB_LIB)

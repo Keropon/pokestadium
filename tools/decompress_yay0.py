@@ -12,11 +12,7 @@ import crunch64
 filepath = Path(sys.argv[1])
 filebytes = filepath.read_bytes()
 
-try:
-    decompressed = crunch64.yay0.decompress(filebytes)
-except Exception:
-    print("SKIP", filepath, "- not Yay0 (offset likely wrong); left as-is")
-    sys.exit(0)
+decompressed = crunch64.yay0.decompress(filebytes)
 
 fileout = Path(sys.argv[2])
 fileout.write_bytes(decompressed)

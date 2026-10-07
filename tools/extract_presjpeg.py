@@ -14,7 +14,7 @@ def read_32_be_value(file_arr, i):
     return (file_arr[i + 0] << 24) + (file_arr[i + 1] << 16)  \
          + (file_arr[i + 2] << 8)  + (file_arr[i + 3])
 
-assets_path = (os.path.dirname(sys.argv[1]) or ".") + "/"
+assets_path = "assets/us/"
 
 filepath = Path(sys.argv[1])
 filename = os.path.splitext(os.path.basename(filepath))[0]
@@ -24,8 +24,8 @@ with filepath.open('rb') as file:
 
     # Check for 50 52 45 53 4A 50 45 47, which is "PRESJPEG"
     if file_header[0] != 0x50 or file_header[1] != 0x52 or file_header[2] != 0x45 or file_header[3] != 0x53 or file_header[4] != 0x4A or file_header[5] != 0x50 or file_header[6] != 0x45 or file_header[7] != 0x47:
-        print("SKIP", filepath, "- not PRESJPEG (offset likely wrong); left as-is")
-        sys.exit(0)
+        print(filepath, "File magic is NOT 'PRESJPEG'. Please pass a valid file.")
+        sys.exit(1)
 
     header_size = read_32_be_value(file_header, 8)
     file.seek(header_size, os.SEEK_SET)
