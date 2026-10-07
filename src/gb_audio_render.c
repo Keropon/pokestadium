@@ -412,7 +412,7 @@ s16 func_80049DF0(void) {
 
     if (changed) {
         nr14 = GB_REG(4);
-        D_800FCF60.unk_04 = GB_REG(3) | ((nr14 & 7) << 8);
+        D_800FCF60.unk_04 = GB_REG(3) | (((u8)nr14 & 7) << 8);
         D_800FCF60.unk_24 = ((0x800 - D_800FCF60.unk_04) * D_800FD004) >> 11;
         switch ((GB_REG(1) & 0xC0) >> 6) {
             case 0:
@@ -589,7 +589,6 @@ skip:
 #pragma GLOBAL_ASM("asm/us/nonmatchings/gb_audio_render/func_80049DF0.s")
 #endif
 
-#ifdef NON_MATCHING
 s16 func_8004A474(void) {
     s32 i;
     s32 changed;
@@ -607,7 +606,7 @@ s16 func_8004A474(void) {
 
     if (changed) {
         nr24 = GB_REG(9);
-        D_800FCF90.unk_1C = ((0x800 - ((GB_REG(8) & 0xFF) | ((nr24 & 7) << 8))) * D_800FD004) >> 11;
+        D_800FCF90.unk_1C = ((0x800 - (GB_REG(8) | (((u8)nr24 & 7) << 8))) * D_800FD004) >> 11;
         switch ((GB_REG(6) & 0xC0) >> 6) {
             case 0:
                 D_800FCF90.unk_10[1] = D_800FCF90.unk_1C >> 3;
@@ -671,7 +670,7 @@ s16 func_8004A474(void) {
                 } else {
                     D_800FCF90.unk_06 = -0x800;
                 }
-                D_800FCF90.unk_08 = D_800FCF90.unk_0C = (GB_REG(7) & 7) * D_800FD004;
+                D_800FCF90.unk_0C = D_800FCF90.unk_08 = (GB_REG(7) & 7) * D_800FD004;
             } else {
                 D_800FCF90.unk_06 = 0;
                 D_800FCF90.unk_08 = -1;
@@ -722,9 +721,6 @@ s16 func_8004A474(void) {
     D_800FCF90.unk_00 += 0x40;
     return out;
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/gb_audio_render/func_8004A474.s")
-#endif
 
 #ifdef NON_MATCHING
 s16 func_8004A89C(void) {
