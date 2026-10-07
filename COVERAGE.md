@@ -3,8 +3,8 @@
 # pokestadium decompilation coverage
 
 <!-- AUTO_COVERAGE:START -->
-- Functions with C implementations: **7,415 / 7,437 (99.7%)**
-- Remaining decompilable `GLOBAL_ASM` owners: **22** (across 15 source files)
+- Functions with C implementations: **7,416 / 7,437 (99.7%)**
+- Remaining decompilable `GLOBAL_ASM` owners: **21** (across 15 source files)
 - Separately managed `hasm` assembly segments: **9**
 <!-- AUTO_COVERAGE:END -->
 
@@ -22,7 +22,7 @@ The function denominator covers C source owners and `GLOBAL_ASM` stubs. `hasm` e
 | `src/fragments/battle_engine/battle_engine_361050.c` | 1 | `func_8437FD74` |
 | `src/fragments/gallery_camera/gallery_camera_150AC0.c` | 1 | `func_86905734` |
 | `src/fragments/gb_tower_emulator/gb_tower_emulator_86CB0.c` | 2 | `func_81209078`, `func_81209374` |
-| `src/fragments/lab_pc/lab_pc_1AE680.c` | 3 | `func_88206110`, `func_88209B54`, `func_8820BE14` |
+| `src/fragments/lab_pc/lab_pc_1AE680.c` | 2 | `func_88209B54`, `func_8820BE14` |
 | `src/fragments/lab_pc_list/lab_pc_list_1CEA00.c` | 1 | `func_88304850` |
 | `src/fragments/particle_data_library/particle_data_library_258080.c` | 1 | `func_81003A54` |
 | `src/fragments/trade_machine/trade_machine_289240.c` | 1 | `func_82F04604` |
