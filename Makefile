@@ -427,8 +427,7 @@ $(ROM): $(ELF)
 	$(call print,Building ROM:,$<,$@)
 	$(V)$(OBJCOPY) -O binary --gap-fill=0xFF $< $@
 	$(V)$(ENCRYPT_LIBLEO) $@ $(MAP)
-
-# TODO: update rom header checksum
+	$(V)$(PYTHON) -m ipl3checksum sum --update $@  # IPL3 rejects a stale CRC1/CRC2 at boot
 
 # TODO: avoid using auto/undefined
 $(ELF): $(O_FILES) $(LIBULTRA_LIB) $(LDSCRIPT) $(BUILD_DIR)/linker_scripts/$(VERSION)/hardware_regs.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/undefined_syms.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/unused_syms.ld $(BUILD_DIR)/linker_scripts/common_undef_syms.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/auto/undefined_syms_auto.ld $(BUILD_DIR)/linker_scripts/$(VERSION)/auto/undefined_funcs_auto.ld
