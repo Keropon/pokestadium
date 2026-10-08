@@ -15,12 +15,21 @@ script, so recompute it after linking instead of hardcoding it.
 Verified against every retail fragment header: relocOffset 77/77, sizeInRom 77/77,
 sizeInRam 75/77.
 
+The header's first word is a hardcoded `j <entry>` (retail bytes too). If code before the
+entry function grows, the stub jumps into the middle of whatever now sits at the retail
+address. This is what broke the six-icon builds: StadiumSelect_Main moved +0x30..+0x7C, the
+stub landed inside StadiumSelect_ConfirmSelection (bogus FREE BATTLE screen) or mid-function
+(black-screen freeze). So the jump is retargeted too: the retail target is read from the
+baserom, named via symbol_addrs*.txt, and pointed at that symbol's linked address.
+
 usage: fix_fragment_headers.py <elf> <rom> <fragment> [fragment ...]
+  (run from the repo root: reads baseroms/us/baserom.z64 and linker_scripts/us/symbol_addrs*.txt)
 
 The fragment list is required on purpose: sizeInRam does not fit every fragment in the
 retail ROM (fragment50 and fragment73 differ), so patching anything you did not modify
 risks corrupting a header that was already right.
 """
+import glob
 import re
 import struct
 import subprocess
@@ -38,6 +47,31 @@ def symbols(elf, nm="mips-linux-gnu-nm"):
         if len(parts) == 3:
             syms[parts[2]] = int(parts[0], 16)
     return syms
+
+
+def retail_funcs(paths=None):
+    """retail address -> function name, from splat's symbol_addrs files"""
+    out = {}
+    for path in paths or glob.glob("linker_scripts/us/symbol_addrs*.txt"):
+        for m in re.finditer(r"^(\w+)\s*=\s*(0x[0-9A-Fa-f]+);.*type:func", open(path).read(), re.M):
+            out[int(m.group(2), 16)] = m.group(1)
+    return out
+
+
+def retarget_entry(rom, start, vram, retail_word, syms, funcs):
+    """-> message, or None when nothing changed. Points the header's `j` at the entry
+    function's linked address. retail_word is the stub as retail has it (from the baserom)."""
+    if retail_word >> 26 != 2:
+        return None
+    target = (vram & 0xF0000000) | ((retail_word & 0x3FFFFFF) << 2)
+    func = funcs.get(target)
+    if func not in syms:
+        return f"entry 0x{target:08X} has no linked symbol, jump left as is"
+    word = (2 << 26) | ((syms[func] >> 2) & 0x3FFFFFF)
+    if struct.unpack_from(">I", rom, start)[0] == word:
+        return None
+    struct.pack_into(">I", rom, start, word)
+    return f"entry j {func} 0x{target:08X}->0x{syms[func]:08X}"
 
 
 def fragment_names(syms):
@@ -90,6 +124,12 @@ def selftest():
     # a non-fragment region is refused
     bad = bytearray(0x100)
     assert fix(bad, syms, "fragment59")[0] is None
+    # entry stub follows its function: retail j StadiumSelect_Main (0x841022C0), Main moved +0x7C
+    syms = {"StadiumSelect_Main": 0x8410233C}
+    funcs = {0x841022C0: "StadiumSelect_Main"}
+    assert retarget_entry(rom, 0, 0x84100000, 0x090408B0, syms, funcs)
+    assert struct.unpack_from(">I", rom, 0)[0] == 0x090408CF
+    assert retarget_entry(rom, 0, 0x84100000, 0x090408B0, syms, funcs) is None  # idempotent
     print("selftest ok")
 
 
@@ -102,7 +142,11 @@ if __name__ == "__main__":
     if not names:
         sys.exit("give at least one fragment name (e.g. fragment59) - see the docstring")
     rom = bytearray(open(rom_path, "rb").read())
+    baserom = open("baseroms/us/baserom.z64", "rb").read()
+    retail_rom = {m.group(1): int(m.group(2), 16) for m in re.finditer(
+        r"^(fragment\d+)_ROM_START\s*=\s*(0x[0-9A-Fa-f]+);", open("linker_scripts/us/symbol_addrs.txt").read(), re.M)}
     syms = symbols(elf)
+    funcs = retail_funcs()
     changed = 0
     for name in names:
         vals, old, msg = fix(rom, syms, name)
@@ -112,6 +156,11 @@ if __name__ == "__main__":
         if vals != old:
             changed += 1
             print(msg)
+        retail_word = struct.unpack_from(">I", baserom, retail_rom[name])[0]
+        msg = retarget_entry(rom, syms[f"{name}_ROM_START"], syms[f"{name}_VRAM"], retail_word, syms, funcs)
+        if msg:
+            changed += 1
+            print(f"{name}: {msg}")
     if changed:
         open(rom_path, "wb").write(rom)
         print(f"patched {changed} fragment header(s) in {rom_path}")
