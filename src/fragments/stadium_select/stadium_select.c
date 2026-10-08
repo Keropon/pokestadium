@@ -55,8 +55,8 @@ static u8 D_84102430[] = {
 };
 static s16 gStadiumCupSessionModes[] = { 3, 1, 2, 6, 4, 5 };
 static s16 gStadiumCupModeCategories[] = { 3, 1, 2, 6, 4, 5 };
-// Cup-select navigation. Slots 1/2 (JP-only Nintendo Cup '97/'98) are linked back in;
-// retail US freezes them (all links -1), leaving four reachable cups.
+// Cup-select navigation, the JP table (2x3 grid). Retail US freezes slots 1/2 (JP-only
+// Nintendo Cup '97/'98, all links -1) and slides slots 4/5 up to y=150.
 static unk_D_84102450 D_84102450[] = {
     {
         244,
@@ -100,21 +100,21 @@ static unk_D_84102450 D_84102450[] = {
     },
     {
         88,
-        150,
+        212,
         128,
         96,
         1,
-        3,
         -1,
-        0,
+        -1,
+        3,
     },
     {
         424,
-        150,
+        212,
         128,
         96,
         2,
-        3,
+        -1,
         3,
         -1,
     },
@@ -884,14 +884,19 @@ void StadiumSelect_BuildCupIconGrid(void) {
     D_84103CD0[3] = StadiumSelect_BuildDivisionCupIcon(&D_3020760, 6);
     D_84103CD0[4] = StadiumSelect_BuildSimpleCupIcon(&D_3014760, 4);
     D_84103CD0[5] = StadiumSelect_BuildSimpleCupIcon(&D_301A760, 5);
+    // JP 2x3 layout; retail US only shows 0, 3, 4, 5 with 4/5 on a middle row (y=42)
     Model_InitDisplayObject(D_84103458, 0, 0, D_84103CE8);
+    Model_InitDisplayObject(&D_84103458[1], 0, 0, D_84103CEC);
+    Model_InitDisplayObject(&D_84103458[2], 0, 0, D_84103CEC);
     Model_InitDisplayObject(&D_84103458[3], 0, 0, D_84103CE8);
     Model_InitDisplayObject(&D_84103458[4], 0, 0, D_84103CEC);
     Model_InitDisplayObject(&D_84103458[5], 0, 0, D_84103CEC);
     Vec3f_SetComponentsDuplicate(&D_84103458->unk_024, -80.0f, 113.0f, -579.0f);
+    Vec3f_SetComponentsDuplicate(&D_84103458[1].unk_024, -236.0f, 104.0f, -579.0f);
+    Vec3f_SetComponentsDuplicate(&D_84103458[2].unk_024, 100.0f, 104.0f, -579.0f);
     Vec3f_SetComponentsDuplicate(&D_84103458[3].unk_024, -80.0f, -29.0f, -579.0f);
-    Vec3f_SetComponentsDuplicate(&D_84103458[4].unk_024, -236.0f, 42.0f, -579.0f);
-    Vec3f_SetComponentsDuplicate(&D_84103458[5].unk_024, 100.0f, 42.0f, -579.0f);
+    Vec3f_SetComponentsDuplicate(&D_84103458[4].unk_024, -236.0f, -20.0f, -579.0f);
+    Vec3f_SetComponentsDuplicate(&D_84103458[5].unk_024, 100.0f, -20.0f, -579.0f);
 }
 
 s16 StadiumSelect_HandleInput(void) {
