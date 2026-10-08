@@ -23,10 +23,21 @@ reproduce the retail table entry for entry. `--selftest` only covers the encoder
 
 usage:
   gen_fragment_relocs.py <elf> <fragment-number> [--check <segment.bin>] [--write <file>]
+  gen_fragment_relocs.py --all <elf>     (the Makefile's post-link step, run from the repo root)
+      regenerates every REGEN_SAFE fragment's table in assets/ and deletes its stale object;
+      exit 3 when anything changed (relink needed), 0 when all tables are current.
 """
 
+import os
 import struct
 import sys
+
+# Fragments whose retail table this tool reproduces entry for entry from a matching build.
+# The others carry relocs the ELF cannot see (pointers inside data still kept as raw blobs),
+# so they keep their retail table and must not change size (fix_fragment_headers enforces
+# that). Re-derive after decomp progress with --audit on a matching build.
+REGEN_SAFE = {5, 25, 26, 29, 30, 32, 33, 35, 36, 37, 38, 40, 48, 49, 51, 52, 53, 54, 56, 58,
+              59, 60, 65, 66, 68, 69, 70, 71, 72, 73, 74, 76, 77}
 
 TYPE_NAMES = {2: "R_MIPS_32", 4: "R_MIPS_26", 5: "R_MIPS_HI16", 6: "R_MIPS_LO16"}
 
@@ -104,6 +115,8 @@ def build(elf_path, frag_no):
         if not (base <= sym["value"] < ram_end):
             dropped += 1
             continue
+        if r_type == 10:  # R_MIPS_PC16: branch within the fragment, position-independent
+            continue
         if r_type not in TYPE_NAMES:
             raise AssertionError(f"unhandled reloc type {r_type} on {sym['name']}")
         assert base <= r_offset < base + content, f"reloc outside content at {hex(r_offset)}"
@@ -161,10 +174,57 @@ def merge(entries, retail_path):
     return carried + entries, want, carried, stale
 
 
+def table_path(n):
+    return f"assets/us/fragments/{n}/fragment{n}_reloc.rodatabin.bin"
+
+
+def update_all(elf):
+    """-> list of fragment numbers whose table was rewritten"""
+    changed = []
+    for n in sorted(REGEN_SAFE):
+        path = table_path(n)
+        entries, _, _, bss_size = build(elf, n)
+        merged, current, _, _ = merge(entries, path)
+        if merged == current:  # compare entries, not bytes: retail tables carry trailing padding
+            continue
+        data = encode(merged, bss_size)
+        open(path, "wb").write(data)
+        # make does not track the .incbin, so drop the object to force a reassemble
+        obj = f"build/asm/us/data/fragments/{n}/fragment{n}_reloc.o"
+        if os.path.exists(obj):
+            os.remove(obj)
+        changed.append(n)
+    return changed
+
+
+def audit(elf):
+    """fragments whose current table regenerates exactly; run on a matching build"""
+    ok = []
+    for n in range(1, 100):
+        if not os.path.exists(table_path(n)):
+            continue
+        try:
+            entries = build(elf, n)[0]
+        except StopIteration:  # no .rel section: nothing to regenerate from
+            continue
+        merged, want, _, _ = merge(entries, table_path(n))
+        if merged == want:
+            ok.append(n)
+    return ok
+
+
 if __name__ == "__main__":
     if "--selftest" in sys.argv:
         selftest()
         sys.exit(0)
+    if sys.argv[1] == "--audit":
+        print(audit(sys.argv[2]))
+        sys.exit(0)
+    if sys.argv[1] == "--all":
+        changed = update_all(sys.argv[2])
+        if changed:
+            print("regenerated reloc tables:", " ".join(f"fragment{n}" for n in changed))
+        sys.exit(3 if changed else 0)
     elf, frag_no = sys.argv[1], sys.argv[2]
     retail_path = sys.argv[3]
     entries, dropped, seg_size, bss_size = build(elf, frag_no)

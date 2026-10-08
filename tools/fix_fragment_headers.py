@@ -22,14 +22,16 @@ stub landed inside StadiumSelect_ConfirmSelection (bogus FREE BATTLE screen) or 
 (black-screen freeze). So the jump is retargeted too: the retail target is read from the
 baserom, named via symbol_addrs*.txt, and pointed at that symbol's linked address.
 
-usage: fix_fragment_headers.py <elf> <rom> <fragment> [fragment ...]
+usage: fix_fragment_headers.py <elf> <rom> (<fragment> ... | --all)
   (run from the repo root: reads baseroms/us/baserom.z64 and linker_scripts/us/symbol_addrs*.txt)
 
-The fragment list is required on purpose: sizeInRam does not fit every fragment in the
-retail ROM (fragment50 and fragment73 differ), so patching anything you did not modify
-risks corrupting a header that was already right.
+Size fields are only rewritten for a fragment whose layout moved (relocOffset or sizeInRom
+differ): sizeInRam does not fit every retail header (fragment50 and fragment73 differ), so
+untouched fragments keep their retail header. A moved fragment that is not in
+gen_fragment_relocs.REGEN_SAFE is an error: its reloc table could not follow the move.
 """
 import glob
+import os
 import re
 import struct
 import subprocess
@@ -39,7 +41,7 @@ HEADER_OFF = {"headerSize": 0x10, "relocOffset": 0x14, "sizeInRom": 0x18, "sizeI
 MAGIC_OFF = 0x08
 
 
-def symbols(elf, nm="mips-linux-gnu-nm"):
+def symbols(elf, nm=os.environ.get("NM", "mips-linux-gnu-nm")):
     out = subprocess.run([nm, elf], capture_output=True, text=True, check=True).stdout
     syms = {}
     for line in out.splitlines():
@@ -93,6 +95,8 @@ def fix(rom, syms, name):
     if rom[start + MAGIC_OFF:start + MAGIC_OFF + 8] != b"FRAGMENT":
         return None, None, f"{name}: no FRAGMENT magic at 0x{start:X}, refusing to write"
     old = struct.unpack(">III", rom[start + 0x14:start + 0x20])
+    if (reloc_offset, size_in_rom) == old[:2]:
+        return old, old, None
     rom[start + 0x14:start + 0x18] = struct.pack(">I", reloc_offset)
     rom[start + 0x18:start + 0x1C] = struct.pack(">I", size_in_rom)
     rom[start + 0x1C:start + 0x20] = struct.pack(">I", size_in_ram)
@@ -140,13 +144,16 @@ if __name__ == "__main__":
     elf, rom_path = sys.argv[1], sys.argv[2]
     names = sys.argv[3:]
     if not names:
-        sys.exit("give at least one fragment name (e.g. fragment59) - see the docstring")
+        sys.exit("give fragment names (e.g. fragment59) or --all - see the docstring")
+    from gen_fragment_relocs import REGEN_SAFE
     rom = bytearray(open(rom_path, "rb").read())
     baserom = open("baseroms/us/baserom.z64", "rb").read()
     retail_rom = {m.group(1): int(m.group(2), 16) for m in re.finditer(
         r"^(fragment\d+)_ROM_START\s*=\s*(0x[0-9A-Fa-f]+);", open("linker_scripts/us/symbol_addrs.txt").read(), re.M)}
     syms = symbols(elf)
     funcs = retail_funcs()
+    if names == ["--all"]:
+        names = fragment_names(syms)
     changed = 0
     for name in names:
         vals, old, msg = fix(rom, syms, name)
@@ -154,15 +161,18 @@ if __name__ == "__main__":
             print(msg)
             continue
         if vals != old:
+            if int(name[len("fragment"):]) not in REGEN_SAFE:
+                sys.exit(f"{name} changed size but its reloc table cannot be regenerated "
+                         "(not in gen_fragment_relocs.REGEN_SAFE); the ROM would crash on load")
             changed += 1
             print(msg)
         retail_word = struct.unpack_from(">I", baserom, retail_rom[name])[0]
         msg = retarget_entry(rom, syms[f"{name}_ROM_START"], syms[f"{name}_VRAM"], retail_word, syms, funcs)
+        if msg and "no linked symbol" in msg and vals == old:
+            continue  # fragment did not move, so neither did its entry
         if msg:
             changed += 1
             print(f"{name}: {msg}")
     if changed:
         open(rom_path, "wb").write(rom)
         print(f"patched {changed} fragment header(s) in {rom_path}")
-    else:
-        print("all fragment headers already match the linker layout")
