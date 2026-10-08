@@ -419,6 +419,8 @@ endif
 .DEFAULT_GOAL := rom
 # Prevent removing intermediate files
 .SECONDARY:
+# A ROM whose post-link fixup failed must not survive as "up to date"
+.DELETE_ON_ERROR:
 
 
 #### Various Recipes ####
