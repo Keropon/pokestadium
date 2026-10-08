@@ -392,15 +392,13 @@ void GbAudio_ApplyQueuedWrites(u16 arg0) {
     }
 }
 
-#ifdef NON_MATCHING
 s16 func_80049DF0(void) {
     s32 i;
     s32 changed;
     s32 nr14;
     u8 phase;
-    s32 freq;
+    u16 freq;
     s16 out;
-    u32 tmp;
 
     changed = 0;
     for (i = 0; i < 5; i++) {
@@ -470,7 +468,7 @@ s16 func_80049DF0(void) {
             D_800FCF60.unk_1E = phase;
             D_800FCF60.unk_1C = 0;
             D_800FCF60.unk_20 = 0;
-            D_800FCF60.unk_0C = (GB_REG(2) & 0xF0) << 7;
+            D_800FCF60.unk_0C = (u8)(GB_REG(2) & 0xF0) << 7;
             if (GB_REG(2) & 7) {
                 if (GB_REG(2) & 8) {
                     D_800FCF60.unk_0E = 0x800;
@@ -480,11 +478,11 @@ s16 func_80049DF0(void) {
                 D_800FCF60.unk_14 = D_800FCF60.unk_10 = (GB_REG(2) & 7) * D_800FD004;
             } else {
                 D_800FCF60.unk_0E = 0;
-                D_800FCF60.unk_14 = D_800FCF60.unk_10 = -1;
+                D_800FCF60.unk_10 = -1;
+                D_800FCF60.unk_14 = -1;
             }
-            tmp = (((GB_REG(0) & 0x70) >> 4) * D_800FD004) >> 1;
-            D_800FCF60.unk_08 = tmp;
-            if (tmp == 0) {
+            D_800FCF60.unk_08 = (((GB_REG(0) & 0x70) >> 4) * D_800FD004) >> 1;
+            if (D_800FCF60.unk_08 == 0) {
                 D_800FCF60.unk_08 = -1;
             }
             if (nr14 & 0x40) {
@@ -509,7 +507,7 @@ s16 func_80049DF0(void) {
 
     if ((D_800FCF60.unk_08 - (D_800FCF60.unk_00 % D_800FCF60.unk_08)) <= 0x40) {
         if (!(GB_REG(0) & 8)) {
-            freq = (u16)(D_800FCF60.unk_04 + (D_800FCF60.unk_04 >> (GB_REG(0) & 7)));
+            freq = (D_800FCF60.unk_04 + (D_800FCF60.unk_04 >> (GB_REG(0) & 7)));
             if (freq >= 0x800) {
                 D_800FCF60.unk_2C = 0;
                 D_800FD008.unk_2C &= 0xFFFE;
@@ -517,7 +515,7 @@ s16 func_80049DF0(void) {
             }
             D_800FCF60.unk_04 = freq;
         } else {
-            freq = (u16)(D_800FCF60.unk_04 - (D_800FCF60.unk_04 >> (GB_REG(0) & 7)));
+            freq = (D_800FCF60.unk_04 - (D_800FCF60.unk_04 >> (GB_REG(0) & 7)));
             if ((freq >= 0x800) || (freq < 0)) {
                 goto skip;
             }
@@ -531,32 +529,32 @@ s16 func_80049DF0(void) {
                     D_800FCF60.unk_18[1] = 0x40;
                 }
                 D_800FCF60.unk_18[0] = D_800FCF60.unk_24 - D_800FCF60.unk_18[1];
-                goto sweep_done;
+                break;
             case 1:
                 D_800FCF60.unk_18[1] = D_800FCF60.unk_24 >> 2;
                 if (D_800FCF60.unk_18[1] < 0x40) {
                     D_800FCF60.unk_18[1] = 0x40;
                 }
                 D_800FCF60.unk_18[0] = D_800FCF60.unk_24 - D_800FCF60.unk_18[1];
-                goto sweep_done;
+                break;
             case 2:
                 D_800FCF60.unk_18[1] = D_800FCF60.unk_24 >> 1;
                 if (D_800FCF60.unk_18[1] < 0x40) {
                     D_800FCF60.unk_18[1] = 0x40;
                 }
                 D_800FCF60.unk_18[0] = D_800FCF60.unk_24 - D_800FCF60.unk_18[1];
-                goto sweep_done;
+                break;
             case 3:
                 D_800FCF60.unk_18[0] = D_800FCF60.unk_24 >> 2;
                 if (D_800FCF60.unk_18[0] < 0x40) {
                     D_800FCF60.unk_18[0] = 0x40;
                 }
                 D_800FCF60.unk_18[1] = D_800FCF60.unk_24 - D_800FCF60.unk_18[0];
-                goto sweep_done;
+                break;
+            default:
+                D_800FCF60.unk_18[1] = 0;
+                D_800FCF60.unk_18[0] = D_800FCF60.unk_24;
         }
-        D_800FCF60.unk_18[1] = 0;
-        D_800FCF60.unk_18[0] = D_800FCF60.unk_24;
-    sweep_done:;
     }
 skip:
 
@@ -585,9 +583,6 @@ skip:
     D_800FCF60.unk_00 += 0x40;
     return out;
 }
-#else
-#pragma GLOBAL_ASM("asm/us/nonmatchings/gb_audio_render/func_80049DF0.s")
-#endif
 
 s16 func_8004A474(void) {
     s32 i;
