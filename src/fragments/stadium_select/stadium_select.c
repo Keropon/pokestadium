@@ -43,79 +43,105 @@ static void* D_84103448;
 static void* D_8410344C;
 static Vtx* D_84103450;
 static GraphNode* D_84103454;
-static unk_D_86002F58_004_000 D_84103458[6];
+// Cup-select slots. Retail has six (US shows four); slot 6 is a seventh cup.
+#define STADIUM_CUP_COUNT 7
+// Icons drawn at this scale so seven fit (retail 1.0). The four-division cups' model is
+// 152x114 against 128x96, so they get scaled down further to the same on-screen size.
+#define CUP_ICON_SCALE 0.8f
+#define CUP_ICON_SCALE_DIVISION (CUP_ICON_SCALE * 128 / 152)
+
+static unk_D_86002F58_004_000 D_84103458[STADIUM_CUP_COUNT];
 static s16 D_84103CC8;
-static unk_D_80068BB0* D_84103CD0[6];
+static unk_D_80068BB0* D_84103CD0[STADIUM_CUP_COUNT];
 static GraphNode* D_84103CE8;
 static GraphNode* D_84103CEC;
 static ModeSettings D_84103CF0;
 
 static u8 D_84102430[] = {
-    0x09, 0x07, 0x08, 0x0C, 0x0A, 0x0B,
+    0x09, 0x07, 0x08, 0x0C, 0x0A, 0x0B, 0x0B,
 };
-static s16 gStadiumCupSessionModes[] = { 3, 1, 2, 6, 4, 5 };
-static s16 gStadiumCupModeCategories[] = { 3, 1, 2, 6, 4, 5 };
-// Cup-select navigation, the JP table (2x3 grid). Retail US freezes slots 1/2 (JP-only
-// Nintendo Cup '97/'98, all links -1) and slides slots 4/5 up to y=150.
+// Slot 6 (the seventh cup) borrows Pika Cup's mode, rules, background and art until it
+// has its own: these per-slot tables are where it gets them.
+static s16 gStadiumCupSessionModes[] = { 3, 1, 2, 6, 4, 5, 5 };
+static s16 gStadiumCupModeCategories[] = { 3, 1, 2, 6, 4, 5, 5 };
+// Strings in text table 0x13 (edited in text/textdata.json): names 0-5, descriptions 6-11
+// (7 and 8, retail "!no use!", are rewritten for the Nintendo Cups), then the seventh cup's
+// name 15 and description 16.
+static s16 gStadiumCupNameIds[] = { 0, 1, 2, 3, 4, 5, 15 };
+static s16 gStadiumCupDescIds[] = { 6, 7, 8, 9, 10, 11, 16 };
+static u8* gStadiumCupIconArt[] = { D_300C000, D_3000000, D_3006000, D_3020760, D_3014760, D_301A760, D_301A760 };
+// Cup-select navigation: screen rect (x, y, w, h) and up/down/left/right links. Top row
+// 1, 0, 2; bottom row 4, 3, 5, 6. Retail US freezes slots 1/2 (JP-only Nintendo Cup '97/'98)
+// and has no slot 6. The icons' 3D positions are derived from these rects.
 static unk_D_84102450 D_84102450[] = {
     {
-        244,
-        70,
-        152,
-        114,
+        269,
+        94,
+        102,
+        77,
         -1,
         3,
         1,
         2,
     },
     {
-        88,
-        88,
-        128,
-        96,
+        143,
+        94,
+        102,
+        77,
         -1,
         4,
         -1,
         0,
     },
     {
-        424,
-        88,
-        128,
-        96,
+        395,
+        94,
+        102,
+        77,
         -1,
         5,
         0,
         -1,
     },
     {
-        244,
-        212,
-        152,
-        114,
+        206,
+        227,
+        102,
+        77,
         0,
         -1,
         4,
         5,
     },
     {
-        88,
-        212,
-        128,
-        96,
+        80,
+        227,
+        102,
+        77,
         1,
         -1,
         -1,
         3,
     },
     {
-        424,
-        212,
-        128,
-        96,
+        332,
+        227,
+        102,
+        77,
         2,
         -1,
         3,
+        6,
+    },
+    {
+        458,
+        227,
+        102,
+        77,
+        2,
+        -1,
+        5,
         -1,
     },
 };
@@ -224,6 +250,7 @@ static u8 D_84102528[][2] = {
         0x19,
         0x1E,
     },
+    { 0xF, 0x14 },
     { 0xF, 0x14 },
 };
 static u8* D_84102534[] = { D_03028EC0, D_03029C40, D_0302A9C0, D_0302B740, D_0302C4C0, D_0302D480 };
@@ -589,6 +616,19 @@ void StadiumSelect_UpdateSparkles(s16 arg0) {
 void StadiumSelect_InitSparkleFlags(void) {
     s32 i;
 
+    // badge sparkles sit on the icons (retail coords are the US layout at scale 1):
+    // 4 ball badges on each division cup, one on Petit/Pika
+    for (i = 0; i < 4; i++) {
+        D_84102498[i].unk_02 = D_84102450[0].unk_00 + CUP_ICON_SCALE_DIVISION * (16 + 38 * i);
+        D_84102498[i].unk_04 = D_84102450[0].unk_02 + CUP_ICON_SCALE_DIVISION * 70;
+        D_84102498[i + 6].unk_02 = D_84102450[3].unk_00 + CUP_ICON_SCALE_DIVISION * (16 + 38 * i);
+        D_84102498[i + 6].unk_04 = D_84102450[3].unk_02 + CUP_ICON_SCALE_DIVISION * 70;
+    }
+    D_84102510[1] = D_84102450[4].unk_00 + CUP_ICON_SCALE * 100;
+    D_84102510[2] = D_84102450[4].unk_02 + CUP_ICON_SCALE * 60;
+    D_8410251C[1] = D_84102450[5].unk_00 + CUP_ICON_SCALE * 100;
+    D_8410251C[2] = D_84102450[5].unk_02 + CUP_ICON_SCALE * 60;
+
     for (i = 0; i < D_84103CF0.unk_05; i++) {
         D_84102498[i].unk_00 = 1;
     }
@@ -738,22 +778,22 @@ void StadiumSelect_DrawCupInfoPanel(s16 arg0) {
         StadiumSelect_DrawBlurbBackdrop(0x38, ((0x5C - temp_a3) / 2) + 0x15C, 0x210, temp_a3, 0x1E, 0x1E, 0x82, 0x96);
     }
 
-    if ((sp28 == 0x5A) && (D_84103CC8 < 6)) {
+    if ((sp28 == 0x5A) && (D_84103CC8 < STADIUM_CUP_COUNT)) {
         Font_BeginTranslucentTextRendering();
         Font_SetActive(0x10, 0);
         Gfx_SetEnvColor(0xFF, 0xFF, 0x64, 0xFF);
-        Font_Printf(0x48, 0x160, Text_GetString(NULL, 0, D_84103440, D_84103CC8));
+        Font_Printf(0x48, 0x160, Text_GetString(NULL, 0, D_84103440, gStadiumCupNameIds[D_84103CC8]));
         Font_Printf(0x18C, 0x160, Text_GetString(NULL, 0, D_84103440, 0xC));
         Font_Printf(Font_MeasureTextExtent(0x10, 0, Text_GetString(NULL, 0, D_84103440, 0xC)) + 0x190, 0x160, "%d~%d",
                       D_84102528[D_84103CC8][0], D_84102528[D_84103CC8][1]);
         Font_SetActive(8, 0);
         Gfx_SetEnvColor(0xFF, 0xFF, 0xFF, 0xFF);
         Font_SetLineHeight(0x18);
-        Font_Printf(0x48, 0x182, Text_GetString(NULL, 0, D_84103440, D_84103CC8 + 6));
+        Font_Printf(0x48, 0x182, Text_GetString(NULL, 0, D_84103440, gStadiumCupDescIds[D_84103CC8]));
         Font_EndTexturedTextRendering();
 
         if (D_800AE540.unk_11F2 == 1) {
-            temp_v0 = Font_MeasureTextExtent(0x10, 0, Text_GetString(NULL, 0, D_84103440, D_84103CC8));
+            temp_v0 = Font_MeasureTextExtent(0x10, 0, Text_GetString(NULL, 0, D_84103440, gStadiumCupNameIds[D_84103CC8]));
 
             gSPDisplayList(gDisplayListHead++, D_8006F518);
 
@@ -773,25 +813,13 @@ void StadiumSelect_RenderFrame(s32 arg0, s32 arg1, f32 arg2) {
 
     if (arg0 < 0xB) {
         var_v0 = ((10 - arg0) * -0x5000) / 10;
-        for (i = 0; i < 3; i++) {
-            D_84103458[i].unk_01E.x = var_v0;
-        }
-
-        for (i = 3; i < 6; i++) {
-            D_84103458[i].unk_01E.x = -var_v0;
-        }
     } else {
         var_v0 = ((arg0 - 10) * -0x5000) / 10;
-        for (i = 0; i < 3; i++) {
-            if (i != D_84103CC8) {
-                D_84103458[i].unk_01E.x = var_v0;
-            }
-        }
-
-        for (i = 3; i < 6; i++) {
-            if (i != D_84103CC8) {
-                D_84103458[i].unk_01E.x = -var_v0;
-            }
+    }
+    // top row flips one way, bottom row the other; on the way out the chosen cup stays
+    for (i = 0; i < STADIUM_CUP_COUNT; i++) {
+        if ((arg0 < 0xB) || (i != D_84103CC8)) {
+            D_84103458[i].unk_01E.x = (D_84102450[i].unk_02 < 160) ? var_v0 : -var_v0;
         }
     }
 
@@ -877,26 +905,28 @@ unk_D_80068BB0* StadiumSelect_BuildSimpleCupIcon(u8* arg0, s16 arg1) {
 }
 
 void StadiumSelect_BuildCupIconGrid(void) {
+    s16 i;
+    f32 scale;
+
     StadiumSelect_InitSparkleFlags();
-    D_84103CD0[0] = StadiumSelect_BuildDivisionCupIcon(&D_300C000, 3);
-    D_84103CD0[1] = StadiumSelect_BuildSimpleCupIcon(D_3000000, 1);
-    D_84103CD0[2] = StadiumSelect_BuildSimpleCupIcon(D_3006000, 2);
-    D_84103CD0[3] = StadiumSelect_BuildDivisionCupIcon(&D_3020760, 6);
-    D_84103CD0[4] = StadiumSelect_BuildSimpleCupIcon(&D_3014760, 4);
-    D_84103CD0[5] = StadiumSelect_BuildSimpleCupIcon(&D_301A760, 5);
-    // JP 2x3 layout; retail US only shows 0, 3, 4, 5 with 4/5 on a middle row (y=42)
-    Model_InitDisplayObject(D_84103458, 0, 0, D_84103CE8);
-    Model_InitDisplayObject(&D_84103458[1], 0, 0, D_84103CEC);
-    Model_InitDisplayObject(&D_84103458[2], 0, 0, D_84103CEC);
-    Model_InitDisplayObject(&D_84103458[3], 0, 0, D_84103CE8);
-    Model_InitDisplayObject(&D_84103458[4], 0, 0, D_84103CEC);
-    Model_InitDisplayObject(&D_84103458[5], 0, 0, D_84103CEC);
-    Vec3f_SetComponentsDuplicate(&D_84103458->unk_024, -80.0f, 113.0f, -579.0f);
-    Vec3f_SetComponentsDuplicate(&D_84103458[1].unk_024, -236.0f, 104.0f, -579.0f);
-    Vec3f_SetComponentsDuplicate(&D_84103458[2].unk_024, 100.0f, 104.0f, -579.0f);
-    Vec3f_SetComponentsDuplicate(&D_84103458[3].unk_024, -80.0f, -29.0f, -579.0f);
-    Vec3f_SetComponentsDuplicate(&D_84103458[4].unk_024, -236.0f, -20.0f, -579.0f);
-    Vec3f_SetComponentsDuplicate(&D_84103458[5].unk_024, 100.0f, -20.0f, -579.0f);
+    for (i = 0; i < STADIUM_CUP_COUNT; i++) {
+        unk_D_84102450* r = &D_84102450[i];
+        // the four-division cups use the wider icon and the other model node
+        s32 division = (i == 0) || (i == 3);
+
+        if (division) {
+            D_84103CD0[i] = StadiumSelect_BuildDivisionCupIcon(gStadiumCupIconArt[i], gStadiumCupSessionModes[i]);
+        } else {
+            D_84103CD0[i] = StadiumSelect_BuildSimpleCupIcon(gStadiumCupIconArt[i], gStadiumCupSessionModes[i]);
+        }
+        Model_InitDisplayObject(&D_84103458[i], 0, 0, division ? D_84103CE8 : D_84103CEC);
+        // 1 unit = 1 pixel at z=-579; the model origin sits 80 (division) / 68 px left of centre
+        scale = division ? CUP_ICON_SCALE_DIVISION : CUP_ICON_SCALE;
+        Vec3f_SetComponentsDuplicate(&D_84103458[i].unk_024,
+                                     r->unk_00 + r->unk_04 / 2 - 320 - scale * (division ? 80 : 68),
+                                     240 - (r->unk_02 + r->unk_06 / 2), -579.0f);
+        Vec3f_SetComponentsDuplicate(&D_84103458[i].unk_030, scale, scale, scale);
+    }
 }
 
 s16 StadiumSelect_HandleInput(void) {
@@ -910,7 +940,7 @@ s16 StadiumSelect_HandleInput(void) {
     } else if (BTN_IS_PRESSED(gPlayer1Controller, BTN_B)) {
         Audio_PlaySoundEffectById(3);
         var_v1 = -1;
-        var_a1 = 6;
+        var_a1 = STADIUM_CUP_COUNT;
     } else if (BTN_IS_PRESSED(gPlayer1Controller, BTN_DUP)) {
         var_v1 = D_84102450[D_84103CC8].unk_08;
     } else if (BTN_IS_PRESSED(gPlayer1Controller, BTN_DDOWN)) {
@@ -953,7 +983,7 @@ void StadiumSelect_Loop(void) {
 
     D_84103CC8 = temp_v0;
 
-    if (D_84103CC8 < 6) {
+    if (D_84103CC8 < STADIUM_CUP_COUNT) {
         D_8410344C = BinArchive_GetFile(D_84103444, D_84102430[D_84103CC8]);
 
         for (i = 11; i < 21; i++) {
@@ -961,7 +991,7 @@ void StadiumSelect_Loop(void) {
             StadiumSelect_RenderFrame(i, 0, 0.0f);
         }
 
-        for (i = 0; i < 6; i++) {
+        for (i = 0; i < STADIUM_CUP_COUNT; i++) {
             ModelRenderer_ClearDisplayObject(&D_84103458[i]);
         }
 
@@ -998,7 +1028,7 @@ void StadiumSelect_InitGeoLayouts(void) {
     ModelRenderer_InitDisplayRoots();
 
     ptr = &D_84103458[0];
-    for (i = 0; i < 6; ptr++, i++) {
+    for (i = 0; i < STADIUM_CUP_COUNT; ptr++, i++) {
         ModelRenderer_AttachDisplayObject(ptr);
         D_84103458[i].unk_000.unk_14 = i;
     }
@@ -1007,7 +1037,7 @@ void StadiumSelect_InitGeoLayouts(void) {
 s32 StadiumSelect_ConfirmSelection(void) {
     s32 var_v1 = 0;
 
-    if (D_84103CC8 < 6) {
+    if (D_84103CC8 < STADIUM_CUP_COUNT) {
         s16 tmp = gStadiumCupSessionModes[D_84103CC8];
 
         Session_SetMode(tmp, gStadiumCupModeCategories[D_84103CC8], 0);
