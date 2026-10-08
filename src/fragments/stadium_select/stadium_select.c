@@ -55,6 +55,8 @@ static u8 D_84102430[] = {
 };
 static s16 gStadiumCupSessionModes[] = { 3, 1, 2, 6, 4, 5 };
 static s16 gStadiumCupModeCategories[] = { 3, 1, 2, 6, 4, 5 };
+// Cup-select navigation. Slots 1/2 (JP-only Nintendo Cup '97/'98) are linked back in;
+// retail US freezes them (all links -1), leaving four reachable cups.
 static unk_D_84102450 D_84102450[] = {
     {
         244,
@@ -63,8 +65,8 @@ static unk_D_84102450 D_84102450[] = {
         114,
         -1,
         3,
-        4,
-        5,
+        1,
+        2,
     },
     {
         88,
@@ -72,9 +74,9 @@ static unk_D_84102450 D_84102450[] = {
         128,
         96,
         -1,
+        4,
         -1,
-        -1,
-        -1,
+        0,
     },
     {
         424,
@@ -82,8 +84,8 @@ static unk_D_84102450 D_84102450[] = {
         128,
         96,
         -1,
-        -1,
-        -1,
+        5,
+        0,
         -1,
     },
     {
@@ -101,7 +103,7 @@ static unk_D_84102450 D_84102450[] = {
         150,
         128,
         96,
-        0,
+        1,
         3,
         -1,
         0,
@@ -111,7 +113,7 @@ static unk_D_84102450 D_84102450[] = {
         150,
         128,
         96,
-        0,
+        2,
         3,
         3,
         -1,
