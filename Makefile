@@ -461,6 +461,12 @@ $(ULTRALIB_LIB):
 	@$(PRINT) "$(GREEN)Making libultra:  $(BLUE)$@ $(NO_COL)\n"
 	$(V)$(MAKE) -C lib/ultralib VERSION=$(ULTRALIB_VERSION) TARGET=$(ULTRALIB_TARGET) FIXUPS=1 COMPARE=0 CROSS=$(MIPS_BINUTILS_PREFIX) IDO_PREPROCESS=$(if $(filter windows,$(DETECTED_OS)),1,0) CC=../../$(CC_OLD) PYTHON=$(PYTHON) VERBOSE=$(VERBOSE) COLOR=$(COLOR)
 
+# Text is the retail archive plus the tracked edits in text/textdata.json
+$(BUILD_DIR)/assets/$(VERSION)/textdata.o: assets/$(VERSION)/textdata.bin text/textdata.json tools/patch_textdata.py
+	$(call print,Patching text:,$<,$@)
+	$(V)$(PYTHON) tools/patch_textdata.py $< text/textdata.json $(@:.o=.bin)
+	$(V)$(OBJCOPY) -I binary -O elf32-big $(@:.o=.bin) $@
+
 $(BUILD_DIR)/%.o: %.bin
 	$(call print,Binning object:,$<,$@)
 	$(V)$(OBJCOPY) -I binary -O elf32-big $< $@
