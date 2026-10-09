@@ -31,6 +31,10 @@ usage:
 import os
 import struct
 import sys
+from typing import Any
+
+Section = dict[str, Any]   # section header fields, plus "sname" (its name)
+Symbol = dict[str, Any]    # "name", "value", "shndx"
 
 # Fragments whose retail table this tool reproduces from a matching build: entry for entry,
 # or (22, 27, 34, 43, 55, 57, 61) the same entries in another order that the loader treats
@@ -44,54 +48,46 @@ REGEN_SAFE = {5, 22, 25, 26, 27, 29, 30, 32, 33, 34, 35, 36, 37, 38, 40, 43, 48,
 TYPE_NAMES = {2: "R_MIPS_32", 4: "R_MIPS_26", 5: "R_MIPS_HI16", 6: "R_MIPS_LO16"}
 
 
-def read_elf(path):
-    """Minimal ELF reader: section headers and .symtab. Returns (data, sections, symbols, endian, is64)."""
+def read_elf(path: str) -> tuple[bytes, list[Section], list[Symbol]]:
+    """Minimal ELF reader: section headers and .symtab of the decomp's linked ELF.
+
+    The build only ever links 32-bit big-endian MIPS, so anything else is rejected rather than
+    half-parsed.
+    """
     data = open(path, "rb").read()
-    assert data[:4] == b"\x7fELF", "not an ELF"
-    is64 = data[4] == 2
-    endian = "<" if data[5] == 1 else ">"
-    if is64:
-        e_shoff, = struct.unpack_from(endian + "Q", data, 0x28)
-        e_shentsize, e_shnum, e_shstrndx = struct.unpack_from(endian + "HHH", data, 0x3A)
-        sh_fmt = endian + "IIQQQQIIQQ"
-    else:
-        e_shoff, = struct.unpack_from(endian + "I", data, 0x20)
-        e_shentsize, e_shnum, e_shstrndx = struct.unpack_from(endian + "HHH", data, 0x2E)
-        sh_fmt = endian + "IIIIIIIIII"
+    if data[:4] != b"\x7fELF" or data[4] != 1 or data[5] != 2 or struct.unpack_from(">H", data, 0x12)[0] != 8:
+        sys.exit(f"{path}: not a 32-bit big-endian MIPS ELF")
+    e_shoff, = struct.unpack_from(">I", data, 0x20)
+    e_shentsize, e_shnum, e_shstrndx = struct.unpack_from(">HHH", data, 0x2E)
 
     sections = []
     for i in range(e_shnum):
-        f = struct.unpack_from(sh_fmt, data, e_shoff + i * e_shentsize)
+        f = struct.unpack_from(">IIIIIIIIII", data, e_shoff + i * e_shentsize)
         sections.append({"name": f[0], "type": f[1], "addr": f[3], "off": f[4],
                          "size": f[5], "link": f[6], "info": f[7], "align": f[8],
                          "entsize": f[9]})
 
     shstr = sections[e_shstrndx]
-    for s in sections:
-        start = shstr["off"] + s["name"]
-        s["sname"] = data[start:data.index(b"\x00", start)].decode()
+    for sec in sections:
+        start = shstr["off"] + sec["name"]
+        sec["sname"] = data[start:data.index(b"\x00", start)].decode()
 
-    symtab = next((s for s in sections if s["type"] == 2), None)   # SHT_SYMTAB
+    symtab = next((sec for sec in sections if sec["type"] == 2), None)   # SHT_SYMTAB
     symbols = []
     if symtab:
         strtab = sections[symtab["link"]]
-        ent = symtab["entsize"] or (24 if is64 else 16)
+        ent = symtab["entsize"] or 16
         for i in range(symtab["size"] // ent):
-            base = symtab["off"] + i * ent
-            if is64:
-                st_name, st_info, st_shndx, st_value = struct.unpack_from(
-                    endian + "IBBHQ", data, base)
-            else:
-                st_name, st_value, st_size, st_info, st_other, st_shndx = struct.unpack_from(
-                    endian + "IIIBBH", data, base)
+            st_name, st_value, _, _, _, st_shndx = struct.unpack_from(">IIIBBH", data, symtab["off"] + i * ent)
             nm = data[strtab["off"] + st_name:strtab["off"] + st_name + 64]
             symbols.append({"name": nm.split(b"\x00")[0].decode("ascii", "replace"),
                             "value": st_value, "shndx": st_shndx})
-    return data, sections, symbols, endian, is64
+    return data, sections, symbols
 
 
-def build(elf_path, frag_no):
-    data, sections, symbols, endian, is64 = read_elf(elf_path)
+def build(elf_path: str, frag_no: int | str) -> tuple[list[int], int, int, int]:
+    """-> (regenerated entries, external relocs dropped, reloc segment size, bss size)"""
+    data, sections, symbols = read_elf(elf_path)
     frag = next(s for s in sections if s["sname"] == f".fragment{frag_no}")
     rel = next(s for s in sections if s["sname"] == f".rel.fragment{frag_no}")
     seg = next(s for s in sections if s["sname"] == f".fragment{frag_no}_relocs")
@@ -100,16 +96,11 @@ def build(elf_path, frag_no):
     base, content = frag["addr"], frag["size"]
     ram_end = base + content + (bss["size"] if bss else 0)   # sizeInRam covers content + bss
 
-    ent = rel["entsize"] or (24 if is64 else 8)
+    ent = rel["entsize"] or 8
     entries, dropped = [], 0
     for i in range(rel["size"] // ent):
-        off = rel["off"] + i * ent
-        if is64:
-            r_offset, r_info = struct.unpack_from(endian + "QQ", data, off)
-            sym_i, r_type = r_info >> 32, r_info & 0xFFFFFFFF
-        else:
-            r_offset, r_info = struct.unpack_from(endian + "II", data, off)
-            sym_i, r_type = r_info >> 8, r_info & 0xFF
+        r_offset, r_info = struct.unpack_from(">II", data, rel["off"] + i * ent)
+        sym_i, r_type = r_info >> 8, r_info & 0xFF
         sym = symbols[sym_i]
         # Only relocations whose symbol lives inside the fragment are regenerated: internal
         # references move with the fragment's runtime base, external ones point at fixed
@@ -133,13 +124,13 @@ def build(elf_path, frag_no):
     return entries, dropped, seg["size"], (bss["size"] if bss else 0)
 
 
-def encode(entries, limit):
+def encode(entries: list[int], limit: int) -> bytes:
     out = struct.pack(">I", len(entries)) + b"".join(struct.pack(">I", w) for w in entries)
     assert len(out) <= limit, f"table grew to 0x{len(out):X} > 0x{limit:X}"
     return out
 
 
-def selftest():
+def selftest() -> None:
     enc = encode([(5 << 24) | 0x10, (6 << 24) | 0x10], 12)
     assert len(enc) == 12, len(enc)
     assert struct.unpack_from(">I", enc, 0)[0] == 2          # count
@@ -156,7 +147,7 @@ def selftest():
     print("selftest ok")
 
 
-def merge(entries, retail_path):
+def merge(entries: list[int], retail_path: str) -> tuple[list[int], list[int], list[int], int]:
     """Regenerated internal relocs plus any retail entry the linker does not emit.
 
     A retail entry whose offset is below the first regenerated offset sits before the
@@ -179,21 +170,21 @@ def merge(entries, retail_path):
     return carried + entries, want, carried, stale
 
 
-def equivalent(a, b):
+def equivalent(a: list[int], b: list[int]) -> bool:
     """Same effect when Memmap_RelocateFragment applies them: R_MIPS_32/26 entries patch one
     word each, independently; HI16/LO16 entries pair through per-register state, so only
     their relative order matters."""
-    def canon(t):
+    def canon(t: list[int]) -> tuple[list[int], list[int]]:
         return (sorted(w for w in t if (w >> 24) & 0x7F not in (5, 6)),
                 [w for w in t if (w >> 24) & 0x7F in (5, 6)])
     return canon(a) == canon(b)
 
 
-def table_path(n):
+def table_path(n: int) -> str:
     return f"assets/us/fragments/{n}/fragment{n}_reloc.rodatabin.bin"
 
 
-def moved_unsafe(elf):
+def moved_unsafe(elf: str) -> list[int]:
     """Fragments outside REGEN_SAFE whose code moved. Their retail table also holds relocs the ELF
     cannot see, so it is kept, which is only right while every reloc the ELF *does* see is still
     at its retail offset. A size check alone misses code that moved inside an unchanged total
@@ -212,7 +203,7 @@ def moved_unsafe(elf):
     return moved
 
 
-def update_all(elf):
+def update_all(elf: str) -> list[int]:
     """-> list of fragment numbers whose table was rewritten"""
     moved = moved_unsafe(elf)
     if moved:
@@ -238,7 +229,7 @@ def update_all(elf):
     return changed
 
 
-def audit(elf):
+def audit(elf: str) -> list[int]:
     """fragments whose current table regenerates exactly; run on a matching build"""
     ok = []
     for n in range(1, 100):

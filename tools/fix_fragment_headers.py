@@ -37,11 +37,13 @@ import struct
 import subprocess
 import sys
 
+HeaderValues = tuple[int, int, int]  # relocOffset, sizeInRom, sizeInRam
+
 HEADER_OFF = {"headerSize": 0x10, "relocOffset": 0x14, "sizeInRom": 0x18, "sizeInRam": 0x1C}
 MAGIC_OFF = 0x08
 
 
-def symbols(elf, nm=os.environ.get("NM", "mips-linux-gnu-nm")):
+def symbols(elf: str, nm: str = os.environ.get("NM", "mips-linux-gnu-nm")) -> dict[str, int]:
     out = subprocess.run([nm, elf], capture_output=True, text=True, check=True).stdout
     syms = {}
     for line in out.splitlines():
@@ -51,7 +53,7 @@ def symbols(elf, nm=os.environ.get("NM", "mips-linux-gnu-nm")):
     return syms
 
 
-def retail_funcs(paths=None):
+def retail_funcs(paths: list[str] | None = None) -> dict[int, str]:
     """retail address -> function name, from splat's symbol_addrs files"""
     out = {}
     for path in paths or glob.glob("linker_scripts/us/symbol_addrs*.txt"):
@@ -60,7 +62,8 @@ def retail_funcs(paths=None):
     return out
 
 
-def retarget_entry(rom, start, vram, retail_word, syms, funcs):
+def retarget_entry(rom: bytearray, start: int, vram: int, retail_word: int,
+                   syms: dict[str, int], funcs: dict[int, str]) -> str | None:
     """-> message, or None when nothing changed. Points the header's `j` at the entry
     function's linked address. retail_word is the stub as retail has it (from the baserom)."""
     if retail_word >> 26 != 2:
@@ -76,12 +79,13 @@ def retarget_entry(rom, start, vram, retail_word, syms, funcs):
     return f"entry j {func} 0x{target:08X}->0x{syms[func]:08X}"
 
 
-def fragment_names(syms):
+def fragment_names(syms: dict[str, int]) -> list[str]:
     return sorted({m.group(1) for k in syms if (m := re.fullmatch(r"(fragment\d+)_ROM_START", k))})
 
 
-def fix(rom, syms, name):
-    """-> (values written, message)"""
+def fix(rom: bytearray, syms: dict[str, int], name: str
+        ) -> tuple[HeaderValues | None, HeaderValues | None, str | None]:
+    """-> (values now in the header, values before, message); (None, None, error) if not fixable"""
     try:
         start = syms[f"{name}_ROM_START"]
         relocs_start = syms[f"{name}_relocs_ROM_START"]
@@ -105,7 +109,7 @@ def fix(rom, syms, name):
         f"sizeInRom 0x{old[1]:X}->0x{size_in_rom:X}  sizeInRam 0x{old[2]:X}->0x{size_in_ram:X}")
 
 
-def selftest():
+def selftest() -> None:
     rom = bytearray(0x100)
     rom[0x00:0x08] = struct.pack(">II", 0x08000020, 0)
     rom[MAGIC_OFF:MAGIC_OFF + 8] = b"FRAGMENT"

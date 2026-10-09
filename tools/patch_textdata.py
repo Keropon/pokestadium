@@ -21,12 +21,12 @@ import struct
 import sys
 
 
-def split(blob):
+def split(blob: bytes) -> list[bytes]:
     n = struct.unpack_from(">I", blob, 12)[0]
     return [blob[o:o + s] for o, s in (struct.unpack_from(">II", blob, 16 + 16 * i) for i in range(n))]
 
 
-def join(files):
+def join(files: list[bytes]) -> bytes:
     head = 16 + 16 * len(files)
     entries, body, off = b"", b"", head
     for f in files:
@@ -36,12 +36,12 @@ def join(files):
     return struct.pack(">IIII", 0, 0, off, len(files)) + entries + body
 
 
-def read_table(f):
+def read_table(f: bytes) -> list[bytes]:
     n = struct.unpack_from(">I", f, 0)[0]
     return [f[o:f.index(b"\0", o)] for o in struct.unpack_from(f">{n}I", f, 4)]
 
 
-def write_table(strings):
+def write_table(strings: list[bytes]) -> bytes:
     out = struct.pack(">I", len(strings))
     pos = 4 + 4 * len(strings)
     for s in strings:
@@ -51,13 +51,13 @@ def write_table(strings):
     return out + b"\xff" * (-len(out) % 16)
 
 
-def patch(blob, edits):
+def patch(blob: bytes, edits: dict[str, dict[str, str]]) -> bytes:
     files = split(blob)
     for table, strings in edits.items():
         t = int(table, 0)
         table_strings = read_table(files[t])
-        for idx, text in sorted(strings.items(), key=lambda kv: int(kv[0])):
-            idx = int(idx)
+        for key, text in sorted(strings.items(), key=lambda kv: int(kv[0])):
+            idx = int(key)
             if idx > len(table_strings):
                 sys.exit(f"table {table}: string {idx} would leave a gap (table has {len(table_strings)})")
             if idx == len(table_strings):
@@ -67,7 +67,7 @@ def patch(blob, edits):
     return join(files)
 
 
-def selftest(path):
+def selftest(path: str) -> None:
     blob = open(path, "rb").read()
     assert patch(blob, {}) == blob, "rebuild without edits must be byte-identical"
     files = split(blob)
