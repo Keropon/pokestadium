@@ -193,8 +193,32 @@ def table_path(n):
     return f"assets/us/fragments/{n}/fragment{n}_reloc.rodatabin.bin"
 
 
+def moved_unsafe(elf):
+    """Fragments outside REGEN_SAFE whose code moved. Their retail table also holds relocs the ELF
+    cannot see, so it is kept, which is only right while every reloc the ELF *does* see is still
+    at its retail offset. A size check alone misses code that moved inside an unchanged total
+    size (padding absorbs it)."""
+    moved = []
+    for n in range(1, 100):
+        if n in REGEN_SAFE or not os.path.exists(table_path(n)):
+            continue
+        try:
+            entries = build(elf, n)[0]
+        except StopIteration:  # no .rel section to compare
+            continue
+        _, current, _, _ = merge(entries, table_path(n))
+        if not set(entries) <= set(current):
+            moved.append(n)
+    return moved
+
+
 def update_all(elf):
     """-> list of fragment numbers whose table was rewritten"""
+    moved = moved_unsafe(elf)
+    if moved:
+        sys.exit("code moved inside " + ", ".join(f"fragment{n}" for n in moved) + ", whose reloc table "
+                 "cannot be regenerated (not in REGEN_SAFE): the ROM would crash. Keep the change "
+                 "byte-neutral (same instructions at the same offsets).")
     changed = []
     for n in sorted(REGEN_SAFE):
         path = table_path(n)
