@@ -32,12 +32,14 @@ import os
 import struct
 import sys
 
-# Fragments whose retail table this tool reproduces entry for entry from a matching build.
-# The others carry relocs the ELF cannot see (pointers inside data still kept as raw blobs),
-# so they keep their retail table and must not change size (fix_fragment_headers enforces
-# that). Re-derive after decomp progress with --audit on a matching build.
-REGEN_SAFE = {5, 25, 26, 29, 30, 32, 33, 35, 36, 37, 38, 40, 48, 49, 51, 52, 53, 54, 56, 58,
-              59, 60, 65, 66, 68, 69, 70, 71, 72, 73, 74, 76, 77}
+# Fragments whose retail table this tool reproduces from a matching build: entry for entry,
+# or (22, 27, 34, 43, 55, 57, 61) the same entries in another order that the loader treats
+# identically (see equivalent()). The others carry relocs the ELF cannot see (pointers inside
+# data still kept as raw blobs), so they keep their retail table and must not change size
+# (fix_fragment_headers enforces that). Re-derive after decomp progress with --audit on a
+# matching build.
+REGEN_SAFE = {5, 22, 25, 26, 27, 29, 30, 32, 33, 34, 35, 36, 37, 38, 40, 43, 48, 49, 51, 52, 53,
+              54, 55, 56, 57, 58, 59, 60, 61, 65, 66, 68, 69, 70, 71, 72, 73, 74, 76, 77}
 
 TYPE_NAMES = {2: "R_MIPS_32", 4: "R_MIPS_26", 5: "R_MIPS_HI16", 6: "R_MIPS_LO16"}
 
@@ -148,6 +150,9 @@ def selftest():
         raise AssertionError("oversized table must be rejected")
     except AssertionError as e:
         assert "grew to" in str(e)
+    hi, lo, w32 = (5 << 24) | 0x10, (6 << 24) | 0x14, (2 << 24) | 0x100
+    assert equivalent([w32, hi, lo], [hi, lo, w32]), "32-bit words may move"
+    assert not equivalent([hi, lo], [lo, hi]), "hi/lo order matters"
     print("selftest ok")
 
 
@@ -174,6 +179,16 @@ def merge(entries, retail_path):
     return carried + entries, want, carried, stale
 
 
+def equivalent(a, b):
+    """Same effect when Memmap_RelocateFragment applies them: R_MIPS_32/26 entries patch one
+    word each, independently; HI16/LO16 entries pair through per-register state, so only
+    their relative order matters."""
+    def canon(t):
+        return (sorted(w for w in t if (w >> 24) & 0x7F not in (5, 6)),
+                [w for w in t if (w >> 24) & 0x7F in (5, 6)])
+    return canon(a) == canon(b)
+
+
 def table_path(n):
     return f"assets/us/fragments/{n}/fragment{n}_reloc.rodatabin.bin"
 
@@ -185,7 +200,9 @@ def update_all(elf):
         path = table_path(n)
         entries, _, _, bss_size = build(elf, n)
         merged, current, _, _ = merge(entries, path)
-        if merged == current:  # compare entries, not bytes: retail tables carry trailing padding
+        # compare entries, not bytes (retail tables carry trailing padding), and keep the
+        # current table when it is only ordered differently, so a matching build stays retail
+        if equivalent(merged, current):
             continue
         data = encode(merged, bss_size)
         open(path, "wb").write(data)
@@ -208,7 +225,7 @@ def audit(elf):
         except StopIteration:  # no .rel section: nothing to regenerate from
             continue
         merged, want, _, _ = merge(entries, table_path(n))
-        if merged == want:
+        if equivalent(merged, want):
             ok.append(n)
     return ok
 
